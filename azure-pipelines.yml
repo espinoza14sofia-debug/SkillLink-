@@ -18,15 +18,15 @@ stages:
               packageType: 'sdk'
               version: '10.x'
 
-          - script: dotnet restore SkillLink.slnx
+          - script: dotnet restore SkillLink.sln
             displayName: 'Restaurar dependencias'
             workingDirectory: backend
 
-          - script: dotnet build SkillLink.slnx --no-restore --configuration Release
+          - script: dotnet build SkillLink.sln --no-restore --configuration Release
             displayName: 'Compilar solución'
             workingDirectory: backend
 
-          - script: dotnet test SkillLink.slnx --no-build --configuration Release --logger trx
+          - script: dotnet test SkillLink.sln --no-build --configuration Release --logger trx
             displayName: 'Ejecutar pruebas unitarias'
             workingDirectory: backend
             continueOnError: true
