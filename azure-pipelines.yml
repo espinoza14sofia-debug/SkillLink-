@@ -48,7 +48,10 @@ stages:
           - task: NodeTool@0
             displayName: 'Instalar Node.js'
             inputs:
-              versionSpec: '18.x'
+              versionSpec: '22.x'
+
+          - script: node -v && npm -v
+            displayName: 'Ver versión de Node'
 
           - script: npm install
             displayName: 'Instalar dependencias'
