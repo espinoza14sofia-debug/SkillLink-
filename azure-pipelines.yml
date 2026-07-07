@@ -16,7 +16,7 @@ stages:
             displayName: 'Instalar .NET SDK'
             inputs:
               packageType: 'sdk'
-              version: '8.x'
+              version: '10.x'
 
           - script: dotnet restore SkillLink.slnx
             displayName: 'Restaurar dependencias'
