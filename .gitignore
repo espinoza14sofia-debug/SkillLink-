@@ -1,3 +1,23 @@
-﻿.vs/
+# .NET
 bin/
 obj/
+*.user
+.vs/
+*.suo
+# Node / React
+node_modules/
+dist/
+build/
+.vite/
+# Entornos
+.env
+.env.local
+.env.*.local
+# Editor
+.vscode/
+.idea/
+# OS
+.DS_Store
+Thumbs.db
+# Logs
+*.log
