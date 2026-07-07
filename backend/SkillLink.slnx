@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SkillLink.Api/SkillLink.Api.csproj" />
+    <Project Path="src/SkillLink.Application/SkillLink.Application.csproj" />
+    <Project Path="src/SkillLink.Domain/SkillLink.Domain.csproj" />
+    <Project Path="src/SkillLink.Infrastructure/SkillLink.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SkillLink.Tests/SkillLink.Tests.csproj" />
+  </Folder>
+</Solution>
