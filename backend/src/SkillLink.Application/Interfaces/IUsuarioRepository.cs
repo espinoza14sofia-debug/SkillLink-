@@ -1,0 +1,12 @@
+﻿using SkillLink.Domain.Entities;
+
+namespace SkillLink.Application.Interfaces;
+
+public interface IUsuarioRepository
+{
+    Task<Usuario?> ObtenerPorEmailAsync(string email);
+    Task<Usuario?> ObtenerPorIdAsync(Guid id);
+    Task<bool> ExisteEmailAsync(string email);
+    Task AgregarAsync(Usuario usuario);
+    Task GuardarCambiosAsync();
+}
