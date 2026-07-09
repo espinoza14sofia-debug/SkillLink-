@@ -2,6 +2,7 @@
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import './Auth.css';
 
 export default function Login() {
     const [form, setForm] = useState({ email: '', password: '' });
@@ -33,7 +34,7 @@ export default function Login() {
     };
 
     return (
-        <div>
+        <div className="auth-container">
             <h1>Iniciar sesión</h1>
             <form onSubmit={handleSubmit}>
                 <div>
@@ -57,7 +58,7 @@ export default function Login() {
                     />
                 </div>
 
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p className="error-msg">{error}</p>}
 
                 <button type="submit" disabled={cargando}>
                     {cargando ? 'Ingresando...' : 'Iniciar sesión'}

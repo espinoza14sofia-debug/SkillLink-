@@ -14,8 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<INivelConfiguracionRepository, NivelConfiguracionRepository>();
+builder.Services.AddScoped<INivelService, NivelService>();
+builder.Services.AddScoped<IXpService, XpService>();
 
+builder.Services.AddScoped<IMisionRepository, MisionRepository>();
+builder.Services.AddScoped<IMisionService, MisionService>();
+
+builder.Services.AddControllers();
+builder.Services.AddScoped<ILogroRepository, LogroRepository>();
+builder.Services.AddScoped<ILogroService, LogroService>();
 builder.Services.AddDbContext<SkillLinkDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -32,7 +40,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -78,11 +86,6 @@ if (app.Environment.IsDevelopment())
 }
 
 
-
-
-
-
- 
 app.UseCors("FrontendPolicy");
 
 app.UseAuthentication();

@@ -1,0 +1,142 @@
+.misiones-wrapper {
+    min-height: 100vh;
+    background: var(--bg);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text-h);
+}
+
+.back-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.misiones-content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+.misiones-content h1 {
+    text-align: left;
+    margin-bottom: 24px;
+}
+
+.empty-msg {
+    color: var(--text);
+    text-align: center;
+    padding: 40px 0;
+}
+
+.misiones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mision-card {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+}
+
+.mision-card.completada {
+    opacity: 0.6;
+}
+
+.mision-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.mision-header h3 {
+    margin: 0;
+    color: var(--text-h);
+    font-size: 18px;
+}
+
+.mision-xp {
+    background: var(--accent-bg);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.mision-desc {
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.mision-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.mision-estado {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.btn-asignar,
+.btn-completar {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-asignar {
+    background: var(--code-bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+
+.btn-completar {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-asignar:hover,
+.btn-completar:hover {
+    opacity: 0.85;
+}
+
+.misiones-loading {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+}

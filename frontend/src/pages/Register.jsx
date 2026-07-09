@@ -1,6 +1,7 @@
 ﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
+import './Auth.css';
 
 export default function Register() {
     const [form, setForm] = useState({
@@ -34,7 +35,7 @@ export default function Register() {
     };
 
     return (
-        <div>
+        <div className="auth-container">
             <h1>Registro</h1>
             <form onSubmit={handleSubmit}>
                 <div>
@@ -78,7 +79,7 @@ export default function Register() {
                     />
                 </div>
 
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p className="error-msg">{error}</p>}
 
                 <button type="submit" disabled={cargando}>
                     {cargando ? 'Registrando...' : 'Registrarse'}

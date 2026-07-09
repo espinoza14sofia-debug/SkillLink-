@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillLink.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SkillLink.Infrastructure.Persistence;
 namespace SkillLink.Infrastructure.Migrations
 {
     [DbContext(typeof(SkillLinkDbContext))]
-    partial class SkillLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709024659_AddTablaMision")]
+    partial class AddTablaMision
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,75 +24,6 @@ namespace SkillLink.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.Logro", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("TipoCondicion")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("ValorCondicion")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Logros");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Descripcion = "Alcanza 50 XP",
-                            Nombre = "Primeros pasos",
-                            TipoCondicion = "xp_total",
-                            ValorCondicion = 50
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Descripcion = "Alcanza 200 XP",
-                            Nombre = "En marcha",
-                            TipoCondicion = "xp_total",
-                            ValorCondicion = 200
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Descripcion = "Completa 1 misión",
-                            Nombre = "Constante",
-                            TipoCondicion = "misiones_completadas",
-                            ValorCondicion = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            Descripcion = "Completa 3 misiones",
-                            Nombre = "Comprometido",
-                            TipoCondicion = "misiones_completadas",
-                            ValorCondicion = 3
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            Descripcion = "Alcanza 1000 XP",
-                            Nombre = "Maestro del XP",
-                            TipoCondicion = "xp_total",
-                            ValorCondicion = 1000
-                        });
-                });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.Mision", b =>
                 {
@@ -224,35 +158,6 @@ namespace SkillLink.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.UsuarioLogro", b =>
-                {
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("LogroId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("FechaObtenido")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("UsuarioId", "LogroId");
-
-                    b.HasIndex("LogroId");
-
-                    b.ToTable("UsuarioLogros");
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.UsuarioLogro", b =>
-                {
-                    b.HasOne("SkillLink.Domain.Entities.Logro", "Logro")
-                        .WithMany()
-                        .HasForeignKey("LogroId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Logro");
                 });
 #pragma warning restore 612, 618
         }
