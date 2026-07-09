@@ -8,6 +8,7 @@ import favicon from '../assets/favicon.png';
 import xpBadge from '../assets/badge-xp.png';
 import insigniaBadge from '../assets/badge-insignia.png';
 import misionBadge from '../assets/badge-mision.png';
+import misionesDisponiblesIcon from '../assets/mision_disponibles.png';
 
 
 export default function Dashboard() {
@@ -160,7 +161,8 @@ export default function Dashboard() {
                 </section>
 
                 <Link to="/misiones" className="misiones-link">
-                    🎯 Ver misiones disponibles
+                    <img src={misionesDisponiblesIcon} alt="" className="misiones-link-icon" />
+                    Ver misiones disponibles
                 </Link>
 
             </main>

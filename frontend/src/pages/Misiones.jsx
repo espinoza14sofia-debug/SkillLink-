@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import './Misiones.css';
 import favicon from '../assets/favicon.png';
+import iconDisponible from '../assets/mision_disponible.png';
+import iconAsignada from '../assets/mision_asignada.png';
+import iconCompletada from '../assets/mision_completada.png';
 
 export default function Misiones() {
     const [misiones, setMisiones] = useState([]);
@@ -53,6 +56,21 @@ export default function Misiones() {
         return <div className="misiones-loading">Cargando misiones...</div>;
     }
 
+    // Devuelve el ícono y el texto según el estado de la misión
+    const getEstadoInfo = (mision, esMia, sinAsignar, completada) => {
+        if (completada) {
+            return { icon: iconCompletada, texto: 'Completada' };
+        }
+        if (esMia) {
+            return { icon: iconAsignada, texto: 'Asignada a ti' };
+        }
+        if (sinAsignar) {
+            return { icon: iconDisponible, texto: 'Disponible' };
+        }
+        // Asignada a otro usuario: no hay ícono propio, se mantiene el emoji
+        return { icon: null, texto: '🔒 Asignada a otro' };
+    };
+
     return (
         <div className="misiones-wrapper">
             <nav className="navbar">
@@ -77,6 +95,7 @@ export default function Misiones() {
                         const esMia = mision.usuarioAsignadoId === usuarioId;
                         const sinAsignar = !mision.usuarioAsignadoId;
                         const completada = mision.estado === 'completada';
+                        const { icon, texto } = getEstadoInfo(mision, esMia, sinAsignar, completada);
 
                         return (
                             <div key={mision.id} className={`mision-card ${completada ? 'completada' : ''}`}>
@@ -88,7 +107,8 @@ export default function Misiones() {
 
                                 <div className="mision-footer">
                                     <span className={`mision-estado estado-${mision.estado}`}>
-                                        {completada ? '✅ Completada' : esMia ? '📌 Asignada a ti' : sinAsignar ? '🔓 Disponible' : '🔒 Asignada a otro'}
+                                        {icon && <img src={icon} alt="" className="estado-icon" />}
+                                        {texto}
                                     </span>
 
                                     {!completada && sinAsignar && (

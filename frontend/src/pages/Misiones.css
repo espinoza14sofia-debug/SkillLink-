@@ -103,8 +103,18 @@
 }
 
 .mision-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 13px;
     color: var(--text);
+}
+
+.estado-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
 }
 
 .btn-asignar,
