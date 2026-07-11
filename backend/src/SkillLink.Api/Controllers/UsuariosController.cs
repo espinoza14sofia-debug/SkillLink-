@@ -87,6 +87,18 @@ public class UsuariosController : ControllerBase
         return Ok(nivelInfo);
     }
 
+    // GET: api/usuarios/{id}/perfil
+    [HttpGet("{id}/perfil")]
+    [Authorize]
+    public async Task<IActionResult> ObtenerPerfilPublico(Guid id)
+    {
+        var perfil = await _usuarioService.ObtenerPerfilPublicoAsync(id);
+        if (perfil == null)
+            return NotFound(new { error = "Usuario no encontrado" });
+
+        return Ok(perfil);
+    }
+
     // PUT: api/usuarios/{id}
     [HttpPut("{id}")]
     [Authorize]
