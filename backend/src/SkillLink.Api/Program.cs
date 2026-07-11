@@ -30,6 +30,9 @@ builder.Services.AddScoped<ILogroService, LogroService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+builder.Services.AddScoped<IHabilidadRepository, HabilidadRepository>();
+builder.Services.AddScoped<IHabilidadService, HabilidadService>();
+
 builder.Services.AddControllers();
 
 // ==========================
