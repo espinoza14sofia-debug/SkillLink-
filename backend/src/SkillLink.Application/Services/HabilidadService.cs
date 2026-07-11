@@ -1,0 +1,67 @@
+﻿using SkillLink.Application.DTOs;
+using SkillLink.Application.Interfaces;
+using SkillLink.Domain.Entities;
+
+namespace SkillLink.Application.Services;
+
+public class HabilidadService : IHabilidadService
+{
+    private readonly IHabilidadRepository _habilidadRepository;
+
+    public HabilidadService(IHabilidadRepository habilidadRepository)
+    {
+        _habilidadRepository = habilidadRepository;
+    }
+
+    public async Task<HabilidadRespuestaDto> AgregarHabilidadAsync(Guid usuarioId, HabilidadCrearDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Nombre))
+            throw new Exception("El nombre de la habilidad es requerido");
+
+        // Busca si la habilidad ya existe en el catálogo general; si no, la crea
+        var habilidad = await _habilidadRepository.ObtenerPorNombreAsync(dto.Nombre);
+        if (habilidad == null)
+        {
+            habilidad = new Habilidad
+            {
+                Id = Guid.NewGuid(),
+                Nombre = dto.Nombre
+            };
+            habilidad = await _habilidadRepository.CrearHabilidadAsync(habilidad);
+        }
+
+        // Verifica que el usuario no la tenga ya agregada
+        var yaExiste = await _habilidadRepository.ExisteUsuarioHabilidadAsync(usuarioId, habilidad.Id);
+        if (yaExiste)
+            throw new Exception("Ya tienes esta habilidad agregada a tu perfil");
+
+        var usuarioHabilidad = new UsuarioHabilidad
+        {
+            Id = Guid.NewGuid(),
+            UsuarioId = usuarioId,
+            HabilidadId = habilidad.Id,
+            Nivel = "Básico"
+        };
+
+        await _habilidadRepository.AgregarUsuarioHabilidadAsync(usuarioHabilidad);
+
+        return new HabilidadRespuestaDto
+        {
+            Id = habilidad.Id,
+            Nombre = habilidad.Nombre,
+            Nivel = usuarioHabilidad.Nivel
+        };
+    }
+
+    public async Task<List<HabilidadRespuestaDto>> ObtenerHabilidadesDeUsuarioAsync(Guid usuarioId)
+    {
+        var lista = await _habilidadRepository.ObtenerPorUsuarioAsync(usuarioId);
+
+        return lista.Select(uh => new HabilidadRespuestaDto
+        {
+            Id = uh.HabilidadId,
+            Nombre = uh.Habilidad?.Nombre ?? "",
+            Nivel = uh.Nivel
+        }).ToList();
+    }
+}

@@ -27,6 +27,24 @@ namespace SkillLink.Application.Services
 
             await _usuarioRepository.GuardarCambiosAsync();
             return true;
+
+
         }
+        public async Task<PerfilPublicoDto?> ObtenerPerfilPublicoAsync(Guid id)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorIdAsync(id);
+            if (usuario == null)
+                return null;
+
+            return new PerfilPublicoDto
+            {
+                Id = usuario.Id,
+                Nombre = usuario.Nombre,
+                Foto = usuario.Foto,
+                Nivel = usuario.Nivel,
+                Xp = usuario.Xp
+            };
+        }
+
     }
 }

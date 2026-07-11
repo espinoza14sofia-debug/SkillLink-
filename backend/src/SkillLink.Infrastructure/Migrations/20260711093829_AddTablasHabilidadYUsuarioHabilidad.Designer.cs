@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillLink.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SkillLink.Infrastructure.Persistence;
 namespace SkillLink.Infrastructure.Migrations
 {
     [DbContext(typeof(SkillLinkDbContext))]
-    partial class SkillLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260711093829_AddTablasHabilidadYUsuarioHabilidad")]
+    partial class AddTablasHabilidadYUsuarioHabilidad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,35 +204,6 @@ namespace SkillLink.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SkillLink.Domain.Entities.TokenRecuperacion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("FechaExpiracion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Usado")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("TokensRecuperacion");
-                });
-
             modelBuilder.Entity("SkillLink.Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
@@ -316,17 +290,6 @@ namespace SkillLink.Infrastructure.Migrations
                     b.HasIndex("LogroId");
 
                     b.ToTable("UsuarioLogros");
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.TokenRecuperacion", b =>
-                {
-                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.UsuarioHabilidad", b =>

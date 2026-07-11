@@ -15,9 +15,19 @@ public class SkillLinkDbContext : DbContext
     public DbSet<Mision> Misiones => Set<Mision>();
     public DbSet<Logro> Logros => Set<Logro>();
     public DbSet<UsuarioLogro> UsuarioLogros => Set<UsuarioLogro>();
+    public DbSet<Habilidad> Habilidades { get; set; }
+    public DbSet<UsuarioHabilidad> UsuarioHabilidades { get; set; }
+    public DbSet<TokenRecuperacion> TokensRecuperacion { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<TokenRecuperacion>(entity =>
+        {
+            entity.HasKey(t => t.Id);
+            entity.Property(t => t.Token).IsRequired();
+            entity.HasIndex(t => t.Token).IsUnique();
+        });
+
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(u => u.Id);
@@ -74,5 +84,15 @@ public class SkillLinkDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(ul => ul.LogroId);
         });
+
+        modelBuilder.Entity<Habilidad>(entity =>
+        {
+            entity.HasKey(h => h.Id);
+            entity.Property(h => h.Nombre).IsRequired().HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<UsuarioHabilidad>()
+            .HasIndex(uh => new { uh.UsuarioId, uh.HabilidadId })
+            .IsUnique();
     }
 }
