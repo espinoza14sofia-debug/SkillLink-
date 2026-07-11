@@ -33,6 +33,8 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHabilidadRepository, HabilidadRepository>();
 builder.Services.AddScoped<IHabilidadService, HabilidadService>();
 
+builder.Services.AddScoped<ITokenRecuperacionRepository, TokenRecuperacionRepository>();
+
 builder.Services.AddControllers();
 
 // ==========================

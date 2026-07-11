@@ -46,4 +46,32 @@ public class AuthController : ControllerBase
 
         return Ok(resultado.Resultado);
     }
+
+    // POST: api/auth/recuperar-password
+    [HttpPost("recuperar-password")]
+    public async Task<IActionResult> RecuperarPassword([FromBody] SolicitarRecuperacionDto dto)
+    {
+        var resultado = await _authService.SolicitarRecuperacionAsync(dto);
+
+        if (!resultado.Exito)
+        {
+            return BadRequest(new { mensaje = resultado.Error });
+        }
+
+        return Ok(new { mensaje = "Si el email existe, se enviaron instrucciones de recuperación." });
+    }
+
+    // POST: api/auth/restablecer-password
+    [HttpPost("restablecer-password")]
+    public async Task<IActionResult> RestablecerPassword([FromBody] RestablecerPasswordDto dto)
+    {
+        var resultado = await _authService.RestablecerPasswordAsync(dto);
+
+        if (!resultado.Exito)
+        {
+            return BadRequest(new { mensaje = resultado.Error });
+        }
+
+        return Ok(new { mensaje = "Contraseña restablecida correctamente." });
+    }
 }
