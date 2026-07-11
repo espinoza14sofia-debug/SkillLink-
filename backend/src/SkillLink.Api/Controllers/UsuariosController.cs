@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillLink.Application.Interfaces;
+using SkillLink.Application.DTOs;
 
 namespace SkillLink.Api.Controllers;
 
@@ -13,17 +14,20 @@ public class UsuariosController : ControllerBase
     private readonly INivelService _nivelService;
     private readonly ILogroService _logroService;
     private readonly IMisionRepository _misionRepository;
+    private readonly IUsuarioService _usuarioService;
 
     public UsuariosController(
         IUsuarioRepository usuarioRepository,
         INivelService nivelService,
         ILogroService logroService,
-        IMisionRepository misionRepository)
+        IMisionRepository misionRepository,
+        IUsuarioService usuarioService)
     {
         _usuarioRepository = usuarioRepository;
         _nivelService = nivelService;
         _logroService = logroService;
         _misionRepository = misionRepository;
+        _usuarioService = usuarioService;
     }
 
     // GET: api/usuarios/me
@@ -40,6 +44,7 @@ public class UsuariosController : ControllerBase
         }
 
         var usuario = await _usuarioRepository.ObtenerPorIdAsync(userId);
+
         if (usuario == null)
         {
             return NotFound();
@@ -71,12 +76,37 @@ public class UsuariosController : ControllerBase
     public async Task<IActionResult> ObtenerNivel(Guid id)
     {
         var usuario = await _usuarioRepository.ObtenerPorIdAsync(id);
+
         if (usuario == null)
         {
             return NotFound();
         }
 
         var nivelInfo = await _nivelService.CalcularNivelAsync(usuario.Xp);
+
         return Ok(nivelInfo);
+    }
+
+    // PUT: api/usuarios/{id}
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> ActualizarPerfil(Guid id, [FromBody] ActualizarPerfilDto dto)
+    {
+        try
+        {
+            await _usuarioService.ActualizarPerfilAsync(id, dto);
+
+            return Ok(new
+            {
+                mensaje = "Perfil actualizado correctamente"
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                error = ex.Message
+            });
+        }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillLink.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SkillLink.Infrastructure.Persistence;
 namespace SkillLink.Infrastructure.Migrations
 {
     [DbContext(typeof(SkillLinkDbContext))]
-    partial class SkillLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709224336_AddNivelesMisionesLogros")]
+    partial class AddNivelesMisionesLogros
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,9 +205,6 @@ namespace SkillLink.Infrastructure.Migrations
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Foto")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Nivel")
                         .HasColumnType("int");

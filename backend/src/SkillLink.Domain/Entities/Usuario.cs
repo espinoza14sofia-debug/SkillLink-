@@ -7,6 +7,7 @@ public class Usuario
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string? Carrera { get; set; }
+    public string? Foto { get; set; }
     public int Nivel { get; set; } = 1;
     public int Xp { get; set; } = 0;
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;

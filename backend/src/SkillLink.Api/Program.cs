@@ -1,18 +1,21 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using SkillLink.Application.Interfaces;
-using SkillLink.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
-using SkillLink.Infrastructure.Persistence;
+using SkillLink.Application.Interfaces;
 using SkillLink.Application.Services;
+using SkillLink.Infrastructure.Persistence;
 using SkillLink.Infrastructure.Repositories;
+using SkillLink.Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregar servicios
+// ==========================
+// Registro de servicios
+// ==========================
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 builder.Services.AddScoped<INivelConfiguracionRepository, NivelConfiguracionRepository>();
 builder.Services.AddScoped<INivelService, NivelService>();
@@ -21,33 +24,45 @@ builder.Services.AddScoped<IXpService, XpService>();
 builder.Services.AddScoped<IMisionRepository, MisionRepository>();
 builder.Services.AddScoped<IMisionService, MisionService>();
 
-builder.Services.AddControllers();
 builder.Services.AddScoped<ILogroRepository, LogroRepository>();
 builder.Services.AddScoped<ILogroService, LogroService>();
-builder.Services.AddDbContext<SkillLinkDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+builder.Services.AddControllers();
 
-// CORS para permitir conexión con React (Vite)
+// ==========================
+// Base de datos
+// ==========================
+builder.Services.AddDbContext<SkillLinkDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// ==========================
+// Swagger (con soporte JWT - botón Authorize)
+// ==========================
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// ==========================
+// CORS
+// ==========================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
+        policy.WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:5174")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 
-
+// ==========================
 // JWT
+// ==========================
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
 var jwtAudience = builder.Configuration["Jwt:Audience"]!;
@@ -75,16 +90,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-
 var app = builder.Build();
 
-
+// ==========================
+// Middleware
+// ==========================
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseCors("FrontendPolicy");
 
