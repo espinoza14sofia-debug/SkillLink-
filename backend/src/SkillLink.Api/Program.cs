@@ -35,6 +35,12 @@ builder.Services.AddScoped<IHabilidadService, HabilidadService>();
 
 builder.Services.AddScoped<ITokenRecuperacionRepository, TokenRecuperacionRepository>();
 
+builder.Services.AddScoped<IEquipoRepository, EquipoRepository>();
+builder.Services.AddScoped<IEquipoService, EquipoService>();
+
+builder.Services.AddScoped<IProyectoRepository, ProyectoRepository>();
+builder.Services.AddScoped<IProyectoService, ProyectoService>();
+
 builder.Services.AddControllers();
 
 // ==========================

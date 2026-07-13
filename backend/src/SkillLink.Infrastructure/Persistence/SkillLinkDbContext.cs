@@ -18,6 +18,9 @@ public class SkillLinkDbContext : DbContext
     public DbSet<Habilidad> Habilidades { get; set; }
     public DbSet<UsuarioHabilidad> UsuarioHabilidades { get; set; }
     public DbSet<TokenRecuperacion> TokensRecuperacion { get; set; }
+    public DbSet<Equipo> Equipos => Set<Equipo>();
+    public DbSet<MiembroEquipo> MiembrosEquipo => Set<MiembroEquipo>();
+    public DbSet<Proyecto> Proyectos => Set<Proyecto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -94,5 +97,44 @@ public class SkillLinkDbContext : DbContext
         modelBuilder.Entity<UsuarioHabilidad>()
             .HasIndex(uh => new { uh.UsuarioId, uh.HabilidadId })
             .IsUnique();
+
+        modelBuilder.Entity<Equipo>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nombre).IsRequired().HasMaxLength(150);
+            entity.Property(e => e.FechaCreacion).IsRequired();
+        });
+
+        modelBuilder.Entity<MiembroEquipo>(entity =>
+        {
+            entity.HasKey(m => m.Id);
+            entity.Property(m => m.Rol).IsRequired();
+            entity.Property(m => m.FechaIngreso).IsRequired();
+
+            entity.HasIndex(m => new { m.EquipoId, m.UsuarioId }).IsUnique();
+
+            entity.HasOne(m => m.Equipo)
+                .WithMany(e => e.Miembros)
+                .HasForeignKey(m => m.EquipoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(m => m.Usuario)
+                .WithMany()
+                .HasForeignKey(m => m.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Proyecto>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Nombre).IsRequired().HasMaxLength(150);
+            entity.Property(p => p.Estado).IsRequired();
+            entity.Property(p => p.FechaCreacion).IsRequired();
+
+            entity.HasOne(p => p.Equipo)
+                .WithMany()
+                .HasForeignKey(p => p.EquipoId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }
