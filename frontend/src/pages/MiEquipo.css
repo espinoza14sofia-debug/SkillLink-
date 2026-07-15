@@ -1,0 +1,183 @@
+.equipo-container {
+  max-width: 960px;
+  margin: 48px auto;
+  padding: 0 24px;
+  font-family: var(--eq-font-body);
+  color: var(--eq-text);
+}
+
+.equipo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.equipo-header h1 {
+  font-family: var(--eq-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--eq-text);
+  margin: 0;
+}
+
+.equipo-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 800px) {
+  .equipo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.equipo-card {
+  background: var(--eq-surface);
+  border: 1px solid var(--eq-border);
+  border-radius: 14px;
+  padding: 24px;
+  text-align: left;
+}
+
+.equipo-card h2 {
+  font-family: var(--eq-font-display);
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--eq-text-dim);
+  margin: 0 0 18px 0;
+}
+
+/* --- Formularios --- */
+.equipo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.equipo-form input,
+.equipo-form textarea {
+  background: var(--eq-bg);
+  border: 1px solid var(--eq-border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-family: var(--eq-font-body);
+  font-size: 14px;
+  color: var(--eq-text);
+}
+
+.equipo-form input:focus,
+.equipo-form textarea:focus {
+  outline: none;
+  border-color: var(--eq-accent);
+}
+
+.equipo-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.equipo-form button {
+  background: var(--eq-accent);
+  color: var(--eq-bg);
+  border: none;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-family: var(--eq-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  align-self: flex-start;
+}
+
+.equipo-form button:hover {
+  background: var(--eq-accent-hover);
+}
+
+.error-text {
+  color: #e5989b;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* --- Lista de miembros --- */
+.miembros-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.miembro-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--eq-border);
+}
+
+.miembro-item:last-child {
+  border-bottom: none;
+}
+
+.miembro-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.miembro-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--eq-secondary);
+  color: var(--eq-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--eq-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.miembro-nombre {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.rol-badge {
+  font-family: var(--eq-font-mono);
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rol-badge.lider {
+  background: var(--eq-highlight);
+  color: var(--eq-bg);
+}
+
+.rol-badge.colaborador {
+  background: transparent;
+  border: 1px solid var(--eq-accent);
+  color: var(--eq-accent);
+}
+
+.miembro-item select {
+  background: var(--eq-bg);
+  border: 1px solid var(--eq-border);
+  color: var(--eq-text-dim);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: var(--eq-font-body);
+}

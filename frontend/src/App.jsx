@@ -5,6 +5,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Misiones from './pages/Misiones';
+import MiEquipo from './pages/MiEquipo';
+import ProyectoDetalle from './pages/ProyectoDetalle';
 
 function App() {
   return (
@@ -29,6 +31,22 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/mi-equipo"
+            element={
+              <ProtectedRoute>
+                <MiEquipo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proyectos/:id"
+            element={
+              <ProtectedRoute>
+                <ProyectoDetalle />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/" element={<Login />} />
         </Routes>
       </BrowserRouter>
@@ -36,4 +54,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 

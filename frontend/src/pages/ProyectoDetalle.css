@@ -1,0 +1,104 @@
+.proyecto-container {
+  max-width: 720px;
+  margin: 48px auto;
+  padding: 0 24px;
+  font-family: var(--eq-font-body);
+  color: var(--eq-text);
+  text-align: left;
+}
+
+.proyecto-volver {
+  color: var(--eq-text-dim);
+  font-size: 13px;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.proyecto-volver:hover {
+  color: var(--eq-accent);
+}
+
+.proyecto-card {
+  background: var(--eq-surface);
+  border: 1px solid var(--eq-border);
+  border-radius: 14px;
+  padding: 28px;
+}
+
+.proyecto-card h1 {
+  font-family: var(--eq-font-display);
+  font-size: 24px;
+  margin: 0 0 6px 0;
+  color: var(--eq-text);
+}
+
+.proyecto-estado {
+  display: inline-block;
+  font-family: var(--eq-font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--eq-accent);
+  border: 1px solid var(--eq-accent);
+  border-radius: 20px;
+  padding: 3px 10px;
+  margin-bottom: 20px;
+}
+
+.proyecto-descripcion {
+  color: var(--eq-text-dim);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* --- Barra estilo misión/XP --- */
+.mision-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--eq-font-mono);
+  font-size: 12px;
+  color: var(--eq-text-dim);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mision-bar-track {
+  position: relative;
+  height: 16px;
+  background: var(--eq-bg);
+  border: 1px solid var(--eq-border);
+  border-radius: 8px;
+  overflow: visible;
+}
+
+.mision-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--eq-secondary), var(--eq-accent));
+  border-radius: 8px 0 0 8px;
+  transition: width 0.4s ease;
+  position: relative;
+}
+
+.mision-bar-marker {
+  position: absolute;
+  top: 50%;
+  right: -7px;
+  width: 14px;
+  height: 14px;
+  background: var(--eq-highlight);
+  transform: translateY(-50%) rotate(45deg);
+  border-radius: 3px;
+  box-shadow: 0 0 8px var(--eq-highlight);
+}
+
+.mision-bar-percent {
+  font-family: var(--eq-font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--eq-highlight);
+  margin-top: 8px;
+  text-align: right;
+}

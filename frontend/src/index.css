@@ -109,3 +109,20 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+:root {
+  --eq-bg: #F7F1EE;
+  --eq-surface: #FFFFFF;
+  --eq-surface-hover: #F3EBEA;
+  --eq-border: #E3D5D9;
+  --eq-secondary: #CFA8BB;
+  --eq-accent: #614051;
+  --eq-accent-hover: #4d3341;
+  --eq-highlight: #967284;
+  --eq-text: #0A0000;
+  --eq-text-dim: #7a6a70;
+
+  --eq-font-display: 'Space Grotesk', sans-serif;
+  --eq-font-body: 'Inter', sans-serif;
+  --eq-font-mono: 'JetBrains Mono', monospace;
+}
