@@ -37,8 +37,13 @@
 }
 
 .misiones-content h1 {
-    text-align: left;
-    margin-bottom: 24px;
+  font-family: var(--eq-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--eq-text);
+  text-align: left;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.5px;
 }
 
 .empty-msg {
@@ -149,4 +154,22 @@
     align-items: center;
     justify-content: center;
     color: var(--text);
+}
+
+.misiones-content h1 {
+  font-family: var(--eq-font-display);
+}
+
+.mision-header h3 {
+  font-family: var(--eq-font-display);
+}
+
+.mision-desc,
+.mision-estado,
+.empty-msg {
+  font-family: var(--eq-font-body);
+}
+
+.mision-xp {
+  font-family: var(--eq-font-mono);
 }

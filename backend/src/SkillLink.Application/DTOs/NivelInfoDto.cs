@@ -7,5 +7,6 @@ public class NivelInfoDto
     public int Xp { get; set; }
     public int XpProximoNivel { get; set; }
     public int XpRestante { get; set; }
-    public double Progreso { get; set; } // 0 a 100
+    public double Progreso { get; set; }
+    public List<LogroDto> NuevosLogros { get; set; } = new();
 }

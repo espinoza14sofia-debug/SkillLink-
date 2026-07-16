@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Misiones from './pages/Misiones';
 import MiEquipo from './pages/MiEquipo';
 import ProyectoDetalle from './pages/ProyectoDetalle';
+import Insignias from './pages/Insignias';
 
 function App() {
   return (
@@ -47,6 +48,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/insignias"
+            element={
+              <ProtectedRoute>
+                <Insignias />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/" element={<Login />} />
         </Routes>
       </BrowserRouter>
@@ -54,4 +63,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

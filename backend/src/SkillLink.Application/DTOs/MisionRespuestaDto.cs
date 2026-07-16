@@ -9,4 +9,5 @@ public class MisionRespuestaDto
     public int XpValor { get; set; }
     public Guid? UsuarioAsignadoId { get; set; }
     public DateTime FechaCreacion { get; set; }
+    public List<LogroDto> NuevosLogros { get; set; } = new();
 }

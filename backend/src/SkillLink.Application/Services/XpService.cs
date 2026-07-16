@@ -43,7 +43,9 @@ public class XpService : IXpService
         await _usuarioRepository.GuardarCambiosAsync();
 
         var misionesCompletadas = await _misionRepository.ContarCompletadasPorUsuarioAsync(usuarioId);
-        await _logroService.EvaluarYOtorgarAsync(usuarioId, usuario.Xp, misionesCompletadas);
+        var nuevosLogros = await _logroService.EvaluarYOtorgarAsync(usuarioId, usuario.Xp, misionesCompletadas);
+
+        nivelInfo.NuevosLogros = nuevosLogros;
 
         return nivelInfo;
     }

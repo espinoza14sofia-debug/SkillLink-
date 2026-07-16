@@ -1,16 +1,24 @@
 .equipo-container {
   max-width: 960px;
-  margin: 48px auto;
+  margin: 40px auto;
   padding: 0 24px;
   font-family: var(--eq-font-body);
   color: var(--eq-text);
 }
 
-.equipo-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
+.equipo-wrapper {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.equipo-container h1 {
+  font-family: var(--eq-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--eq-text);
+  margin: 0 0 24px 0;
+  letter-spacing: -0.5px;
+  text-align: left;
 }
 
 .equipo-header h1 {
@@ -34,21 +42,20 @@
 }
 
 .equipo-card {
-  background: var(--eq-surface);
-  border: 1px solid var(--eq-border);
-  border-radius: 14px;
+  background: #f7f5ee;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   padding: 24px;
-  text-align: left;
 }
 
 .equipo-card h2 {
-  font-family: var(--eq-font-display);
-  font-size: 15px;
-  font-weight: 500;
+  color: #8a7a6a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--eq-text-dim);
-  margin: 0 0 18px 0;
+  margin-bottom: 16px;
 }
 
 /* --- Formularios --- */
@@ -72,7 +79,7 @@
 .equipo-form input:focus,
 .equipo-form textarea:focus {
   outline: none;
-  border-color: var(--eq-accent);
+  border-color: #8b5fbf;
 }
 
 .equipo-form textarea {
@@ -81,8 +88,8 @@
 }
 
 .equipo-form button {
-  background: var(--eq-accent);
-  color: var(--eq-bg);
+  background: #8b5fbf;
+  color: #fff;
   border: none;
   padding: 11px 18px;
   border-radius: 8px;
@@ -95,7 +102,7 @@
 }
 
 .equipo-form button:hover {
-  background: var(--eq-accent-hover);
+  background: #7a4fae;
 }
 
 .error-text {
@@ -162,14 +169,14 @@
 }
 
 .rol-badge.lider {
-  background: var(--eq-highlight);
-  color: var(--eq-bg);
+  background: #ecdff7;
+  color: #8b5fbf;
 }
 
 .rol-badge.colaborador {
   background: transparent;
-  border: 1px solid var(--eq-accent);
-  color: var(--eq-accent);
+  border: 1px solid #8b5fbf;
+  color: #8b5fbf;
 }
 
 .miembro-item select {
@@ -180,4 +187,21 @@
   padding: 5px 8px;
   font-size: 12px;
   font-family: var(--eq-font-body);
+}
+
+.miembro-item select:focus {
+  outline: none;
+  border-color: #8b5fbf;
+}
+
+.volver-dashboard {
+  color: #8b5fbf;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.chat-card-ancha {
+  grid-column: 1 / -1; /* ocupa todo el ancho del grid, de punta a punta */
 }

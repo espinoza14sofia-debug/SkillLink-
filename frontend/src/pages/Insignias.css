@@ -1,0 +1,163 @@
+.insignias-wrapper {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.insignias-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.insignias-header h1 {
+  font-family: var(--eq-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--eq-text);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.insignias-header a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.insignias-header a:hover {
+  text-decoration: underline;
+}
+
+.insignias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.insignia-card {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.15s ease, border-color 0.2s;
+}
+
+.insignia-card:not(.bloqueada):hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.insignia-card.bloqueada {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.insignia-icono {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.insignia-card h3 {
+  color: var(--text-h);
+  margin: 0.5rem 0;
+}
+
+.insignia-condicion {
+  color: var(--text);
+  font-size: 0.85rem;
+  margin: 0.5rem 0;
+}
+
+.insignia-estado {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+}
+
+.insignia-estado.desbloqueada {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.insignia-estado.bloqueada-texto {
+  background: var(--border);
+  color: var(--text);
+}
+
+.insignias-mensaje {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text);
+}
+
+.insignias-mensaje.error {
+  color: #ef4444;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-h);
+}
+
+.brand-icon-img {
+  height: 30px;
+  width: auto;
+}
+
+.back-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.insignias-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.insignias-content h1 {
+  font-family: var(--eq-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--eq-text);
+  margin: 0 0 24px 0;
+  letter-spacing: -0.5px;
+  text-align: left;
+}
+
+.insignias-header h1 {
+  font-family: var(--eq-font-display);
+}
+
+.insignia-card h3 {
+  font-family: var(--eq-font-display);
+}
+
+.insignia-condicion,
+.insignias-mensaje,
+.insignia-estado {
+  font-family: var(--eq-font-body);
+}

@@ -59,7 +59,7 @@ public class MisionService : IMisionService
         return MapearADto(mision);
     }
 
-    public async Task<MisionRespuestaDto> CompletarAsync(Guid misionId, Guid usuarioId)
+ public async Task<MisionRespuestaDto> CompletarAsync(Guid misionId, Guid usuarioId)
     {
         var mision = await _misionRepository.ObtenerPorIdAsync(misionId);
         if (mision == null)
@@ -81,9 +81,11 @@ public class MisionService : IMisionService
         await _misionRepository.GuardarCambiosAsync();
 
         // Otorgar el XP automáticamente
-        await _xpService.OtorgarXpAsync(usuarioId, mision.XpValor);
+        var nivelInfo = await _xpService.OtorgarXpAsync(usuarioId, mision.XpValor);
 
-        return MapearADto(mision);
+        var dto = MapearADto(mision);
+        dto.NuevosLogros = nivelInfo.NuevosLogros;
+        return dto;
     }
 
     private static MisionRespuestaDto MapearADto(Mision mision)

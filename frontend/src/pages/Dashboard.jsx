@@ -9,6 +9,9 @@ import xpBadge from '../assets/badge-xp.png';
 import insigniaBadge from '../assets/badge-insignia.png';
 import misionBadge from '../assets/badge-mision.png';
 import misionesDisponiblesIcon from '../assets/mision_disponibles.png';
+import MenuLateral from '../components/MenuLateral';
+import NotificacionLogro from '../components/NotificacionLogro';
+
 
 
 export default function Dashboard() {
@@ -17,13 +20,16 @@ export default function Dashboard() {
     const [perfil, setPerfil] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState('');
+    const [nuevosLogros, setNuevosLogros] = useState(null);
 
     useEffect(() => {
         const cargarPerfil = async () => {
             try {
                 const respuesta = await api.get('/usuarios/me');
+                console.log('RESPUESTA DEL BACKEND:', respuesta.data);
                 setPerfil(respuesta.data);
             } catch (err) {
+                console.log('ERROR AL CARGAR PERFIL:', err);
                 setError('No se pudo cargar tu perfil.');
             } finally {
                 setCargando(false);
@@ -38,17 +44,24 @@ export default function Dashboard() {
         navigate('/login');
     };
 
-    const handleGanarXp = async () => {
+   const handleGanarXp = async () => {
         try {
             const respuesta = await api.post('/xp/otorgar', {
                 cantidad: 50,
                 motivo: 'Prueba'
             });
 
+            console.log('RESPUESTA XP COMPLETA:', respuesta.data);
+            console.log('NUEVOS LOGROS:', respuesta.data.nuevosLogros);
+
             setPerfil((prev) => ({
                 ...prev,
                 ...respuesta.data
             }));
+
+            if (respuesta.data.nuevosLogros?.length > 0) {
+                setNuevosLogros(respuesta.data.nuevosLogros);
+            }
         } catch (err) {
             console.error('Error al otorgar XP:', err);
         }
@@ -71,15 +84,14 @@ export default function Dashboard() {
 
     return (
         <div className="dashboard-wrapper">
+            <NotificacionLogro logros={nuevosLogros} onCerrar={() => setNuevosLogros(null)} />
+
             <nav className="navbar">
                 <div className="navbar-brand">
+                    <MenuLateral />
                     <img src={favicon} alt="SkillLink" className="brand-icon-img" />
                     <span className="brand-name">SkillLink</span>
                 </div>
-
-                <button className="logout-btn" onClick={handleLogout}>
-                    Cerrar sesión
-                </button>
             </nav>
 
             <main className="dashboard-content">
@@ -159,11 +171,6 @@ export default function Dashboard() {
                     </div>
 
                 </section>
-
-                <Link to="/misiones" className="misiones-link">
-                    <img src={misionesDisponiblesIcon} alt="" className="misiones-link-icon" />
-                    Ver misiones disponibles
-                </Link>
 
             </main>
         </div>

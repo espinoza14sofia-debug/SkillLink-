@@ -43,6 +43,11 @@ builder.Services.AddScoped<IProyectoService, ProyectoService>();
 
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IMensajeRepository, MensajeRepository>();
+builder.Services.AddScoped<IMensajeService, MensajeService>();
+
+
+
 // ==========================
 // Base de datos
 // ==========================

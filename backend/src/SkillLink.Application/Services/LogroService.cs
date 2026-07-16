@@ -32,9 +32,10 @@ public class LogroService : ILogroService
         }).ToList();
     }
 
-    public async Task EvaluarYOtorgarAsync(Guid usuarioId, int xpTotal, int misionesCompletadas)
+    public async Task<List<LogroDto>> EvaluarYOtorgarAsync(Guid usuarioId, int xpTotal, int misionesCompletadas)
     {
         var logros = await _logroRepository.ObtenerTodosAsync();
+        var nuevos = new List<LogroDto>();
 
         foreach (var logro in logros)
         {
@@ -50,14 +51,27 @@ public class LogroService : ILogroService
             var yaLoTiene = await _logroRepository.YaTieneLogroAsync(usuarioId, logro.Id);
             if (yaLoTiene) continue;
 
+            var fecha = DateTime.UtcNow;
+
             await _logroRepository.OtorgarAsync(new UsuarioLogro
             {
                 UsuarioId = usuarioId,
                 LogroId = logro.Id,
-                FechaObtenido = DateTime.UtcNow
+                FechaObtenido = fecha
+            });
+
+            nuevos.Add(new LogroDto
+            {
+                Id = logro.Id,
+                Nombre = logro.Nombre,
+                Descripcion = logro.Descripcion,
+                Desbloqueado = true,
+                FechaObtenido = fecha
             });
         }
 
         await _logroRepository.GuardarCambiosAsync();
+
+        return nuevos;
     }
 }

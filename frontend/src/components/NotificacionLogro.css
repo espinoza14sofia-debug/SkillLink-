@@ -1,0 +1,56 @@
+.notificacion-logro {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 200;
+    background: var(--code-bg);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    animation: slideIn 0.3s ease;
+    max-width: 320px;
+}
+
+.notificacion-icono {
+    font-size: 28px;
+}
+
+.notificacion-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notificacion-texto strong {
+    color: var(--text-h);
+    font-size: 14px;
+}
+
+.notificacion-texto span {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .notificacion-logro {
+        left: 16px;
+        right: 16px;
+        max-width: none;
+    }
+}
