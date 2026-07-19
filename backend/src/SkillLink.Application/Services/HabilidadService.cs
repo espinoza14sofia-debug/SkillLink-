@@ -64,4 +64,40 @@ public class HabilidadService : IHabilidadService
             Nivel = uh.Nivel
         }).ToList();
     }
+
+    public async Task EliminarHabilidadAsync(Guid usuarioId, Guid habilidadId)
+    {
+        var usuarioHabilidad = await _habilidadRepository.ObtenerUsuarioHabilidadAsync(usuarioId, habilidadId);
+        if (usuarioHabilidad == null)
+            throw new Exception("No tienes esta habilidad agregada a tu perfil.");
+
+        await _habilidadRepository.EliminarUsuarioHabilidadAsync(usuarioHabilidad);
+    }
+
+    public async Task<HabilidadRespuestaDto> ActualizarNivelHabilidadAsync(
+        Guid usuarioId,
+        Guid habilidadId,
+        ActualizarNivelHabilidadDto dto)
+    {
+        var nivelesValidos = new[] { "Básico", "Intermedio", "Avanzado" };
+
+        if (!nivelesValidos.Contains(dto.Nivel))
+            throw new Exception("Nivel inválido. Debe ser: Básico, Intermedio o Avanzado.");
+
+        var usuarioHabilidad = await _habilidadRepository.ObtenerUsuarioHabilidadAsync(usuarioId, habilidadId);
+
+        if (usuarioHabilidad == null)
+            throw new Exception("No tienes esta habilidad agregada a tu perfil.");
+
+        usuarioHabilidad.Nivel = dto.Nivel;
+
+        await _habilidadRepository.GuardarCambiosAsync();
+
+        return new HabilidadRespuestaDto
+        {
+            Id = usuarioHabilidad.HabilidadId,
+            Nombre = usuarioHabilidad.Habilidad?.Nombre ?? "",
+            Nivel = usuarioHabilidad.Nivel
+        };
+    }
 }

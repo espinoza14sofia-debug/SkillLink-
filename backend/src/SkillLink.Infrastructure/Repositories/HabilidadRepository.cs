@@ -33,9 +33,22 @@ public class HabilidadRepository : IHabilidadRepository
             .AnyAsync(uh => uh.UsuarioId == usuarioId && uh.HabilidadId == habilidadId);
     }
 
+    public async Task<UsuarioHabilidad?> ObtenerUsuarioHabilidadAsync(Guid usuarioId, Guid habilidadId)
+    {
+        return await _context.UsuarioHabilidades
+            .Include(uh => uh.Habilidad)
+            .FirstOrDefaultAsync(uh => uh.UsuarioId == usuarioId && uh.HabilidadId == habilidadId);
+    }
+
     public async Task AgregarUsuarioHabilidadAsync(UsuarioHabilidad usuarioHabilidad)
     {
         _context.UsuarioHabilidades.Add(usuarioHabilidad);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task EliminarUsuarioHabilidadAsync(UsuarioHabilidad usuarioHabilidad)
+    {
+        _context.UsuarioHabilidades.Remove(usuarioHabilidad);
         await _context.SaveChangesAsync();
     }
 

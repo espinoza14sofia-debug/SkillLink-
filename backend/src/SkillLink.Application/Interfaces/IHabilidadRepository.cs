@@ -9,5 +9,8 @@ public interface IHabilidadRepository
     Task<bool> ExisteUsuarioHabilidadAsync(Guid usuarioId, Guid habilidadId);
     Task AgregarUsuarioHabilidadAsync(UsuarioHabilidad usuarioHabilidad);
     Task<List<UsuarioHabilidad>> ObtenerPorUsuarioAsync(Guid usuarioId);
+    Task<UsuarioHabilidad?> ObtenerUsuarioHabilidadAsync(Guid usuarioId, Guid habilidadId);
     Task GuardarCambiosAsync();
+    Task EliminarUsuarioHabilidadAsync(UsuarioHabilidad usuarioHabilidad);
+
 }

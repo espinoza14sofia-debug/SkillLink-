@@ -41,4 +41,39 @@ public class HabilidadesController : ControllerBase
         var habilidades = await _habilidadService.ObtenerHabilidadesDeUsuarioAsync(id);
         return Ok(habilidades);
     }
+
+    // PUT: api/usuarios/{id}/habilidades/{habilidadId}
+    [HttpPut("{id}/habilidades/{habilidadId}")]
+    [Authorize]
+    public async Task<IActionResult> ActualizarNivelHabilidad(
+        Guid id,
+        Guid habilidadId,
+        [FromBody] ActualizarNivelHabilidadDto dto)
+    {
+        try
+        {
+            var resultado = await _habilidadService.ActualizarNivelHabilidadAsync(id, habilidadId, dto);
+            return Ok(resultado);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    // DELETE: api/usuarios/{id}/habilidades/{habilidadId}
+    [HttpDelete("{id}/habilidades/{habilidadId}")]
+    [Authorize]
+    public async Task<IActionResult> EliminarHabilidad(Guid id, Guid habilidadId)
+    {
+        try
+        {
+            await _habilidadService.EliminarHabilidadAsync(id, habilidadId);
+            return Ok(new { mensaje = "Habilidad eliminada correctamente" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
 }
