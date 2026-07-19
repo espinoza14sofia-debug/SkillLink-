@@ -1,12 +1,11 @@
 namespace SkillLink.Application.DTOs;
-public class MensajeRespuestaDto
+
+public class MensajePrivadoRespuestaDto
 {
     public Guid Id { get; set; }
     public Guid EmisorId { get; set; }
     public string EmisorNombre { get; set; } = string.Empty;
+    public Guid ReceptorId { get; set; }
     public string Contenido { get; set; } = string.Empty;
     public DateTime Fecha { get; set; }
-    public int? XpGanado { get; set; }
-    public bool SubioDeNivel { get; set; }
-    public int NuevoNivel { get; set; }
 }

@@ -18,7 +18,6 @@ public class ProyectoService : IProyectoService
 
     public async Task<ProyectoDetalleDto> CrearProyectoAsync(ProyectoCrearDto dto, Guid usuarioId)
     {
-        // Acceptance Criteria: solo un miembro del equipo puede crear proyectos
         var pertenece = await _proyectoRepository.UsuarioPerteneceAlEquipoAsync(dto.EquipoId, usuarioId);
         if (!pertenece)
             throw new UnauthorizedAccessException("No perteneces a este equipo.");
@@ -51,7 +50,6 @@ public class ProyectoService : IProyectoService
         var proyecto = await _proyectoRepository.ObtenerPorIdAsync(proyectoId);
         if (proyecto == null) return null;
 
-        // Acceptance Criteria: solo miembros del equipo pueden ver el detalle
         var pertenece = await _proyectoRepository.UsuarioPerteneceAlEquipoAsync(proyecto.EquipoId, usuarioId);
         if (!pertenece)
             throw new UnauthorizedAccessException("No perteneces a este equipo.");
@@ -67,5 +65,26 @@ public class ProyectoService : IProyectoService
             PorcentajeAvance = avance,
             FechaCreacion = proyecto.FechaCreacion
         };
+    }
+
+    public async Task<List<ProyectoDetalleDto>> ObtenerMisProyectosAsync(Guid usuarioId)
+    {
+        var proyectos = await _proyectoRepository.ObtenerPorUsuarioAsync(usuarioId);
+
+        var resultado = new List<ProyectoDetalleDto>();
+        foreach (var proyecto in proyectos)
+        {
+            var avance = await _proyectoRepository.CalcularPorcentajeAvanceAsync(proyecto.Id);
+            resultado.Add(new ProyectoDetalleDto
+            {
+                Id = proyecto.Id,
+                Nombre = proyecto.Nombre,
+                Descripcion = proyecto.Descripcion,
+                Estado = proyecto.Estado.ToString(),
+                PorcentajeAvance = avance,
+                FechaCreacion = proyecto.FechaCreacion
+            });
+        }
+        return resultado;
     }
 }

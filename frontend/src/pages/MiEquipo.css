@@ -35,6 +35,10 @@
   gap: 24px;
 }
 
+.equipo-grid-suelto {
+  align-items: start;
+}
+
 @media (max-width: 800px) {
   .equipo-grid {
     grid-template-columns: 1fr;
@@ -98,7 +102,9 @@
   font-size: 14px;
   cursor: pointer;
   transition: background 0.15s ease;
-  align-self: flex-start;
+
+  width: 100%;
+  align-self: stretch;
 }
 
 .equipo-form button:hover {
@@ -204,4 +210,34 @@
 
 .chat-card-ancha {
   grid-column: 1 / -1; /* ocupa todo el ancho del grid, de punta a punta */
+}
+
+.btn-proyectos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  background: #8b5fbf;
+  color: #fff;
+  text-decoration: none;
+
+  padding: 11px 18px;
+  margin-top: 12px;
+
+  border-radius: 8px;
+
+  font-family: var(--eq-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+
+  transition: background 0.15s ease;
+}
+
+.btn-proyectos:hover {
+  background: #7a4fae;
+  color: #fff;
 }

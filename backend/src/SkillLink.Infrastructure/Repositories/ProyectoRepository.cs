@@ -2,8 +2,6 @@
 using SkillLink.Application.Interfaces;
 using SkillLink.Domain.Entities;
 using SkillLink.Infrastructure.Persistence;
-using SkillLink.Domain.Entities;
-using SkillLink.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -41,5 +39,18 @@ public class ProyectoRepository : IProyectoRepository
     public async Task<double> CalcularPorcentajeAvanceAsync(Guid proyectoId)
     {
         return await Task.FromResult(0.0); // placeholder temporal
+    }
+
+    public async Task<List<Proyecto>> ObtenerPorUsuarioAsync(Guid usuarioId)
+    {
+        var equipoIds = await _context.MiembrosEquipo
+            .Where(m => m.UsuarioId == usuarioId)
+            .Select(m => m.EquipoId)
+            .ToListAsync();
+
+        return await _context.Proyectos
+            .Where(p => equipoIds.Contains(p.EquipoId))
+            .OrderByDescending(p => p.FechaCreacion)
+            .ToListAsync();
     }
 }

@@ -59,7 +59,7 @@ public class MisionService : IMisionService
         return MapearADto(mision);
     }
 
- public async Task<MisionRespuestaDto> CompletarAsync(Guid misionId, Guid usuarioId)
+    public async Task<MisionRespuestaDto> CompletarAsync(Guid misionId, Guid usuarioId)
     {
         var mision = await _misionRepository.ObtenerPorIdAsync(misionId);
         if (mision == null)
@@ -85,6 +85,8 @@ public class MisionService : IMisionService
 
         var dto = MapearADto(mision);
         dto.NuevosLogros = nivelInfo.NuevosLogros;
+        dto.SubioDeNivel = nivelInfo.SubioDeNivel;
+        dto.NuevoNivel = nivelInfo.Nivel;
         return dto;
     }
 

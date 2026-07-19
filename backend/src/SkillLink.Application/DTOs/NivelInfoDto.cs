@@ -9,4 +9,5 @@ public class NivelInfoDto
     public int XpRestante { get; set; }
     public double Progreso { get; set; }
     public List<LogroDto> NuevosLogros { get; set; } = new();
+    public bool SubioDeNivel { get; set; }
 }

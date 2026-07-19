@@ -46,6 +46,9 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IMensajeRepository, MensajeRepository>();
 builder.Services.AddScoped<IMensajeService, MensajeService>();
 
+builder.Services.AddScoped<IMensajePrivadoRepository, MensajePrivadoRepository>();
+builder.Services.AddScoped<IMensajePrivadoService, MensajePrivadoService>();
+
 
 
 // ==========================

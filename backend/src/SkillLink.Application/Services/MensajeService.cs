@@ -8,11 +8,16 @@ public class MensajeService : IMensajeService
 {
     private readonly IMensajeRepository _mensajeRepository;
     private readonly IEquipoRepository _equipoRepository;
+    private readonly IXpService _xpService;
 
-    public MensajeService(IMensajeRepository mensajeRepository, IEquipoRepository equipoRepository)
+    public MensajeService(
+        IMensajeRepository mensajeRepository,
+        IEquipoRepository equipoRepository,
+        IXpService xpService)
     {
         _mensajeRepository = mensajeRepository;
         _equipoRepository = equipoRepository;
+        _xpService = xpService;
     }
 
     public async Task<List<MensajeRespuestaDto>> ObtenerHistorialAsync(Guid equipoId, Guid usuarioId)
@@ -52,10 +57,32 @@ public class MensajeService : IMensajeService
         await _mensajeRepository.AgregarAsync(mensaje);
         await _mensajeRepository.GuardarCambiosAsync();
 
+        int? xpGanado = null;
+        bool subioDeNivel = false;
+        int nuevoNivel = 0;
+        try
+        {
+            var nivelInfo = await _xpService.OtorgarXpPorMensajeAsync(usuarioId);
+            if (nivelInfo != null)
+            {
+                xpGanado = 5;
+                subioDeNivel = nivelInfo.SubioDeNivel;
+                nuevoNivel = nivelInfo.Nivel;
+            }
+        }
+        catch
+        {
+            // Si falla el otorgamiento de XP, no debe romper el envío del mensaje
+        }
+
         var nuevos = await _mensajeRepository.ObtenerNuevosAsync(equipoId, mensaje.Fecha.AddSeconds(-1));
         var creado = nuevos.FirstOrDefault(m => m.Id == mensaje.Id) ?? mensaje;
 
-        return MapearADto(creado);
+        var respuesta = MapearADto(creado);
+        respuesta.XpGanado = xpGanado;
+        respuesta.SubioDeNivel = subioDeNivel;
+        respuesta.NuevoNivel = nuevoNivel;
+        return respuesta;
     }
 
     private async Task ValidarMiembroAsync(Guid equipoId, Guid usuarioId)

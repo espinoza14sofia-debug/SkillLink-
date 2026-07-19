@@ -34,6 +34,14 @@ public class ProyectosController : ControllerBase
         }
     }
 
+    [HttpGet("mios")]
+    public async Task<IActionResult> ObtenerMisProyectos()
+    {
+        var usuarioId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var proyectos = await _proyectoService.ObtenerMisProyectosAsync(usuarioId);
+        return Ok(proyectos);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> ObtenerDetalle(Guid id)
     {

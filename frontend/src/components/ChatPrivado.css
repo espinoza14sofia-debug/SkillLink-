@@ -1,0 +1,56 @@
+.chat-privado-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.chat-privado-modal {
+  background: var(--eq-surface);
+  border: 1px solid var(--eq-border);
+  border-radius: 14px;
+  width: 380px;
+  max-width: 92vw;
+  height: 520px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-privado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--eq-border);
+  font-weight: bold;
+  color: var(--eq-text);
+}
+
+.chat-privado-cerrar {
+  background: none;
+  border: none;
+  color: var(--eq-text-dim);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.chat-burbuja-privada {
+  max-width: 75%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: var(--eq-bg);
+  border: 1px solid var(--eq-border);
+  align-self: flex-start;
+}
+
+.chat-burbuja-privada.propia {
+  align-self: flex-end;
+  background: var(--eq-accent);
+  color: white;
+}

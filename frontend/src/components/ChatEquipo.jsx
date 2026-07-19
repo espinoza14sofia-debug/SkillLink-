@@ -35,6 +35,7 @@ export default function ChatEquipo({ equipoId }) {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [toastXp, setToastXp] = useState(null);
 
   const ultimaFechaRef = useRef(null);
   const contenedorRef = useRef(null);
@@ -99,6 +100,11 @@ export default function ChatEquipo({ equipoId }) {
       setMensajes((prev) => [...prev, data]);
       ultimaFechaRef.current = data.fecha;
       setTexto("");
+
+      if (data.xpGanado) {
+        setToastXp(data.xpGanado);
+        setTimeout(() => setToastXp(null), 3000);
+      }
     } catch (err) {
       setError("No se pudo enviar el mensaje.");
     } finally {
@@ -136,6 +142,8 @@ export default function ChatEquipo({ equipoId }) {
       </div>
 
       {error && <p className="chat-mensaje-estado error">{error}</p>}
+
+      {toastXp && <div className="chat-toast-xp">+{toastXp} XP</div>}
 
       <form className="chat-form" onSubmit={handleEnviar}>
         <input

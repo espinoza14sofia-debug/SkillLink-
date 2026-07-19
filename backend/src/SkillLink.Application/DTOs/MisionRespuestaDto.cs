@@ -2,7 +2,7 @@ namespace SkillLink.Application.DTOs;
 
 public class MisionRespuestaDto
 {
-    public Guid Id { get; set; }
+     public Guid Id { get; set; }
     public string Titulo { get; set; } = string.Empty;
     public string? Descripcion { get; set; }
     public string Estado { get; set; } = string.Empty;
@@ -10,4 +10,6 @@ public class MisionRespuestaDto
     public Guid? UsuarioAsignadoId { get; set; }
     public DateTime FechaCreacion { get; set; }
     public List<LogroDto> NuevosLogros { get; set; } = new();
+    public bool SubioDeNivel { get; set; }
+    public int NuevoNivel { get; set; }
 }

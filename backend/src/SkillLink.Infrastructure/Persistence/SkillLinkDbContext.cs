@@ -22,6 +22,8 @@ public class SkillLinkDbContext : DbContext
     public DbSet<MiembroEquipo> MiembrosEquipo => Set<MiembroEquipo>();
     public DbSet<Proyecto> Proyectos => Set<Proyecto>();
     public DbSet<Mensaje> Mensajes => Set<Mensaje>();
+    public DbSet<MensajePrivado> MensajesPrivados => Set<MensajePrivado>();
+    public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -125,7 +127,7 @@ public class SkillLinkDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-       modelBuilder.Entity<Proyecto>(entity =>
+        modelBuilder.Entity<Proyecto>(entity =>
         {
             entity.HasKey(p => p.Id);
             entity.Property(p => p.Nombre).IsRequired().HasMaxLength(150);
@@ -154,6 +156,25 @@ public class SkillLinkDbContext : DbContext
             entity.HasOne(m => m.Emisor)
                 .WithMany()
                 .HasForeignKey(m => m.EmisorId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<MensajePrivado>(entity =>
+        {
+            entity.HasKey(m => m.Id);
+            entity.Property(m => m.Contenido).IsRequired().HasMaxLength(1000);
+            entity.Property(m => m.Fecha).IsRequired();
+
+            entity.HasIndex(m => new { m.EmisorId, m.ReceptorId, m.Fecha });
+
+            entity.HasOne(m => m.Emisor)
+                .WithMany()
+                .HasForeignKey(m => m.EmisorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(m => m.Receptor)
+                .WithMany()
+                .HasForeignKey(m => m.ReceptorId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

@@ -15,7 +15,7 @@ export default function ProyectoDetalle() {
 
   return (
     <div className="proyecto-container">
-      <Link to="/mi-equipo" className="proyecto-volver">← Volver a mi equipo</Link>
+      <Link to="/mis-proyectos" className="proyecto-volver">← Volver a mis proyectos</Link>
       <div className="proyecto-card">
         <h1>{proyecto.nombre}</h1>
         <span className="proyecto-estado">{proyecto.estado}</span>

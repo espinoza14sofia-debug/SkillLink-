@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillLink.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SkillLink.Infrastructure.Persistence;
 namespace SkillLink.Infrastructure.Migrations
 {
     [DbContext(typeof(SkillLinkDbContext))]
-    partial class SkillLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260719153517_AddUltimoXpMensajeFechaUsuario")]
+    partial class AddUltimoXpMensajeFechaUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,35 +158,6 @@ namespace SkillLink.Infrastructure.Migrations
                     b.ToTable("Mensajes");
                 });
 
-            modelBuilder.Entity("SkillLink.Domain.Entities.MensajePrivado", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Contenido")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<Guid>("EmisorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ReceptorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceptorId");
-
-                    b.HasIndex("EmisorId", "ReceptorId", "Fecha");
-
-                    b.ToTable("MensajesPrivados");
-                });
-
             modelBuilder.Entity("SkillLink.Domain.Entities.MiembroEquipo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -221,9 +195,6 @@ namespace SkillLink.Infrastructure.Migrations
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("EquipoId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -244,8 +215,6 @@ namespace SkillLink.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EquipoId");
 
                     b.ToTable("Misiones");
                 });
@@ -309,36 +278,6 @@ namespace SkillLink.Infrastructure.Migrations
                             Titulo = "Maestro",
                             XpMinimo = 2900
                         });
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.Notificacion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Leida")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Mensaje")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Notificaciones");
                 });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.Proyecto", b =>
@@ -510,25 +449,6 @@ namespace SkillLink.Infrastructure.Migrations
                     b.Navigation("Equipo");
                 });
 
-            modelBuilder.Entity("SkillLink.Domain.Entities.MensajePrivado", b =>
-                {
-                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Emisor")
-                        .WithMany()
-                        .HasForeignKey("EmisorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Receptor")
-                        .WithMany()
-                        .HasForeignKey("ReceptorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Emisor");
-
-                    b.Navigation("Receptor");
-                });
-
             modelBuilder.Entity("SkillLink.Domain.Entities.MiembroEquipo", b =>
                 {
                     b.HasOne("SkillLink.Domain.Entities.Equipo", "Equipo")
@@ -544,26 +464,6 @@ namespace SkillLink.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Equipo");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.Mision", b =>
-                {
-                    b.HasOne("SkillLink.Domain.Entities.Equipo", "Equipo")
-                        .WithMany()
-                        .HasForeignKey("EquipoId");
-
-                    b.Navigation("Equipo");
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.Notificacion", b =>
-                {
-                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Usuario");
                 });
