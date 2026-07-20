@@ -67,9 +67,19 @@ public class ProyectoService : IProyectoService
         };
     }
 
+<<<<<<< Updated upstream
     public async Task<List<ProyectoDetalleDto>> ObtenerMisProyectosAsync(Guid usuarioId)
     {
         var proyectos = await _proyectoRepository.ObtenerPorUsuarioAsync(usuarioId);
+=======
+    public async Task<List<ProyectoDetalleDto>> ObtenerPorEquipoAsync(Guid equipoId, Guid usuarioId)
+    {
+        var pertenece = await _proyectoRepository.UsuarioPerteneceAlEquipoAsync(equipoId, usuarioId);
+        if (!pertenece)
+            throw new UnauthorizedAccessException("No perteneces a este equipo.");
+
+        var proyectos = await _proyectoRepository.ObtenerPorEquipoAsync(equipoId);
+>>>>>>> Stashed changes
 
         var resultado = new List<ProyectoDetalleDto>();
         foreach (var proyecto in proyectos)
@@ -85,6 +95,10 @@ public class ProyectoService : IProyectoService
                 FechaCreacion = proyecto.FechaCreacion
             });
         }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
         return resultado;
     }
 }

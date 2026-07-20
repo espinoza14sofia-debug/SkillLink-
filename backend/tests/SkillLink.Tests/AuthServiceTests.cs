@@ -35,7 +35,6 @@ public class AuthServiceTests
     [Fact]
     public async Task RegistrarAsync_ConEmailDuplicado_DeberiaRetornarError()
     {
-        // Arrange
         var dto = new RegistroUsuarioDto
         {
             Nombre = "Jendry Murillo",
@@ -48,20 +47,18 @@ public class AuthServiceTests
             .Setup(r => r.ExisteEmailAsync(dto.Email))
             .ReturnsAsync(true);
 
-        // Act
         var resultado = await _authService.RegistrarAsync(dto);
 
-        // Assert
         Assert.False(resultado.Exito);
         Assert.Equal("El email ya está registrado.", resultado.Error);
         Assert.Null(resultado.Usuario);
+
         _usuarioRepositoryMock.Verify(r => r.AgregarAsync(It.IsAny<Usuario>()), Times.Never);
     }
 
     [Fact]
     public async Task RegistrarAsync_ConPasswordValido_DeberiaCrearUsuarioConNivel1YXp0()
     {
-        // Arrange
         var dto = new RegistroUsuarioDto
         {
             Nombre = "Sofia Vargas",
@@ -78,10 +75,8 @@ public class AuthServiceTests
             .Setup(p => p.HashPassword(dto.Password))
             .Returns("hash-simulado-123");
 
-        // Act
         var resultado = await _authService.RegistrarAsync(dto);
 
-        // Assert
         Assert.True(resultado.Exito);
         Assert.Null(resultado.Error);
         Assert.NotNull(resultado.Usuario);
@@ -96,7 +91,6 @@ public class AuthServiceTests
     [Fact]
     public async Task RegistrarAsync_ConCamposVacios_DeberiaRetornarError()
     {
-        // Arrange
         var dto = new RegistroUsuarioDto
         {
             Nombre = "",
@@ -104,10 +98,8 @@ public class AuthServiceTests
             Password = "MiPassword123"
         };
 
-        // Act
         var resultado = await _authService.RegistrarAsync(dto);
 
-        // Assert
         Assert.False(resultado.Exito);
         Assert.Equal("Nombre, email y contraseña son obligatorios.", resultado.Error);
     }
@@ -117,8 +109,11 @@ public class AuthServiceTests
     [Fact]
     public async Task LoginAsync_ConCredencialesCorrectas_DeberiaRetornarToken()
     {
-        // Arrange
-        var dto = new LoginDto { Email = "sofia@test.com", Password = "MiPassword123" };
+        var dto = new LoginDto
+        {
+            Email = "sofia@test.com",
+            Password = "MiPassword123"
+        };
 
         var usuarioExistente = new Usuario
         {
@@ -142,10 +137,8 @@ public class AuthServiceTests
             .Setup(t => t.GenerateToken(usuarioExistente.Id, usuarioExistente.Email))
             .Returns("token-jwt-simulado");
 
-        // Act
         var resultado = await _authService.LoginAsync(dto);
 
-        // Assert
         Assert.True(resultado.Exito);
         Assert.NotNull(resultado.Resultado);
         Assert.Equal("token-jwt-simulado", resultado.Resultado!.Token);
@@ -155,17 +148,18 @@ public class AuthServiceTests
     [Fact]
     public async Task LoginAsync_ConEmailInexistente_DeberiaRetornarError()
     {
-        // Arrange
-        var dto = new LoginDto { Email = "noexiste@test.com", Password = "cualquierPassword" };
+        var dto = new LoginDto
+        {
+            Email = "noexiste@test.com",
+            Password = "cualquierPassword"
+        };
 
         _usuarioRepositoryMock
             .Setup(r => r.ObtenerPorEmailAsync(dto.Email))
             .ReturnsAsync((Usuario?)null);
 
-        // Act
         var resultado = await _authService.LoginAsync(dto);
 
-        // Assert
         Assert.False(resultado.Exito);
         Assert.Equal("Credenciales inválidas.", resultado.Error);
         Assert.Null(resultado.Resultado);
@@ -174,8 +168,11 @@ public class AuthServiceTests
     [Fact]
     public async Task LoginAsync_ConPasswordIncorrecto_DeberiaRetornarError()
     {
-        // Arrange
-        var dto = new LoginDto { Email = "sofia@test.com", Password = "passwordIncorrecto" };
+        var dto = new LoginDto
+        {
+            Email = "sofia@test.com",
+            Password = "passwordIncorrecto"
+        };
 
         var usuarioExistente = new Usuario
         {
@@ -195,14 +192,15 @@ public class AuthServiceTests
             .Setup(p => p.VerifyPassword(dto.Password, usuarioExistente.PasswordHash))
             .Returns(false);
 
-        // Act
         var resultado = await _authService.LoginAsync(dto);
 
-        // Assert
         Assert.False(resultado.Exito);
         Assert.Equal("Credenciales inválidas.", resultado.Error);
         Assert.Null(resultado.Resultado);
 
-        _tokenServiceMock.Verify(t => t.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
+        _tokenServiceMock.Verify(
+            t => t.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>()),
+            Times.Never
+        );
     }
 }

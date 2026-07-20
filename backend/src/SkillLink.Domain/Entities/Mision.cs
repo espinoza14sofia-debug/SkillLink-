@@ -9,5 +9,15 @@ public class Mision
     public Guid? UsuarioAsignadoId { get; set; }
     public Guid? EquipoId { get; set; }
     public DateTime FechaCreacion { get; set; }
+<<<<<<< Updated upstream
     public Equipo? Equipo { get; set; }
+=======
+
+    public Guid? ProyectoId { get; set; }
+    public Proyecto? Proyecto { get; set; }
+
+    public DateTime? FechaLimite { get; set; }
+    public string? Etiquetas { get; set; } 
+    public int Progreso { get; set; } = 0;     public bool EsUrgente { get; set; } = false; // marcado manualmente por el creador
+>>>>>>> Stashed changes
 }

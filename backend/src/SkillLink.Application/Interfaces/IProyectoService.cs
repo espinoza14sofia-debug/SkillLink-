@@ -9,6 +9,10 @@ namespace SkillLink.Application.Interfaces
     {
         Task<ProyectoDetalleDto> CrearProyectoAsync(ProyectoCrearDto dto, Guid usuarioId);
         Task<ProyectoDetalleDto?> ObtenerDetalleAsync(Guid proyectoId, Guid usuarioId);
+<<<<<<< Updated upstream
         Task<List<ProyectoDetalleDto>> ObtenerMisProyectosAsync(Guid usuarioId);
+=======
+        Task<List<ProyectoDetalleDto>> ObtenerPorEquipoAsync(Guid equipoId, Guid usuarioId);
+>>>>>>> Stashed changes
     }
 }

@@ -22,8 +22,12 @@ public class SkillLinkDbContext : DbContext
     public DbSet<MiembroEquipo> MiembrosEquipo => Set<MiembroEquipo>();
     public DbSet<Proyecto> Proyectos => Set<Proyecto>();
     public DbSet<Mensaje> Mensajes => Set<Mensaje>();
+<<<<<<< Updated upstream
     public DbSet<MensajePrivado> MensajesPrivados => Set<MensajePrivado>();
     public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
+=======
+    public DbSet<ActividadReciente> Actividades => Set<ActividadReciente>();
+>>>>>>> Stashed changes
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -65,6 +69,12 @@ public class SkillLinkDbContext : DbContext
             entity.Property(m => m.Titulo).IsRequired().HasMaxLength(200);
             entity.Property(m => m.Estado).IsRequired().HasMaxLength(20);
             entity.Property(m => m.FechaCreacion).IsRequired();
+            entity.Property(m => m.Etiquetas).HasMaxLength(300);
+
+            entity.HasOne(m => m.Proyecto)
+                .WithMany()
+                .HasForeignKey(m => m.ProyectoId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Logro>(entity =>
@@ -138,6 +148,15 @@ public class SkillLinkDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(p => p.EquipoId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ActividadReciente>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Texto).IsRequired().HasMaxLength(300);
+            entity.Property(a => a.Fecha).IsRequired();
+
+            entity.HasIndex(a => new { a.UsuarioId, a.Fecha });
         });
 
         modelBuilder.Entity<Mensaje>(entity =>

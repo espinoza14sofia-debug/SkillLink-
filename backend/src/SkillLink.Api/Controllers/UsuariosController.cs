@@ -71,6 +71,22 @@ public class UsuariosController : ControllerBase
         });
     }
 
+    // GET: api/usuarios
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> ObtenerTodos()
+    {
+        var usuarios = await _usuarioRepository.ObtenerTodosAsync();
+
+        var resultado = usuarios.Select(u => new
+        {
+            id = u.Id,
+            nombre = u.Nombre
+        });
+
+        return Ok(resultado);
+    }
+
     // GET: api/usuarios/{id}/nivel
     [HttpGet("{id}/nivel")]
     public async Task<IActionResult> ObtenerNivel(Guid id)
@@ -93,11 +109,16 @@ public class UsuariosController : ControllerBase
     public async Task<IActionResult> ObtenerPerfilPublico(Guid id)
     {
         var perfil = await _usuarioService.ObtenerPerfilPublicoAsync(id);
+
         if (perfil == null)
+        {
             return NotFound(new { error = "Usuario no encontrado" });
+        }
 
         return Ok(perfil);
     }
+
+   
 
     // PUT: api/usuarios/{id}
     [HttpPut("{id}")]

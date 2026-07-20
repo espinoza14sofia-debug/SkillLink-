@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillLink.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SkillLink.Infrastructure.Persistence;
 namespace SkillLink.Infrastructure.Migrations
 {
     [DbContext(typeof(SkillLinkDbContext))]
-    partial class SkillLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260720051810_AddCamposMisionExtendidos")]
+    partial class AddCamposMisionExtendidos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,33 +24,6 @@ namespace SkillLink.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.ActividadReciente", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Texto")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("Xp")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId", "Fecha");
-
-                    b.ToTable("Actividades");
-                });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.Equipo", b =>
                 {
@@ -182,35 +158,6 @@ namespace SkillLink.Infrastructure.Migrations
                     b.ToTable("Mensajes");
                 });
 
-            modelBuilder.Entity("SkillLink.Domain.Entities.MensajePrivado", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Contenido")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<Guid>("EmisorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ReceptorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceptorId");
-
-                    b.HasIndex("EmisorId", "ReceptorId", "Fecha");
-
-                    b.ToTable("MensajesPrivados");
-                });
-
             modelBuilder.Entity("SkillLink.Domain.Entities.MiembroEquipo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -248,13 +195,8 @@ namespace SkillLink.Infrastructure.Migrations
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(max)");
 
-<<<<<<< Updated upstream
-                    b.Property<Guid?>("EquipoId")
-                        .HasColumnType("uniqueidentifier");
-=======
                     b.Property<bool>("EsUrgente")
                         .HasColumnType("bit");
->>>>>>> Stashed changes
 
                     b.Property<string>("Estado")
                         .IsRequired()
@@ -290,11 +232,7 @@ namespace SkillLink.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< Updated upstream
-                    b.HasIndex("EquipoId");
-=======
                     b.HasIndex("ProyectoId");
->>>>>>> Stashed changes
 
                     b.ToTable("Misiones");
                 });
@@ -358,36 +296,6 @@ namespace SkillLink.Infrastructure.Migrations
                             Titulo = "Maestro",
                             XpMinimo = 2900
                         });
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.Notificacion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Leida")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Mensaje")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Notificaciones");
                 });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.Proyecto", b =>
@@ -482,9 +390,6 @@ namespace SkillLink.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UltimoXpMensajeFecha")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Xp")
                         .HasColumnType("int");
 
@@ -559,25 +464,6 @@ namespace SkillLink.Infrastructure.Migrations
                     b.Navigation("Equipo");
                 });
 
-            modelBuilder.Entity("SkillLink.Domain.Entities.MensajePrivado", b =>
-                {
-                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Emisor")
-                        .WithMany()
-                        .HasForeignKey("EmisorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Receptor")
-                        .WithMany()
-                        .HasForeignKey("ReceptorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Emisor");
-
-                    b.Navigation("Receptor");
-                });
-
             modelBuilder.Entity("SkillLink.Domain.Entities.MiembroEquipo", b =>
                 {
                     b.HasOne("SkillLink.Domain.Entities.Equipo", "Equipo")
@@ -599,31 +485,12 @@ namespace SkillLink.Infrastructure.Migrations
 
             modelBuilder.Entity("SkillLink.Domain.Entities.Mision", b =>
                 {
-<<<<<<< Updated upstream
-                    b.HasOne("SkillLink.Domain.Entities.Equipo", "Equipo")
-                        .WithMany()
-                        .HasForeignKey("EquipoId");
-
-                    b.Navigation("Equipo");
-                });
-
-            modelBuilder.Entity("SkillLink.Domain.Entities.Notificacion", b =>
-                {
-                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-=======
                     b.HasOne("SkillLink.Domain.Entities.Proyecto", "Proyecto")
                         .WithMany()
                         .HasForeignKey("ProyectoId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Proyecto");
->>>>>>> Stashed changes
                 });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.Proyecto", b =>

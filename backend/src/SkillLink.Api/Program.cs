@@ -17,6 +17,9 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
+builder.Services.AddScoped<IActividadRepository, ActividadRepository>();
+builder.Services.AddScoped<IActividadService, ActividadService>();
+
 builder.Services.AddScoped<INivelConfiguracionRepository, NivelConfiguracionRepository>();
 builder.Services.AddScoped<INivelService, NivelService>();
 builder.Services.AddScoped<IXpService, XpService>();

@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --text: #6b6375;
@@ -17,7 +20,7 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
+  font: 16px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
@@ -54,18 +57,6 @@
 
 body {
   margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
 }
 
 h1,
@@ -127,4 +118,215 @@ code {
   --eq-font-display: 'Space Grotesk', sans-serif;
   --eq-font-body: 'Inter', sans-serif;
   --eq-font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ===== Estilos del diseño Stitch (glassmorphism) ===== */
+
+.glass {
+  background: rgba(224, 225, 221, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(224, 225, 221, 0.15);
+}
+
+.orb {
+  position: fixed;
+  border-radius: 9999px;
+  filter: blur(80px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.xp-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.xp-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  animation: shimmer 2.5s infinite;
+}
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ===== Estilos específicos del Login (Stitch) ===== */
+
+.glass-panel {
+  background: rgba(224, 225, 221, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(224, 225, 221, 0.15);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+  animation: move 20s infinite alternate ease-in-out;
+}
+
+@keyframes move {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(100px, 50px) scale(1.2);
+  }
+}
+
+.blob-1 {
+  width: 400px;
+  height: 400px;
+  background: #415A77;
+  top: -10%;
+  left: -10%;
+  opacity: 0.4;
+}
+
+.blob-2 {
+  width: 500px;
+  height: 500px;
+  background: #1B263B;
+  bottom: -10%;
+  right: -5%;
+  opacity: 0.6;
+  animation-delay: -5s;
+}
+
+/* Efecto de label flotante: sube y se achica cuando el input tiene foco o contenido */
+input:focus + label,
+input:not(:placeholder-shown) + label {
+  transform: translateY(-24px) scale(0.85);
+  color: #afc9ea;
+}
+
+/* ===== Alias de variables usadas por los componentes de Figma Make (ui.jsx) ===== */
+:root {
+  --font-display: var(--eq-font-display);
+  --font-mono: var(--eq-font-mono);
+  --font-body: var(--eq-font-body);
+}
+
+/* ===== Clases usadas por ui.jsx y las páginas de Figma Make ===== */
+.glass-card {
+  background: rgba(224, 225, 221, 0.05);
+  border: 1px solid rgba(224, 225, 221, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-nested {
+  background: rgba(224, 225, 221, 0.05);
+  border: 1px solid rgba(224, 225, 221, 0.1);
+  border-radius: 10px;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(224, 225, 221, 0.06) 25%,
+    rgba(224, 225, 221, 0.12) 37%,
+    rgba(224, 225, 221, 0.06) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+@keyframes skeleton-loading {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== Barra de XP (usada por el componente XPBar) ===== */
+.xp-track {
+  height: 8px;
+  width: 100%;
+  background: rgba(224, 225, 221, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.xp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #415A77, #778DA9);
+  transition: width 0.6s ease-in-out;
+}
+
+/* ===== Blobs decorativos usados por Login/Register de Figma Make ===== */
+.bg-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: -1;
+  pointer-events: none;
+  animation: move 20s infinite alternate ease-in-out;
+}
+.bg-blob-1 {
+  width: 420px;
+  height: 420px;
+  background: #415A77;
+  top: -12%;
+  left: -10%;
+  opacity: 0.35;
+}
+.bg-blob-2 {
+  width: 480px;
+  height: 480px;
+  background: #1B263B;
+  bottom: -12%;
+  right: -8%;
+  opacity: 0.5;
+  animation-delay: -6s;
+}
+.bg-blob-3 {
+  width: 320px;
+  height: 320px;
+  background: #778DA9;
+  top: 35%;
+  right: 15%;
+  opacity: 0.2;
+  animation-delay: -3s;
+}
+
+/* ===== Modal overlay usado por Team.jsx y otras pantallas con modales ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 27, 42, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.glass-float {
+  background: rgba(27, 38, 59, 0.95);
+  border: 1px solid rgba(224, 225, 221, 0.12);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }

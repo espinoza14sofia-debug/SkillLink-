@@ -1,27 +1,84 @@
 import { useState } from "react";
+import { Input, Button } from "./ui";
+import { Folder } from "lucide-react";
 import api from "../services/api";
 
 export default function FormularioCrearProyecto({ equipoId, onCreado }) {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [error, setError] = useState(null);
+  const [cargando, setCargando] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setCargando(true);
     try {
       const res = await api.post("/proyectos", { nombre, descripcion, equipoId });
+      console.log("Proyecto creado:", res.data);
       onCreado?.(res.data);
-    } catch {
-      setError("No se pudo crear el proyecto.");
+      setNombre("");
+      setDescripcion("");
+    } catch (err) {
+      // Log completo para diagnosticar por qué no se refleja: revisa la consola
+      // del navegador después de intentar crear un proyecto.
+      console.error("Error creando proyecto:", err.response?.status, err.response?.data || err);
+      setError(err.response?.data?.mensaje || "No se pudo crear el proyecto.");
+    } finally {
+      setCargando(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="equipo-form">
-      <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre del proyecto" required />
-      <textarea value={descripcion} onChange={e => setDescripcion(e.target.value)} placeholder="Descripción" />
-      <button type="submit">Crear proyecto</button>
-      {error && <p className="error-text">{error}</p>}
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <Input
+        label="Nombre del proyecto"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        placeholder="Ej: Portal de gestión académica"
+        icon={<Folder size={15} />}
+        required
+      />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9" }}>Descripción</label>
+        <textarea
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          placeholder="¿Qué van a construir?"
+          rows={3}
+          style={{
+            padding: "11px 14px",
+            background: "rgba(224,225,221,0.06)",
+            border: "1px solid rgba(224,225,221,0.15)",
+            borderRadius: "12px",
+            color: "#E0E1DD",
+            outline: "none",
+            fontSize: "14px",
+            fontFamily: "var(--font-body)",
+            resize: "vertical",
+          }}
+        />
+      </div>
+
+      {error && (
+        <div
+          style={{
+            background: "rgba(124, 58, 58, 0.15)",
+            border: "1px solid rgba(124, 58, 58, 0.35)",
+            borderRadius: "10px",
+            padding: "10px 14px",
+            fontSize: "13px",
+            color: "#c97070",
+          }}
+        >
+          {error}
+        </div>
+      )}
+
+      <Button type="submit" size="lg" disabled={cargando} style={{ width: "100%" }}>
+        {cargando ? "Creando…" : "Crear proyecto"}
+      </Button>
     </form>
   );
 }

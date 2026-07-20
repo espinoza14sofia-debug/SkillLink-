@@ -35,12 +35,18 @@ public class ProyectoRepository : IProyectoRepository
             .AnyAsync(m => m.EquipoId == equipoId && m.UsuarioId == usuarioId);
     }
 
-    // en Misiones hay que poner ProyectoId
     public async Task<double> CalcularPorcentajeAvanceAsync(Guid proyectoId)
     {
-        return await Task.FromResult(0.0); // placeholder temporal
+        var total = await _context.Misiones.CountAsync(m => m.ProyectoId == proyectoId);
+        if (total == 0) return 0.0;
+
+        var completadas = await _context.Misiones
+            .CountAsync(m => m.ProyectoId == proyectoId && m.Estado == "completada");
+
+        return Math.Round((double)completadas / total * 100, 1);
     }
 
+<<<<<<< Updated upstream
     public async Task<List<Proyecto>> ObtenerPorUsuarioAsync(Guid usuarioId)
     {
         var equipoIds = await _context.MiembrosEquipo
@@ -50,6 +56,12 @@ public class ProyectoRepository : IProyectoRepository
 
         return await _context.Proyectos
             .Where(p => equipoIds.Contains(p.EquipoId))
+=======
+    public async Task<List<Proyecto>> ObtenerPorEquipoAsync(Guid equipoId)
+    {
+        return await _context.Proyectos
+            .Where(p => p.EquipoId == equipoId)
+>>>>>>> Stashed changes
             .OrderByDescending(p => p.FechaCreacion)
             .ToListAsync();
     }

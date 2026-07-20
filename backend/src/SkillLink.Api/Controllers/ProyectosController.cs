@@ -58,4 +58,21 @@ public class ProyectosController : ControllerBase
             return Forbid();
         }
     }
+
+    // GET: api/proyectos/equipo/{equipoId}
+    [HttpGet("equipo/{equipoId}")]
+    public async Task<IActionResult> ObtenerPorEquipo(Guid equipoId)
+    {
+        var usuarioId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        try
+        {
+            var proyectos = await _proyectoService.ObtenerPorEquipoAsync(equipoId, usuarioId);
+            return Ok(proyectos);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
 }

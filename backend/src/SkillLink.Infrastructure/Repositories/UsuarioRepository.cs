@@ -24,6 +24,11 @@ public class UsuarioRepository : IUsuarioRepository
         return await _context.Usuarios.FindAsync(id);
     }
 
+    public async Task<List<Usuario>> ObtenerTodosAsync()
+    {
+        return await _context.Usuarios.ToListAsync();
+    }
+
     public async Task<bool> ExisteEmailAsync(string email)
     {
         return await _context.Usuarios.AnyAsync(u => u.Email == email);
@@ -33,6 +38,8 @@ public class UsuarioRepository : IUsuarioRepository
     {
         await _context.Usuarios.AddAsync(usuario);
     }
+
+   
 
     public async Task GuardarCambiosAsync()
     {

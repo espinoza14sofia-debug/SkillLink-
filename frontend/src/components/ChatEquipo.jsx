@@ -5,19 +5,18 @@ import "./ChatEquipo.css";
 
 const INTERVALO_POLLING_MS = 4000;
 
-// Paleta de colores neutros/pastel — legible con texto oscuro
+ 
 const PALETA_COLORES = [
-  "#D8D3C5", // beige
-  "#C9D6D3", // verde grisáceo
-  "#D6CFE0", // lavanda suave
-  "#D9C9BE", // terracota claro
-  "#C7D3DE", // celeste grisáceo
-  "#DAD4C0", // arena
-  "#CDD9C4", // verde salvia
-  "#DCCFCF", // rosa polvo
+  "rgba(55, 61, 67, 0.69)",   // azul acero
+  "rgba(119, 141, 169, 0.3)",  // azul grisáceo
+  "rgba(109, 179, 132, 0.25)", // verde salvia
+  "rgba(117, 117, 129, 0.59)",  // dorado suave
+  "rgb(112, 70, 91)",  // mauve
+  "rgba(27, 38, 59, 0.6)",     // azul marino oscuro
+  "rgba(130, 89, 39, 0.91)", // celeste
+  "rgba(169, 128, 128, 0.15)", // rosa apagado
 ];
 
-// Genera un índice de color estable a partir del id del usuario
 function colorPorUsuario(id) {
   if (!id) return PALETA_COLORES[0];
   let hash = 0;
@@ -112,13 +111,27 @@ export default function ChatEquipo({ equipoId }) {
     }
   };
 
-  if (cargando) return <p className="chat-mensaje-estado">Cargando chat...</p>;
+  if (cargando)
+    return (
+      <p style={{ color: "#778DA9", fontSize: "13px", padding: "16px", textAlign: "center" }}>
+        Cargando chat...
+      </p>
+    );
 
   return (
-    <div className="chat-equipo">
-      <div className="chat-mensajes" ref={contenedorRef}>
+    <div
+      className="chat-equipo"
+      style={{ display: "flex", flexDirection: "column", height: "100%" }}
+    >
+      <div
+        className="chat-mensajes"
+        ref={contenedorRef}
+        style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}
+      >
         {mensajes.length === 0 && (
-          <p className="chat-mensaje-estado">Aún no hay mensajes. ¡Sé el primero en escribir!</p>
+          <p style={{ color: "#778DA9", fontSize: "13px", textAlign: "center" }}>
+            Aún no hay mensajes. ¡Sé el primero en escribir!
+          </p>
         )}
 
         {mensajes.map((m) => {
@@ -128,12 +141,31 @@ export default function ChatEquipo({ equipoId }) {
           return (
             <div
               key={m.id}
-              className={`chat-burbuja ${esPropia ? "propia" : ""}`}
-              style={{ backgroundColor: color }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: esPropia ? "flex-end" : "flex-start",
+              }}
             >
-              <span className="chat-emisor">{m.emisorNombre}</span>
-              <p className="chat-contenido">{m.contenido}</p>
-              <span className="chat-hora">
+              {!esPropia && (
+                <span style={{ fontSize: "11px", color: "#778DA9", marginBottom: "3px", paddingLeft: "4px" }}>
+                  {m.emisorNombre}
+                </span>
+              )}
+              <div
+                style={{
+                  background: color,
+                  border: "1px solid rgba(255, 255, 255, 0.16)",
+                  borderRadius: "12px",
+                  padding: "9px 13px",
+                  maxWidth: "85%",
+                }}
+              >
+                <p style={{ margin: 0, fontSize: "13px", color: "#030303", lineHeight: 1.5 }}>
+                  {m.contenido}
+                </p>
+              </div>
+              <span style={{ fontSize: "10px", color: "#415A77", marginTop: "3px", paddingLeft: "4px" }}>
                 {new Date(m.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </span>
             </div>
@@ -141,20 +173,61 @@ export default function ChatEquipo({ equipoId }) {
         })}
       </div>
 
-      {error && <p className="chat-mensaje-estado error">{error}</p>}
+      {error && (
+        <p style={{ color: "#c97070", fontSize: "12px", padding: "0 16px" }}>{error}</p>
+      )}
 
+<<<<<<< Updated upstream
       {toastXp && <div className="chat-toast-xp">+{toastXp} XP</div>}
 
       <form className="chat-form" onSubmit={handleEnviar}>
+=======
+      <form
+        onSubmit={handleEnviar}
+        style={{
+          padding: "12px 16px",
+          borderTop: "1px solid rgba(22, 22, 23, 0.44)",
+          display: "flex",
+          gap: "8px",
+        }}
+      >
+>>>>>>> Stashed changes
         <input
           type="text"
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           placeholder="Escribí un mensaje..."
           disabled={enviando}
+          style={{
+            flex: 1,
+            background: "rgba(201, 201, 202, 0.91)",
+            border: "1px solid rgba(173, 174, 178, 0.54)",
+            borderRadius: "10px",
+            padding: "9px 13px",
+            color: "#020202",
+            fontSize: "13px",
+            outline: "none",
+            fontFamily: "var(--font-body)",
+          }}
         />
-        <button type="submit" disabled={enviando || !texto.trim()}>
-          Enviar
+        <button
+          type="submit"
+          disabled={enviando || !texto.trim()}
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: "10px",
+            border: "none",
+            background: "#8a8b8c",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            opacity: enviando || !texto.trim() ? 0.5 : 1,
+          }}
+        >
+          <span style={{ color: "#232121", fontSize: "13px" }}>➤</span>
         </button>
       </form>
     </div>

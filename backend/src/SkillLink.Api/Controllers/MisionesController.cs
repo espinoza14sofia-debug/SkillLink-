@@ -91,4 +91,60 @@ public class MisionesController : ControllerBase
             return BadRequest(new { mensaje = ex.Message });
         }
     }
+
+   
+    // PUT: api/misiones/{id}/reasignar
+    [HttpPut("{id}/reasignar")]
+    [Authorize]
+    public async Task<IActionResult> Reasignar(
+        Guid id,
+        [FromBody] ReasignarDto dto)
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                       ?? User.FindFirst("sub")?.Value;
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var usuarioActualId))
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            var resultado = await _misionService.ReasignarAsync(
+                id,
+                usuarioActualId,
+                dto.NuevoUsuarioId);
+
+            return Ok(resultado);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                error = ex.Message
+            });
+        }
+    }
+
+    // PUT: api/misiones/{id}/progreso
+    [HttpPut("{id}/progreso")]
+    public async Task<IActionResult> ActualizarProgreso(Guid id, [FromBody] ActualizarProgresoDto dto)
+    {
+        var usuarioId = ObtenerUsuarioId();
+        if (usuarioId == null) return Unauthorized();
+
+        try
+        {
+            var mision = await _misionService.ActualizarProgresoAsync(id, usuarioId.Value, dto.Progreso);
+            return Ok(mision);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
 }
