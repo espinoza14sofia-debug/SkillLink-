@@ -4,7 +4,7 @@ using SkillLink.Domain.Entities;
 using SkillLink.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace SkillLink.Infrastructure.Repositories;
 
@@ -19,13 +19,15 @@ public class ProyectoRepository : IProyectoRepository
 
     public async Task<Proyecto?> ObtenerPorIdAsync(Guid id)
     {
-        return await _context.Proyectos.FirstOrDefaultAsync(p => p.Id == id);
+        return await _context.Proyectos
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<Proyecto> CrearAsync(Proyecto proyecto)
     {
         _context.Proyectos.Add(proyecto);
         await _context.SaveChangesAsync();
+
         return proyecto;
     }
 
@@ -37,16 +39,20 @@ public class ProyectoRepository : IProyectoRepository
 
     public async Task<double> CalcularPorcentajeAvanceAsync(Guid proyectoId)
     {
-        var total = await _context.Misiones.CountAsync(m => m.ProyectoId == proyectoId);
-        if (total == 0) return 0.0;
+        var total = await _context.Misiones
+            .CountAsync(m => m.ProyectoId == proyectoId);
+
+        if (total == 0)
+            return 0.0;
 
         var completadas = await _context.Misiones
-            .CountAsync(m => m.ProyectoId == proyectoId && m.Estado == "completada");
+            .CountAsync(m =>
+                m.ProyectoId == proyectoId &&
+                m.Estado == "completada");
 
         return Math.Round((double)completadas / total * 100, 1);
     }
 
-<<<<<<< Updated upstream
     public async Task<List<Proyecto>> ObtenerPorUsuarioAsync(Guid usuarioId)
     {
         var equipoIds = await _context.MiembrosEquipo
@@ -56,12 +62,14 @@ public class ProyectoRepository : IProyectoRepository
 
         return await _context.Proyectos
             .Where(p => equipoIds.Contains(p.EquipoId))
-=======
+            .OrderByDescending(p => p.FechaCreacion)
+            .ToListAsync();
+    }
+
     public async Task<List<Proyecto>> ObtenerPorEquipoAsync(Guid equipoId)
     {
         return await _context.Proyectos
             .Where(p => p.EquipoId == equipoId)
->>>>>>> Stashed changes
             .OrderByDescending(p => p.FechaCreacion)
             .ToListAsync();
     }

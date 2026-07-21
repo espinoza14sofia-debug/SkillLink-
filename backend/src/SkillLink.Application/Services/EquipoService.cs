@@ -53,6 +53,28 @@ public class EquipoService : IEquipoService
             Rol = m.Rol.ToString()
         }).ToList();
     }
+    public async Task<List<EquipoResumenDto>> ObtenerMisEquiposAsync(Guid usuarioId)
+    {
+        var equipos = await _equipoRepository.ObtenerEquiposPorUsuarioAsync(usuarioId);
+        var resultado = new List<EquipoResumenDto>();
+
+        foreach (var equipo in equipos)
+        {
+            var miembro = await _equipoRepository.ObtenerMiembroAsync(equipo.Id, usuarioId);
+            var miembros = await _equipoRepository.ObtenerMiembrosPorEquipoAsync(equipo.Id);
+
+            resultado.Add(new EquipoResumenDto
+            {
+                Id = equipo.Id,
+                Nombre = equipo.Nombre,
+                Rol = miembro?.Rol.ToString() ?? "",
+                CantidadMiembros = miembros.Count,
+                FechaCreacion = equipo.FechaCreacion
+            });
+        }
+
+        return resultado;
+    }
 
     public async Task<bool> CambiarRolMiembroAsync(Guid equipoId, Guid usuarioObjetivoId, RolEquipo nuevoRol, Guid usuarioSolicitanteId)
     {

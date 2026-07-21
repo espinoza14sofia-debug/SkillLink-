@@ -45,6 +45,19 @@ public class EquipoRepository : IEquipoRepository
             .ToListAsync();
     }
 
+    public async Task<List<Equipo>> ObtenerEquiposPorUsuarioAsync(Guid usuarioId)
+    {
+        var equipoIds = await _context.MiembrosEquipo
+            .Where(m => m.UsuarioId == usuarioId)
+            .Select(m => m.EquipoId)
+            .ToListAsync();
+
+        return await _context.Equipos
+            .Where(e => equipoIds.Contains(e.Id))
+            .OrderByDescending(e => e.FechaCreacion)
+            .ToListAsync();
+    }
+
     public async Task<bool> CambiarRolAsync(Guid equipoId, Guid usuarioId, RolEquipo nuevoRol)
     {
         var miembro = await ObtenerMiembroAsync(equipoId, usuarioId);

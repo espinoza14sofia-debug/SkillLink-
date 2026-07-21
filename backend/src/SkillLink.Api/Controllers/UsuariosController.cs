@@ -15,19 +15,22 @@ public class UsuariosController : ControllerBase
     private readonly ILogroService _logroService;
     private readonly IMisionRepository _misionRepository;
     private readonly IUsuarioService _usuarioService;
+    private readonly IRachaService _rachaService;
 
     public UsuariosController(
         IUsuarioRepository usuarioRepository,
         INivelService nivelService,
         ILogroService logroService,
         IMisionRepository misionRepository,
-        IUsuarioService usuarioService)
+        IUsuarioService usuarioService,
+        IRachaService rachaService)
     {
         _usuarioRepository = usuarioRepository;
         _nivelService = nivelService;
         _logroService = logroService;
         _misionRepository = misionRepository;
         _usuarioService = usuarioService;
+        _rachaService = rachaService;
     }
 
     // GET: api/usuarios/me
@@ -50,9 +53,15 @@ public class UsuariosController : ControllerBase
             return NotFound();
         }
 
+        // Registra que el usuario tuvo actividad hoy (actualiza su racha de días).
+        var racha = await _rachaService.RegistrarActividadAsync(userId);
+
         var nivelInfo = await _nivelService.CalcularNivelAsync(usuario.Xp);
         var logros = await _logroService.ObtenerLogrosDeUsuarioAsync(userId);
         var misionesCompletadas = await _misionRepository.ContarCompletadasPorUsuarioAsync(userId);
+
+        // Evalúa si con esto (o con la racha actualizada) desbloqueó algo nuevo.
+        var logrosNuevos = await _logroService.EvaluarYOtorgarAsync(userId, nivelInfo.Xp, misionesCompletadas);
 
         return Ok(new
         {
@@ -67,7 +76,9 @@ public class UsuariosController : ControllerBase
             xpRestante = nivelInfo.XpRestante,
             progreso = nivelInfo.Progreso,
             insigniasDesbloqueadas = logros.Count(l => l.Desbloqueado),
-            misionesCompletadas = misionesCompletadas
+            misionesCompletadas = misionesCompletadas,
+            rachaActual = racha,
+            logrosNuevos = logrosNuevos
         });
     }
 
@@ -117,8 +128,6 @@ public class UsuariosController : ControllerBase
 
         return Ok(perfil);
     }
-
-   
 
     // PUT: api/usuarios/{id}
     [HttpPut("{id}")]

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillLink.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SkillLink.Infrastructure.Persistence;
 namespace SkillLink.Infrastructure.Migrations
 {
     [DbContext(typeof(SkillLinkDbContext))]
-    partial class SkillLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260720233326_AgregarMensajesPrivados")]
+    partial class AgregarMensajesPrivados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,9 +159,6 @@ namespace SkillLink.Infrastructure.Migrations
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("Leido")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("ReceptorId")
                         .HasColumnType("uniqueidentifier");
@@ -438,12 +438,6 @@ namespace SkillLink.Infrastructure.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RachaActual")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UltimaActividad")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("UltimoXpMensajeFecha")
                         .HasColumnType("datetime2");

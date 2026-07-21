@@ -12,10 +12,10 @@ namespace SkillLink.Application.Interfaces
         Task<Proyecto> CrearAsync(Proyecto proyecto);
         Task<bool> UsuarioPerteneceAlEquipoAsync(Guid equipoId, Guid usuarioId);
         Task<double> CalcularPorcentajeAvanceAsync(Guid proyectoId);
-<<<<<<< Updated upstream
+ 
         Task<List<Proyecto>> ObtenerPorUsuarioAsync(Guid usuarioId);
-=======
+ 
         Task<List<Proyecto>> ObtenerPorEquipoAsync(Guid equipoId);
->>>>>>> Stashed changes
+ 
     }
 }

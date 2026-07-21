@@ -9,5 +9,7 @@ namespace SkillLink.Application.Interfaces
         Task<MiembroEquipo?> ObtenerMiembroAsync(Guid equipoId, Guid usuarioId);
         Task<List<MiembroEquipo>> ObtenerMiembrosPorEquipoAsync(Guid equipoId);
         Task<bool> CambiarRolAsync(Guid equipoId, Guid usuarioId, RolEquipo nuevoRol);
+        Task<List<Equipo>> ObtenerEquiposPorUsuarioAsync(Guid usuarioId);
     }
+
 }

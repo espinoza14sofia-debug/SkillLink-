@@ -7,10 +7,17 @@ namespace SkillLink.Application.Services;
 public class LogroService : ILogroService
 {
     private readonly ILogroRepository _logroRepository;
+    private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IProyectoRepository _proyectoRepository;
 
-    public LogroService(ILogroRepository logroRepository)
+    public LogroService(
+        ILogroRepository logroRepository,
+        IUsuarioRepository usuarioRepository,
+        IProyectoRepository proyectoRepository)
     {
         _logroRepository = logroRepository;
+        _usuarioRepository = usuarioRepository;
+        _proyectoRepository = proyectoRepository;
     }
 
     public async Task<List<LogroDto>> ObtenerLogrosDeUsuarioAsync(Guid usuarioId)
@@ -37,12 +44,33 @@ public class LogroService : ILogroService
         var logros = await _logroRepository.ObtenerTodosAsync();
         var nuevos = new List<LogroDto>();
 
+        // Estos dos solo se calculan si hay al menos un logro que los necesite,
+        // para no pegarle a la base de datos de más en cada evaluación.
+        var necesitaRacha = logros.Any(l => l.TipoCondicion == "racha_dias");
+        var necesitaProyectos = logros.Any(l => l.TipoCondicion == "proyectos_completados");
+
+        var rachaActual = 0;
+        if (necesitaRacha)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId);
+            rachaActual = usuario?.RachaActual ?? 0;
+        }
+
+        var proyectosCompletados = 0;
+        if (necesitaProyectos)
+        {
+            var proyectos = await _proyectoRepository.ObtenerPorUsuarioAsync(usuarioId);
+            proyectosCompletados = proyectos.Count(p => p.Estado == EstadoProyecto.Completado);
+        }
+
         foreach (var logro in logros)
         {
             var cumple = logro.TipoCondicion switch
             {
                 "xp_total" => xpTotal >= logro.ValorCondicion,
                 "misiones_completadas" => misionesCompletadas >= logro.ValorCondicion,
+                "racha_dias" => rachaActual >= logro.ValorCondicion,
+                "proyectos_completados" => proyectosCompletados >= logro.ValorCondicion,
                 _ => false
             };
 

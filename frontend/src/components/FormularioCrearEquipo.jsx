@@ -1,30 +1,29 @@
 import { useState } from "react";
-import { Input, Button } from "./ui";
 import { Users } from "lucide-react";
+import { Input, Button } from "./ui";
 import api from "../services/api";
 
 export default function FormularioCrearEquipo({ onCreado }) {
   const [nombre, setNombre] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setError("");
     setCargando(true);
     try {
       const res = await api.post("/equipos", { nombre });
       onCreado?.(res.data.id);
-    } catch (err) {
-      console.error("Error creando equipo:", err.response?.data || err);
-      setError(err.response?.data?.mensaje || "No se pudo crear el equipo.");
+    } catch {
+      setError("No se pudo crear el equipo.");
     } finally {
       setCargando(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       <Input
         label="Nombre del equipo"
         value={nombre}

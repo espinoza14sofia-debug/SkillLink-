@@ -26,6 +26,14 @@ public class EquiposController : ControllerBase
         return CreatedAtAction(nameof(ObtenerMiembros), new { id = equipoId }, new { id = equipoId });
     }
 
+    [HttpGet("mios")]
+    public async Task<IActionResult> ObtenerMisEquipos()
+    {
+        var usuarioId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var equipos = await _equipoService.ObtenerMisEquiposAsync(usuarioId);
+        return Ok(equipos);
+    }
+
     [HttpGet("{id}/miembros")]
     public async Task<IActionResult> ObtenerMiembros(Guid id)
     {

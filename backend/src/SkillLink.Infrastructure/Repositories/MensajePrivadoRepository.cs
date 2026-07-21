@@ -46,4 +46,15 @@ public class MensajePrivadoRepository : IMensajePrivadoRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    // Usado para armar el sidebar de "Privados": la última conversación con cada persona.
+    public async Task<List<MensajePrivado>> ObtenerTodosDelUsuarioAsync(Guid usuarioId)
+    {
+        return await _context.MensajesPrivados
+            .Include(m => m.Emisor)
+            .Include(m => m.Receptor)
+            .Where(m => m.EmisorId == usuarioId || m.ReceptorId == usuarioId)
+            .OrderByDescending(m => m.Fecha)
+            .ToListAsync();
+    }
 }

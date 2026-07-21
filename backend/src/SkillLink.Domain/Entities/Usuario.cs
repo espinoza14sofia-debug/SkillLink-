@@ -12,4 +12,6 @@ public class Usuario
     public int Xp { get; set; } = 0;
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
     public DateTime? UltimoXpMensajeFecha { get; set; }
+    public DateTime? UltimaActividad { get; set; }
+    public int RachaActual { get; set; } = 0;
 }

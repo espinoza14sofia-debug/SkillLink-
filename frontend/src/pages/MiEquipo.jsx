@@ -1,21 +1,5 @@
-<<<<<<< Updated upstream
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import FormularioCrearEquipo from "../components/FormularioCrearEquipo";
-import PanelRoles from "../components/PanelRoles";
-import FormularioCrearProyecto from "../components/FormularioCrearProyecto";
-import ChatEquipo from "../components/ChatEquipo";
-import api from "../services/api";
-import favicon from "../assets/favicon.png";
-import "./MiEquipo.css";
-import "../pages/MisProyectos.css";
-
-export default function MiEquipo() {
-  const [equipoId, setEquipoId] = useState(localStorage.getItem("equipoId"));
-  const [proyectos, setProyectos] = useState([]);
-=======
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Users, Plus, MessageSquare, Crown, ChevronRight, Folder } from 'lucide-react';
 import { Avatar, Button, GlassCard, XPBar, EmptyState } from '../components/ui';
 import Navbar from '../components/Navbar';
@@ -25,12 +9,12 @@ import ChatEquipo from '../components/ChatEquipo';
 import api from '../services/api';
 
 export default function Team() {
->>>>>>> Stashed changes
   const navigate = useNavigate();
   const [equipoId, setEquipoId] = useState(localStorage.getItem('equipoId'));
   const [miembros, setMiembros] = useState([]);
   const [proyectos, setProyectos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [buscandoEquipo, setBuscandoEquipo] = useState(!localStorage.getItem('equipoId'));
   const [showCreateProject, setShowCreateProject] = useState(false);
 
   const handleEquipoCreado = (id) => {
@@ -38,18 +22,6 @@ export default function Team() {
     setEquipoId(id);
   };
 
-<<<<<<< Updated upstream
-  const cargarProyectos = () => {
-    api.get("/proyectos/mios")
-      .then(res => setProyectos(res.data))
-      .catch(() => {});
-  };
-
-  useEffect(() => {
-    if (equipoId) cargarProyectos();
-  }, [equipoId]);
-
-=======
   const cargarMiembros = async () => {
     try {
       const { data } = await api.get(`/equipos/${equipoId}/miembros`);
@@ -67,6 +39,31 @@ export default function Team() {
       setProyectos([]);
     }
   };
+
+  // Si no hay equipoId guardado en este navegador, buscamos si el usuario
+  // ya pertenece a algún equipo en el backend antes de mostrar "sin equipo".
+  useEffect(() => {
+    if (equipoId) {
+      setBuscandoEquipo(false);
+      return;
+    }
+
+    const buscarMisEquipos = async () => {
+      try {
+        const { data } = await api.get('/equipos/mios');
+        if (data && data.length > 0) {
+          localStorage.setItem('equipoId', data[0].id);
+          setEquipoId(data[0].id);
+        }
+      } catch (err) {
+        // Si falla, dejamos que se muestre la pantalla de "crear equipo"
+      } finally {
+        setBuscandoEquipo(false);
+      }
+    };
+
+    buscarMisEquipos();
+  }, [equipoId]);
 
   useEffect(() => {
     if (!equipoId) {
@@ -87,13 +84,24 @@ export default function Team() {
     }
   };
 
-  const handleProyectoCreado = (proyecto) => {
-    setProyectos((prev) => [proyecto, ...prev]);
+  const handleProyectoCreado = async () => {
+    await cargarProyectos();
     setShowCreateProject(false);
   };
 
-  // Sin equipo todavía
->>>>>>> Stashed changes
+  // Todavía buscando si el usuario pertenece a algún equipo
+  if (buscandoEquipo) {
+    return (
+      <div>
+        <Navbar />
+        <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '90px 24px 32px' }}>
+          <div className="skeleton" style={{ height: 400, borderRadius: 16 }} />
+        </div>
+      </div>
+    );
+  }
+
+  // Sin equipo todavía (ni guardado, ni encontrado en el backend)
   if (!equipoId) {
     return (
       <div>
@@ -153,60 +161,6 @@ export default function Team() {
             </p>
           </div>
         </div>
-<<<<<<< Updated upstream
-        <Link to="/dashboard" className="back-link">← Volver al Dashboard</Link>
-      </nav>
-      <div className="equipo-container">
-        <h1>Mi Equipo</h1>
-
-        <div className="equipo-grid">
-          <div className="equipo-card">
-            <h2>Miembros</h2>
-            <PanelRoles equipoId={equipoId} />
-          </div>
-          <div className="equipo-card">
-            <h2>Nuevo proyecto</h2>
-            <FormularioCrearProyecto
-              equipoId={equipoId}
-              onCreado={(proyecto) => {
-                cargarProyectos();
-                navigate(`/proyectos/${proyecto.id}`);
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="equipo-grid equipo-grid-suelto" style={{ marginTop: 24 }}>
-          <div className="equipo-card">
-            <h2>Mis Proyectos</h2>
-            {proyectos.length === 0 ? (
-              <p style={{ color: "var(--eq-text-dim)" }}>Aún no hay proyectos.</p>
-            ) : (
-              <div className="proyectos-grid">
-                {proyectos.map((p) => (
-                  <Link to={`/proyectos/${p.id}`} key={p.id} className="proyecto-mini-card">
-                    <h3>{p.nombre}</h3>
-                    <span className="proyecto-estado">{p.estado}</span>
-                    <p className="proyecto-mini-descripcion">{p.descripcion}</p>
-                    <div className="mision-bar-track">
-                      <div
-                        className="mision-bar-fill"
-                        style={{ width: `${p.porcentajeAvance}%` }}
-                      >
-                        <div className="mision-bar-marker"></div>
-                      </div>
-                    </div>
-                    <div className="mision-bar-percent">{p.porcentajeAvance}%</div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="equipo-card">
-            <h2>Chat del equipo</h2>
-            <ChatEquipo equipoId={equipoId} />
-          </div>
-=======
 
         <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr 320px', gap: '16px' }}>
           {/* Members panel */}
@@ -236,9 +190,12 @@ export default function Team() {
                     borderRadius: '12px',
                     background: 'rgba(224, 225, 221, 0.04)',
                     border: '1px solid rgba(224, 225, 221, 0.06)',
+                    transition: 'background 0.15s',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(224, 225, 221, 0.08)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(224, 225, 221, 0.04)')}
                 >
-                  <Avatar name={m.nombre} size={38} />
+                  <Avatar name={m.nombre} size={38} ring={m.rol === 'Lider' ? 'gold' : 'none'} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
                       <span
@@ -267,6 +224,7 @@ export default function Team() {
                       color: '#778DA9',
                       fontSize: '11px',
                       padding: '4px 6px',
+                      flexShrink: 0,
                     }}
                   >
                     <option value="" disabled>
@@ -312,7 +270,7 @@ export default function Team() {
                 Aún no hay proyectos. Crea el primero.
               </p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
                 {proyectos.map((p) => (
                   <div
                     key={p.id}
@@ -334,9 +292,26 @@ export default function Team() {
                 ))}
               </div>
             )}
+
+            <div style={{ borderTop: '1px solid rgba(224,225,221,0.08)', paddingTop: '16px' }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '13px', fontWeight: 600, margin: '0 0 12px', color: '#778DA9' }}>
+                ESTADÍSTICAS DEL EQUIPO
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                {[
+                  { label: 'Proyectos', value: proyectos.length },
+                  { label: 'Miembros', value: miembros.length },
+                ].map(({ label, value }) => (
+                  <div key={label} className="glass-nested" style={{ padding: '10px 12px' }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '16px', fontWeight: 600, color: '#E0E1DD' }}>{value}</div>
+                    <div style={{ fontSize: '11px', color: '#778DA9', marginTop: 2 }}>{label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </GlassCard>
 
-          {/* Chat panel — reutiliza tu componente ChatEquipo funcional */}
+          {/* Chat panel */}
           <GlassCard style={{ padding: '0', display: 'flex', flexDirection: 'column', height: '580px', overflow: 'hidden' }}>
             <div
               style={{
@@ -356,11 +331,9 @@ export default function Team() {
               <ChatEquipo equipoId={equipoId} />
             </div>
           </GlassCard>
->>>>>>> Stashed changes
         </div>
       </div>
 
-      {/* Create project modal — reutiliza tu FormularioCrearProyecto funcional */}
       {showCreateProject && (
         <div className="overlay" onClick={() => setShowCreateProject(false)}>
           <div

@@ -80,10 +80,7 @@ public class MisionService : IMisionService
         return MapearADto(mision);
     }
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
+ 
     public async Task<MisionRespuestaDto> CompletarAsync(Guid misionId, Guid usuarioId)
     {
         var mision = await _misionRepository.ObtenerPorIdAsync(misionId);
@@ -129,12 +126,11 @@ public class MisionService : IMisionService
         var dto = MapearADto(mision);
 
         dto.NuevosLogros = nivelInfo.NuevosLogros;
-<<<<<<< Updated upstream
+ 
         dto.SubioDeNivel = nivelInfo.SubioDeNivel;
-        dto.NuevoNivel = nivelInfo.Nivel;
-=======
 
->>>>>>> Stashed changes
+        dto.NuevoNivel = nivelInfo.Nivel;
+ 
         return dto;
     }
     public async Task<MisionRespuestaDto> ActualizarProgresoAsync(

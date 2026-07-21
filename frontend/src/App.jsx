@@ -10,6 +10,9 @@ import MiEquipo from './pages/MiEquipo';
 import ProyectoDetalle from './pages/ProyectoDetalle';
 import Insignias from './pages/Insignias';
 import MisProyectos from './pages/MisProyectos';
+import Mensajes from './pages/Mensajes';
+import Ranking from './pages/Ranking';
+
 
 function App() {
   return (
@@ -64,6 +67,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Insignias />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mensajes"
+            element={
+              <ProtectedRoute>
+                <Mensajes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ranking"
+            element={
+              <ProtectedRoute>
+                <Ranking />
               </ProtectedRoute>
             }
           />

@@ -1,29 +1,23 @@
 import { useState } from "react";
-import { Input, Button } from "./ui";
 import { Folder } from "lucide-react";
+import { Input, Button } from "./ui";
 import api from "../services/api";
 
 export default function FormularioCrearProyecto({ equipoId, onCreado }) {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setError("");
     setCargando(true);
     try {
       const res = await api.post("/proyectos", { nombre, descripcion, equipoId });
-      console.log("Proyecto creado:", res.data);
       onCreado?.(res.data);
-      setNombre("");
-      setDescripcion("");
-    } catch (err) {
-      // Log completo para diagnosticar por qué no se refleja: revisa la consola
-      // del navegador después de intentar crear un proyecto.
-      console.error("Error creando proyecto:", err.response?.status, err.response?.data || err);
-      setError(err.response?.data?.mensaje || "No se pudo crear el proyecto.");
+    } catch {
+      setError("No se pudo crear el proyecto.");
     } finally {
       setCargando(false);
     }
@@ -48,13 +42,16 @@ export default function FormularioCrearProyecto({ equipoId, onCreado }) {
           placeholder="¿Qué van a construir?"
           rows={3}
           style={{
-            padding: "11px 14px",
-            background: "rgba(224,225,221,0.06)",
-            border: "1px solid rgba(224,225,221,0.15)",
+            width: "100%",
+            background: "rgba(224, 225, 221, 0.06)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            border: "1px solid rgba(224, 225, 221, 0.15)",
             borderRadius: "12px",
+            padding: "12px 14px",
             color: "#E0E1DD",
-            outline: "none",
             fontSize: "14px",
+            outline: "none",
             fontFamily: "var(--font-body)",
             resize: "vertical",
           }}

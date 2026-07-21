@@ -22,12 +22,9 @@ public class SkillLinkDbContext : DbContext
     public DbSet<MiembroEquipo> MiembrosEquipo => Set<MiembroEquipo>();
     public DbSet<Proyecto> Proyectos => Set<Proyecto>();
     public DbSet<Mensaje> Mensajes => Set<Mensaje>();
-<<<<<<< Updated upstream
     public DbSet<MensajePrivado> MensajesPrivados => Set<MensajePrivado>();
     public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
-=======
     public DbSet<ActividadReciente> Actividades => Set<ActividadReciente>();
->>>>>>> Stashed changes
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -82,14 +79,6 @@ public class SkillLinkDbContext : DbContext
             entity.HasKey(l => l.Id);
             entity.Property(l => l.Nombre).IsRequired().HasMaxLength(100);
             entity.Property(l => l.TipoCondicion).IsRequired().HasMaxLength(50);
-
-            entity.HasData(
-                new Logro { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Nombre = "Primeros pasos", Descripcion = "Alcanza 50 XP", TipoCondicion = "xp_total", ValorCondicion = 50 },
-                new Logro { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Nombre = "En marcha", Descripcion = "Alcanza 200 XP", TipoCondicion = "xp_total", ValorCondicion = 200 },
-                new Logro { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Nombre = "Constante", Descripcion = "Completa 1 misión", TipoCondicion = "misiones_completadas", ValorCondicion = 1 },
-                new Logro { Id = Guid.Parse("44444444-4444-4444-4444-444444444444"), Nombre = "Comprometido", Descripcion = "Completa 3 misiones", TipoCondicion = "misiones_completadas", ValorCondicion = 3 },
-                new Logro { Id = Guid.Parse("55555555-5555-5555-5555-555555555555"), Nombre = "Maestro del XP", Descripcion = "Alcanza 1000 XP", TipoCondicion = "xp_total", ValorCondicion = 1000 }
-            );
         });
 
         modelBuilder.Entity<UsuarioLogro>(entity =>
@@ -171,11 +160,6 @@ public class SkillLinkDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(m => m.EquipoId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(m => m.Emisor)
-                .WithMany()
-                .HasForeignKey(m => m.EmisorId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<MensajePrivado>(entity =>

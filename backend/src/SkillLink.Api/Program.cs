@@ -13,6 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 // ==========================
 // Registro de servicios
 // ==========================
+
+builder.Services.AddScoped<IRachaService, RachaService>();
+builder.Services.AddScoped<INotificacionRepository, NotificacionRepository>();
+builder.Services.AddScoped<INotificacionService, NotificacionService>();
+
+builder.Services.AddScoped<IRankingRepository, RankingRepository>();
+builder.Services.AddScoped<IRankingService, RankingService>();
+
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();

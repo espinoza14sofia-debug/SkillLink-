@@ -14,6 +14,7 @@ import {
     Clock,
     AlertCircle,
     Circle,
+    MessageSquare,
 } from "lucide-react";
 import { Avatar, Badge, XPBar, GlassCard, Button } from "../components/ui";
 
@@ -49,8 +50,6 @@ export default function Dashboard() {
 
                 try {
                     const respuestaMisiones = await api.get("/misiones");
-                    console.log("MISIONES:", respuestaMisiones.data);
-                    console.log("MI ID:", respuestaPerfil.data.id);
                     const miId = String(respuestaPerfil.data.id);
 
                     const misMisiones = respuestaMisiones.data.filter(
@@ -446,6 +445,7 @@ export default function Dashboard() {
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                             {[
                                 { label: "Ver mi equipo", path: "/mi-equipo", icon: Users },
+                                { label: "Mensajes", path: "/mensajes", icon: MessageSquare },
                                 { label: "Ranking global", path: "/ranking", icon: TrendingUp },
                                 { label: "Mis insignias", path: "/insignias", icon: Star },
                             ].map(({ label, path, icon: Icon }) => (

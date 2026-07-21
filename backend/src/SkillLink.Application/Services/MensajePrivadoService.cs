@@ -55,6 +55,34 @@ public class MensajePrivadoService : IMensajePrivadoService
         return MapearADto(creado);
     }
 
+    // Agrupa todos los mensajes del usuario por "la otra persona" y arma una
+    // conversación por cada una, con el último mensaje y el conteo de no leídos.
+    public async Task<List<ConversacionDto>> ObtenerConversacionesAsync(Guid usuarioId)
+    {
+        var mensajes = await _repository.ObtenerTodosDelUsuarioAsync(usuarioId);
+
+        var conversaciones = mensajes
+            .GroupBy(m => m.EmisorId == usuarioId ? m.ReceptorId : m.EmisorId)
+            .Select(grupo =>
+            {
+                var ultimo = grupo.First(); // ya viene ordenado desc por fecha desde el repo
+                var otraPersona = ultimo.EmisorId == usuarioId ? ultimo.Receptor : ultimo.Emisor;
+
+                return new ConversacionDto
+                {
+                    UsuarioId = grupo.Key,
+                    Nombre = otraPersona?.Nombre ?? "Usuario",
+                    UltimoMensaje = ultimo.Contenido,
+                    Fecha = ultimo.Fecha,
+                    NoLeidos = grupo.Count(m => m.ReceptorId == usuarioId && !m.Leido)
+                };
+            })
+            .OrderByDescending(c => c.Fecha)
+            .ToList();
+
+        return conversaciones;
+    }
+
     private static MensajePrivadoRespuestaDto MapearADto(MensajePrivado mensaje)
     {
         return new MensajePrivadoRespuestaDto

@@ -1,10 +1,28 @@
 import { useEffect, useState } from 'react';
-import { Search, Clock, CheckCircle, Lock, Circle, AlertCircle } from 'lucide-react';
+import { Search, Clock, CheckCircle, Lock, Circle, AlertCircle, Plus } from 'lucide-react';
 import { Badge, Button, GlassCard, XPBar, Input } from '../components/ui';
 import Navbar from '../components/Navbar';
+import FormularioCrearMision from '../components/FormularioCrearMision';
 import api from '../services/api';
 
 const FILTROS = ['Todas', 'En progreso', 'Urgentes', 'Pendientes', 'Completadas'];
+
+function formatearTiempoRelativo(fechaIso) {
+  if (!fechaIso) return null;
+  const ahora = new Date();
+  const fecha = new Date(fechaIso);
+  const segundos = Math.floor((ahora - fecha) / 1000);
+
+  if (segundos < 60) return 'hace un momento';
+  const minutos = Math.floor(segundos / 60);
+  if (minutos < 60) return `hace ${minutos}m`;
+  const horas = Math.floor(minutos / 60);
+  if (horas < 24) return `hace ${horas}h`;
+  const dias = Math.floor(horas / 24);
+  if (dias < 30) return `hace ${dias}d`;
+  const meses = Math.floor(dias / 30);
+  return `hace ${meses}mes`;
+}
 
 export default function Missions() {
   const [misiones, setMisiones] = useState([]);
@@ -18,6 +36,7 @@ export default function Missions() {
   const [reasignarId, setReasignarId] = useState(null);
   const [reasignarDestino, setReasignarDestino] = useState('');
   const [usuarios, setUsuarios] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const cargarMisiones = async () => {
     try {
@@ -157,11 +176,17 @@ export default function Missions() {
     <div>
       <Navbar />
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '90px 24px 32px' }}>
-        <div style={{ marginBottom: '28px' }}>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: 700, margin: '0 0 6px' }}>
-            Misiones
-          </h1>
-          <p style={{ color: '#778DA9', margin: 0 }}>Completa misiones para ganar XP y subir de nivel</p>
+        <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: 700, margin: '0 0 6px' }}>
+              Misiones
+            </h1>
+            <p style={{ color: '#778DA9', margin: 0 }}>Completa misiones para ganar XP y subir de nivel</p>
+          </div>
+          <Button variant="primary" onClick={() => setShowCreateModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Plus size={15} />
+            Nueva misión
+          </Button>
         </div>
 
         {error && (
@@ -240,6 +265,9 @@ export default function Missions() {
               const completada = estado.key === 'done';
               const Icon = estado.icon;
               const etiquetas = (m.etiquetas || '').split(',').map((t) => t.trim()).filter(Boolean);
+              const iconBg = completada ? 'rgba(109, 179, 132, 0.12)' : 'rgba(65, 90, 119, 0.2)';
+              const iconBorder = completada ? 'rgba(109, 179, 132, 0.35)' : 'rgba(65, 90, 119, 0.3)';
+              const iconColor = estado.key === 'urgent' ? '#c97070' : completada ? '#6db384' : '#778DA9';
 
               return (
                 <GlassCard
@@ -248,66 +276,77 @@ export default function Missions() {
                   style={{
                     padding: '20px',
                     cursor: 'pointer',
-                    opacity: completada ? 0.75 : 1,
+                    opacity: completada ? 0.9 : 1,
                     transition: 'all 0.2s',
                   }}
                   onClick={() => setExpandedId(isExpanded ? null : m.id)}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                  {/* Header: icono circular + XP */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
                     <div
                       style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: '10px',
-                        background: 'rgba(65, 90, 119, 0.2)',
-                        border: '1px solid rgba(65, 90, 119, 0.3)',
+                        width: 38,
+                        height: 38,
+                        borderRadius: '50%',
+                        background: iconBg,
+                        border: `1.5px solid ${iconBorder}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
                       }}
                     >
-                      <Icon size={17} color={estado.key === 'urgent' ? '#c97070' : estado.key === 'done' ? '#6db384' : '#778DA9'} />
+                      <Icon size={17} color={iconColor} />
                     </div>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', fontWeight: 600, color: '#9db5cc' }}>
                       +{m.xpValor} XP
                     </div>
                   </div>
 
-                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 4px', color: '#E0E1DD' }}>
+                  {/* Título y descripción */}
+                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 700, margin: '0 0 6px', color: '#E0E1DD' }}>
                     {m.titulo}
                   </h3>
                   {m.proyectoNombre && (
-                    <p style={{ color: '#778DA9', fontSize: '12px', margin: '0 0 8px' }}>{m.proyectoNombre}</p>
+                    <p style={{ color: '#778DA9', fontSize: '12px', margin: '0 0 4px' }}>{m.proyectoNombre}</p>
                   )}
                   {m.descripcion && (
-                    <p style={{ color: '#778DA9', fontSize: '12px', margin: '0 0 12px' }}>{m.descripcion}</p>
+                    <p style={{ color: '#9aa8b8', fontSize: '13px', margin: '0 0 14px', lineHeight: 1.5 }}>
+                      {m.descripcion}
+                    </p>
                   )}
 
+                  {/* Tags */}
                   {etiquetas.length > 0 && (
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
                       {etiquetas.map((t) => (
-                        <span key={t} className="glass-nested" style={{ padding: '3px 9px', fontSize: '11px', color: '#778DA9' }}>
+                        <span
+                          key={t}
+                          className="glass-nested"
+                          style={{ padding: '5px 12px', fontSize: '12px', color: '#9db5cc', borderRadius: '8px' }}
+                        >
                           {t}
                         </span>
                       ))}
                     </div>
                   )}
 
+                  {/* Barra de progreso */}
                   {!completada && (
                     <div style={{ marginBottom: '14px' }}>
                       <XPBar value={m.progreso || 0} max={100} label={`${m.progreso || 0}%`} />
                     </div>
                   )}
 
+                  {/* Footer: estado + tiempo */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Badge variant={estado.variant}>{estado.label}</Badge>
-                    {m.fechaLimite && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#778DA9' }}>
-                        <Clock size={12} />
-                        {new Date(m.fechaLimite).toLocaleDateString('es-CR', { day: 'numeric', month: 'short' })}
-                      </div>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#778DA9' }}>
+                      <Clock size={12} />
+                      {m.fechaLimite
+                        ? new Date(m.fechaLimite).toLocaleDateString('es-CR', { day: 'numeric', month: 'short' })
+                        : formatearTiempoRelativo(m.fechaCreacion)}
+                    </div>
                   </div>
 
                   {isExpanded && (
@@ -320,7 +359,6 @@ export default function Missions() {
                         )}
                       </p>
 
-                      {/* Fila de botones principales: Iniciar / Continuar + Ver detalles */}
                       {!completada && (
                         <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
                           {sinAsignar && (
@@ -343,7 +381,6 @@ export default function Missions() {
                         </div>
                       )}
 
-                      {/* Panel de detalles adicionales */}
                       {detailsOpenId === m.id && (
                         <div
                           className="glass-nested"
@@ -366,7 +403,6 @@ export default function Missions() {
                         </div>
                       )}
 
-                      {/* Controles de progreso / completar, solo si la misión es mía */}
                       {!completada && esMia && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                           <div>
@@ -388,7 +424,6 @@ export default function Missions() {
                             Marcar como completada
                           </Button>
 
-                          {/* Ceder la misión a otra persona */}
                           <div style={{ borderTop: '1px solid rgba(224,225,221,0.08)', paddingTop: '10px', marginTop: '4px' }}>
                             {reasignarId === m.id ? (
                               <div style={{ display: 'flex', gap: '8px' }}>
@@ -442,6 +477,31 @@ export default function Missions() {
           </div>
         )}
       </div>
+
+      {/* Modal: Crear misión */}
+      {showCreateModal && (
+        <div className="overlay" onClick={() => setShowCreateModal(false)}>
+          <div
+            className="glass-float"
+            style={{ width: '100%', maxWidth: '480px', padding: '32px', margin: '24px', maxHeight: '85vh', overflowY: 'auto' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 600, margin: '0 0 6px' }}>
+              Nueva misión
+            </h2>
+            <p style={{ color: '#778DA9', fontSize: '13px', margin: '0 0 24px' }}>
+              Completa los datos de la misión
+            </p>
+            <FormularioCrearMision
+              onCreada={() => {
+                setShowCreateModal(false);
+                cargarMisiones();
+              }}
+              onCancelar={() => setShowCreateModal(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
