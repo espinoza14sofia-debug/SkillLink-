@@ -129,6 +129,8 @@ public class UsuariosController : ControllerBase
         return Ok(perfil);
     }
 
+   
+
     // PUT: api/usuarios/{id}
     [HttpPut("{id}")]
     [Authorize]
