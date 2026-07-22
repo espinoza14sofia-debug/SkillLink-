@@ -210,7 +210,11 @@ public class MisionService : IMisionService
 
         return MapearADto(mision);
     }
-
+    public async Task<List<MisionRespuestaDto>> ObtenerPorEquipoAsync(Guid equipoId)
+    {
+        var misiones = await _misionRepository.ObtenerPorEquipoAsync(equipoId);
+        return misiones.Select(MapearADto).ToList();
+    }
 
     private static MisionRespuestaDto MapearADto(Mision mision)
     {

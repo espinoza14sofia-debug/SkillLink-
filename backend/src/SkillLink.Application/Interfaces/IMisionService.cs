@@ -10,4 +10,5 @@ public interface IMisionService
     Task<MisionRespuestaDto> CompletarAsync(Guid misionId, Guid usuarioId);
     Task<MisionRespuestaDto> ActualizarProgresoAsync(Guid misionId, Guid usuarioId, int progreso);
     Task<MisionRespuestaDto> ReasignarAsync(Guid misionId, Guid usuarioActualId, Guid nuevoUsuarioId);
+    Task<List<MisionRespuestaDto>> ObtenerPorEquipoAsync(Guid equipoId);
 }

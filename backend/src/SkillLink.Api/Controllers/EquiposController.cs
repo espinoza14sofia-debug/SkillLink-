@@ -12,10 +12,12 @@ namespace SkillLink.Api.Controllers;
 public class EquiposController : ControllerBase
 {
     private readonly IEquipoService _equipoService;
+    private readonly IInvitacionService _invitacionService;
 
-    public EquiposController(IEquipoService equipoService)
+    public EquiposController(IEquipoService equipoService, IInvitacionService invitacionService)
     {
         _equipoService = equipoService;
+        _invitacionService = invitacionService;
     }
 
     [HttpPost]
@@ -51,5 +53,50 @@ public class EquiposController : ControllerBase
             return Forbid();
 
         return NoContent();
+    }
+
+    [HttpPost("{id}/invitar")]
+    public async Task<IActionResult> Invitar(Guid id, [FromBody] InvitarUsuarioDto dto)
+    {
+        var usuarioId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        try
+        {
+            await _invitacionService.InvitarAsync(id, dto, usuarioId);
+            return Ok(new { mensaje = "Invitación enviada correctamente." });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
+
+    [HttpGet("invitaciones/pendientes")]
+    public async Task<IActionResult> ObtenerMisInvitaciones()
+    {
+        var usuarioId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var invitaciones = await _invitacionService.ObtenerMisInvitacionesAsync(usuarioId);
+        return Ok(invitaciones);
+    }
+
+    [HttpPut("invitaciones/{invitacionId}/responder")]
+    public async Task<IActionResult> ResponderInvitacion(Guid invitacionId, [FromBody] ResponderInvitacionDto dto)
+    {
+        var usuarioId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        try
+        {
+            var resultado = await _invitacionService.ResponderAsync(invitacionId, dto.Aceptar, usuarioId);
+            if (!resultado) return NotFound();
+            return Ok(new { mensaje = dto.Aceptar ? "Invitación aceptada." : "Invitación rechazada." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
     }
 }

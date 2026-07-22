@@ -39,8 +39,14 @@ export default function Missions() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const cargarMisiones = async () => {
+    const equipoId = localStorage.getItem('equipoId');
+    if (!equipoId) {
+      setMisiones([]);
+      setCargando(false);
+      return;
+    }
     try {
-      const respuesta = await api.get('/misiones');
+      const respuesta = await api.get(`/misiones/equipo/${equipoId}`);
       setMisiones(respuesta.data);
     } catch (err) {
       setError('No se pudieron cargar las misiones.');
@@ -281,7 +287,6 @@ export default function Missions() {
                   }}
                   onClick={() => setExpandedId(isExpanded ? null : m.id)}
                 >
-                  {/* Header: icono circular + XP */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
                     <div
                       style={{
@@ -303,7 +308,6 @@ export default function Missions() {
                     </div>
                   </div>
 
-                  {/* Título y descripción */}
                   <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 700, margin: '0 0 6px', color: '#E0E1DD' }}>
                     {m.titulo}
                   </h3>
@@ -316,7 +320,6 @@ export default function Missions() {
                     </p>
                   )}
 
-                  {/* Tags */}
                   {etiquetas.length > 0 && (
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
                       {etiquetas.map((t) => (
@@ -331,14 +334,12 @@ export default function Missions() {
                     </div>
                   )}
 
-                  {/* Barra de progreso */}
                   {!completada && (
                     <div style={{ marginBottom: '14px' }}>
                       <XPBar value={m.progreso || 0} max={100} label={`${m.progreso || 0}%`} />
                     </div>
                   )}
 
-                  {/* Footer: estado + tiempo */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Badge variant={estado.variant}>{estado.label}</Badge>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#778DA9' }}>
@@ -478,7 +479,6 @@ export default function Missions() {
         )}
       </div>
 
-      {/* Modal: Crear misión */}
       {showCreateModal && (
         <div className="overlay" onClick={() => setShowCreateModal(false)}>
           <div

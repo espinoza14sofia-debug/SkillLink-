@@ -44,6 +44,14 @@ public class MisionesController : ControllerBase
         return Ok(misiones);
     }
 
+    // GET: api/misiones/equipo/{equipoId}
+    [HttpGet("equipo/{equipoId}")]
+    public async Task<IActionResult> ObtenerPorEquipo(Guid equipoId)
+    {
+        var misiones = await _misionService.ObtenerPorEquipoAsync(equipoId);
+        return Ok(misiones);
+    }
+
     // POST: api/misiones
     [HttpPost]
     public async Task<IActionResult> Crear([FromBody] MisionCrearDto dto)

@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Misiones from './pages/Misiones';
 import MiEquipo from './pages/MiEquipo';
+import MisEquipos from './pages/MisEquipos';
 import ProyectoDetalle from './pages/ProyectoDetalle';
 import Insignias from './pages/Insignias';
 import MisProyectos from './pages/MisProyectos';
@@ -35,6 +36,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Misiones />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mis-equipos"
+            element={
+              <ProtectedRoute>
+                <MisEquipos />
               </ProtectedRoute>
             }
           />

@@ -43,4 +43,11 @@ public class MisionRepository : IMisionRepository
     {
         await _context.SaveChangesAsync();
     }
+    public async Task<List<Mision>> ObtenerPorEquipoAsync(Guid equipoId)
+    {
+        return await _context.Misiones
+            .Where(m => m.EquipoId == equipoId)
+            .Include(m => m.Proyecto)
+            .ToListAsync();
+    }
 }

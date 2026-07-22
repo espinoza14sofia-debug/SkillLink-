@@ -25,6 +25,7 @@ public class SkillLinkDbContext : DbContext
     public DbSet<MensajePrivado> MensajesPrivados => Set<MensajePrivado>();
     public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
     public DbSet<ActividadReciente> Actividades => Set<ActividadReciente>();
+    public DbSet<InvitacionEquipo> InvitacionesEquipo => Set<InvitacionEquipo>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -178,6 +179,28 @@ public class SkillLinkDbContext : DbContext
             entity.HasOne(m => m.Receptor)
                 .WithMany()
                 .HasForeignKey(m => m.ReceptorId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<InvitacionEquipo>(entity =>
+        {
+            entity.HasKey(i => i.Id);
+            entity.Property(i => i.Estado).IsRequired();
+            entity.Property(i => i.FechaCreacion).IsRequired();
+
+            entity.HasOne(i => i.Equipo)
+                .WithMany()
+                .HasForeignKey(i => i.EquipoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(i => i.UsuarioInvitado)
+                .WithMany()
+                .HasForeignKey(i => i.UsuarioInvitadoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(i => i.UsuarioInvita)
+                .WithMany()
+                .HasForeignKey(i => i.UsuarioInvitaId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }
