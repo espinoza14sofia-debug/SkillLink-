@@ -85,9 +85,9 @@ export default function Ranking() {
                         {/* Podio top 3 */}
                         {top3.length === 3 && (
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "14px", marginBottom: "28px", alignItems: "end" }}>
-                                <PodioCard usuario={top3[1]} posicion={2} />
-                                <PodioCard usuario={top3[0]} posicion={1} />
-                                <PodioCard usuario={top3[2]} posicion={3} />
+                                <PodioCard usuario={top3[1]} posicion={2} onClick={() => navigate(`/usuarios/${top3[1].usuarioId}`)} />
+                                <PodioCard usuario={top3[0]} posicion={1} onClick={() => navigate(`/usuarios/${top3[0].usuarioId}`)} />
+                                <PodioCard usuario={top3[2]} posicion={3} onClick={() => navigate(`/usuarios/${top3[2].usuarioId}`)} />
                             </div>
                         )}
 
@@ -120,7 +120,13 @@ export default function Ranking() {
                                     ))}
                                 </div>
                                 {resto.map((u) => (
-                                    <FilaRanking key={u.usuarioId} usuario={u} esYo={user && u.usuarioId === user.id} mostrarCarrera={Boolean(top[0]?.carrera)} />
+                                    <FilaRanking
+                                        key={u.usuarioId}
+                                        usuario={u}
+                                        esYo={user && u.usuarioId === user.id}
+                                        mostrarCarrera={Boolean(top[0]?.carrera)}
+                                        onClick={() => navigate(`/usuarios/${u.usuarioId}`)}
+                                    />
                                 ))}
                             </GlassCard>
                         )}
@@ -132,13 +138,13 @@ export default function Ranking() {
 }
 
 // Tarjeta del podio (posiciones 1, 2 y 3), con medalla como ícono en vez de emoji
-function PodioCard({ usuario, posicion }) {
+function PodioCard({ usuario, posicion, onClick }) {
     const alturaBase = posicion === 1 ? 160 : posicion === 2 ? 130 : 110;
     const color = COLOR_POSICION[posicion];
     const rgb = posicion === 1 ? "196,154,63" : posicion === 2 ? "160,181,200" : "169,113,63";
 
     return (
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", cursor: "pointer" }} onClick={onClick}>
             <Avatar name={usuario.nombre} size={posicion === 1 ? 68 : 56} ring={RING_POSICION[posicion]} level={usuario.nivel} />
             <div style={{ marginTop: "10px", marginBottom: "8px" }}>
                 <p style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "13px", margin: "0 0 2px", color: "#E0E1DD" }}>
@@ -168,7 +174,7 @@ function PodioCard({ usuario, posicion }) {
 }
 
 // Fila de la tabla / de "tu posición"
-function FilaRanking({ usuario, esYo, mostrarCarrera }) {
+function FilaRanking({ usuario, esYo, mostrarCarrera, onClick }) {
     const colorMedalla = COLOR_POSICION[usuario.posicion];
     const tieneTendencia = typeof usuario.cambio === "number";
     const IconoTendencia = usuario.cambio > 0 ? TrendingUp : usuario.cambio < 0 ? TrendingDown : Minus;
@@ -176,11 +182,13 @@ function FilaRanking({ usuario, esYo, mostrarCarrera }) {
 
     return (
         <div
+            onClick={esYo ? undefined : onClick}
             style={{
                 display: "grid",
                 gridTemplateColumns: mostrarCarrera ? "50px 1fr 100px 100px 70px" : "50px 1fr 100px 70px",
                 gap: "8px", alignItems: "center",
                 padding: "10px 16px", borderRadius: "10px", marginBottom: "2px",
+                cursor: esYo ? "default" : "pointer",
                 background: esYo ? "rgba(65, 90, 119, 0.15)" : "transparent",
                 border: esYo ? "1px solid rgba(65, 90, 119, 0.3)" : "1px solid transparent",
             }}

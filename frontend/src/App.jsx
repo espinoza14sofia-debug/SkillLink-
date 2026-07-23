@@ -13,6 +13,8 @@ import Insignias from './pages/Insignias';
 import MisProyectos from './pages/MisProyectos';
 import Mensajes from './pages/Mensajes';
 import Ranking from './pages/Ranking';
+import Perfil from './pages/Perfil';
+import PerfilPublico from './pages/PerfilPublico';
 
 
 function App() {
@@ -92,6 +94,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Ranking />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRoute>
+                <Perfil />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/usuarios/:id"
+            element={
+              <ProtectedRoute>
+                <PerfilPublico />
               </ProtectedRoute>
             }
           />

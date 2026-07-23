@@ -75,6 +75,23 @@ public class EquiposController : ControllerBase
         }
     }
 
+    [HttpDelete("{id}/salir")]
+    public async Task<IActionResult> SalirDelEquipo(Guid id)
+    {
+        var usuarioId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        try
+        {
+            var resultado = await _equipoService.SalirDelEquipoAsync(id, usuarioId);
+            if (!resultado) return NotFound();
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
+
     [HttpGet("invitaciones/pendientes")]
     public async Task<IActionResult> ObtenerMisInvitaciones()
     {

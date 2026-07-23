@@ -25,22 +25,22 @@ public class MisionesController : ControllerBase
         return Guid.TryParse(userIdClaim, out var id) ? id : null;
     }
 
-    // GET: api/misiones
+    // GET: api/misiones (Devuelve las misiones del usuario autenticado)
     [HttpGet]
-    public async Task<IActionResult> ObtenerTodas()
-    {
-        var misiones = await _misionService.ObtenerTodasAsync();
-        return Ok(misiones);
-    }
-
-    // GET: api/misiones/mias
-    [HttpGet("mias")]
     public async Task<IActionResult> ObtenerMisPropias()
     {
         var usuarioId = ObtenerUsuarioId();
         if (usuarioId == null) return Unauthorized();
 
         var misiones = await _misionService.ObtenerPorUsuarioAsync(usuarioId.Value);
+        return Ok(misiones);
+    }
+
+    // GET: api/misiones/todas
+    [HttpGet("todas")]
+    public async Task<IActionResult> ObtenerTodas()
+    {
+        var misiones = await _misionService.ObtenerTodasAsync();
         return Ok(misiones);
     }
 
@@ -56,8 +56,16 @@ public class MisionesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Crear([FromBody] MisionCrearDto dto)
     {
+        var usuarioId = ObtenerUsuarioId();
+        if (usuarioId == null) return Unauthorized();
+
+        if (dto.UsuarioAsignadoId == null || dto.UsuarioAsignadoId == Guid.Empty)
+        {
+            dto.UsuarioAsignadoId = usuarioId.Value;
+        }
+
         var mision = await _misionService.CrearAsync(dto);
-        return CreatedAtAction(nameof(ObtenerTodas), new { id = mision.Id }, mision);
+        return CreatedAtAction(nameof(ObtenerMisPropias), new { id = mision.Id }, mision);
     }
 
     // PUT: api/misiones/{id}/asignar
@@ -90,7 +98,7 @@ public class MisionesController : ControllerBase
             var mision = await _misionService.CompletarAsync(id, usuarioId.Value);
             return Ok(mision);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
@@ -100,37 +108,21 @@ public class MisionesController : ControllerBase
         }
     }
 
-   
     // PUT: api/misiones/{id}/reasignar
     [HttpPut("{id}/reasignar")]
-    [Authorize]
-    public async Task<IActionResult> Reasignar(
-        Guid id,
-        [FromBody] ReasignarDto dto)
+    public async Task<IActionResult> Reasignar(Guid id, [FromBody] ReasignarDto dto)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                       ?? User.FindFirst("sub")?.Value;
-
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var usuarioActualId))
-        {
-            return Unauthorized();
-        }
+        var usuarioActualId = ObtenerUsuarioId();
+        if (usuarioActualId == null) return Unauthorized();
 
         try
         {
-            var resultado = await _misionService.ReasignarAsync(
-                id,
-                usuarioActualId,
-                dto.NuevoUsuarioId);
-
+            var resultado = await _misionService.ReasignarAsync(id, usuarioActualId.Value, dto.NuevoUsuarioId);
             return Ok(resultado);
         }
         catch (Exception ex)
         {
-            return BadRequest(new
-            {
-                error = ex.Message
-            });
+            return BadRequest(new { error = ex.Message });
         }
     }
 
@@ -146,7 +138,7 @@ public class MisionesController : ControllerBase
             var mision = await _misionService.ActualizarProgresoAsync(id, usuarioId.Value, dto.Progreso);
             return Ok(mision);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }

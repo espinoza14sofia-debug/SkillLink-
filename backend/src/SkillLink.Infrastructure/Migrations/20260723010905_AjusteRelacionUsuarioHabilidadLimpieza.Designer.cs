@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkillLink.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SkillLink.Infrastructure.Persistence;
 namespace SkillLink.Infrastructure.Migrations
 {
     [DbContext(typeof(SkillLinkDbContext))]
-    partial class SkillLinkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260723010905_AjusteRelacionUsuarioHabilidadLimpieza")]
+    partial class AjusteRelacionUsuarioHabilidadLimpieza
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,20 +366,18 @@ namespace SkillLink.Infrastructure.Migrations
 
                     b.Property<string>("Mensaje")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioId", "Leida");
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Notificaciones");
                 });
@@ -517,9 +518,14 @@ namespace SkillLink.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("UsuarioId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("UsuarioId", "HabilidadId");
 
                     b.HasIndex("HabilidadId");
+
+                    b.HasIndex("UsuarioId1");
 
                     b.ToTable("UsuarioHabilidades", (string)null);
                 });
@@ -684,10 +690,14 @@ namespace SkillLink.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("SkillLink.Domain.Entities.Usuario", "Usuario")
-                        .WithMany("UsuarioHabilidades")
+                        .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("SkillLink.Domain.Entities.Usuario", null)
+                        .WithMany("UsuarioHabilidades")
+                        .HasForeignKey("UsuarioId1");
 
                     b.Navigation("Habilidad");
 

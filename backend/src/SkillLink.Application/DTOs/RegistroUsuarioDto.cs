@@ -1,6 +1,4 @@
-﻿namespace SkillLink.Application.DTOs;
-
-public class RegistroUsuarioDto
+﻿public class UsuarioRegistroDto
 {
     public string Nombre { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;

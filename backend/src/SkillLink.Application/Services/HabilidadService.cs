@@ -37,7 +37,6 @@ public class HabilidadService : IHabilidadService
 
         var usuarioHabilidad = new UsuarioHabilidad
         {
-            Id = Guid.NewGuid(),
             UsuarioId = usuarioId,
             HabilidadId = habilidad.Id,
             Nivel = "Básico"

@@ -6,9 +6,9 @@ import FormularioCrearMision from "../components/FormularioCrearMision";
 import api from "../services/api";
 
 const statusConfig = {
-  urgent:      { label: "Urgente",     variant: "error",   icon: AlertCircle, color: "#c97070" },
+  urgent:       { label: "Urgente",     variant: "error",   icon: AlertCircle, color: "#c97070" },
   in_progress: { label: "En progreso", variant: "accent",  icon: Circle,      color: "#9db5cc" },
-  pending:     { label: "Pendiente",   variant: "neutral", icon: Clock,       color: "#415A77" },
+  pending:     { label: "Pendiente",    variant: "neutral", icon: Clock,       color: "#415A77" },
   done:        { label: "Completada",  variant: "success", icon: CheckCircle, color: "#6db384" },
 };
 
@@ -51,16 +51,32 @@ export default function ProyectoDetalle() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [showAdd, setShowAdd] = useState(false);
+  const [usuarioActualId, setUsuarioActualId] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('usuario');
+    if (stored) {
+      setUsuarioActualId(JSON.parse(stored).id);
+    }
+  }, []);
 
   const cargarDatos = async () => {
     try {
-      const [resProyecto, resMisiones] = await Promise.all([
-        api.get(`/proyectos/${id}`),
-        api.get(`/misiones`),
-      ]);
-      setProyecto(resProyecto.data);
-      const todas = resMisiones.data.map(normalizar);
-      setMisiones(todas.filter((m) => String(m.proyectoId) === String(id)));
+      const resProyecto = await api.get(`/proyectos/${id}`);
+      const proyectoData = resProyecto.data;
+      setProyecto(proyectoData);
+
+      const equipoId = proyectoData.equipoId ?? proyectoData.EquipoId;
+
+      if (equipoId) {
+        const resMisiones = await api.get(`/misiones/equipo/${equipoId}`);
+        const todas = resMisiones.data.map(normalizar);
+        setMisiones(todas.filter((m) => String(m.proyectoId) === String(id)));
+      } else {
+        const resMisiones = await api.get(`/misiones/todas`);
+        const todas = resMisiones.data.map(normalizar);
+        setMisiones(todas.filter((m) => String(m.proyectoId) === String(id)));
+      }
     } catch (err) {
       setError("No se pudo cargar el proyecto.");
     } finally {
@@ -210,6 +226,7 @@ export default function ProyectoDetalle() {
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               {lista.map((m) => {
                 const vencimiento = formatearVencimiento(m.fechaLimite);
+                const esMia = String(m.usuarioAsignadoId) === String(usuarioActualId);
                 return (
                   <GlassCard key={m.id} className="hover-lift" style={{
                     padding: "14px 18px",
@@ -237,20 +254,27 @@ export default function ProyectoDetalle() {
                         +{m.xpValor}
                       </div>
 
+                      {/* Sin asignar: cualquiera puede tomarla */}
                       {!m.usuarioAsignadoId && m.estado !== "completada" && (
                         <Button variant="ghost" size="sm" style={{ padding: "4px 8px", fontSize: "11px" }} onClick={() => handleAsignar(m.id)}>
                           Asignarme
                         </Button>
                       )}
-                      {m.usuarioAsignadoId && m.estado === "pendiente" && m.progreso === 0 && (
+                      {/* Asignada a mí, sin iniciar */}
+                      {esMia && m.estado === "pendiente" && m.progreso === 0 && (
                         <Button variant="ghost" size="sm" style={{ padding: "4px 8px", fontSize: "11px" }} onClick={() => handleIniciar(m.id)}>
                           Iniciar
                         </Button>
                       )}
-                      {m.usuarioAsignadoId && m.estado !== "completada" && m.progreso > 0 && (
+                      {/* Asignada a mí, en progreso */}
+                      {esMia && m.estado !== "completada" && m.progreso > 0 && (
                         <Button variant="primary" size="sm" style={{ padding: "4px 8px", fontSize: "11px" }} onClick={() => handleCompletar(m.id)}>
                           Completar
                         </Button>
+                      )}
+                      {/* Asignada a otra persona */}
+                      {m.usuarioAsignadoId && !esMia && m.estado !== "completada" && (
+                        <span style={{ fontSize: "11px", color: "#778DA9" }}>Asignada a otro</span>
                       )}
                     </div>
                   </GlassCard>

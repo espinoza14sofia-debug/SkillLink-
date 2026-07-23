@@ -3,6 +3,7 @@ using SkillLink.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SkillLink.Application.Interfaces
 {
@@ -12,5 +13,6 @@ namespace SkillLink.Application.Interfaces
         Task<List<MiembroEquipoDto>> ObtenerMiembrosAsync(Guid equipoId);
         Task<bool> CambiarRolMiembroAsync(Guid equipoId, Guid usuarioObjetivoId, RolEquipo nuevoRol, Guid usuarioSolicitanteId);
         Task<List<EquipoResumenDto>> ObtenerMisEquiposAsync(Guid usuarioId);
+        Task<bool> SalirDelEquipoAsync(Guid equipoId, Guid usuarioId);
     }
 }
