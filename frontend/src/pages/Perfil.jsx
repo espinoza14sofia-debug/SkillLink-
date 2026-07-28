@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, Save, Plus, X, Edit2, Check, Award } from 'lucide-react'
+import { Camera, Save, Plus, X, Edit2, Check, Award, Bell, BellOff } from 'lucide-react'
 import api from '../services/api'
+import { suscribirseAPush, desuscribirseDePush } from '../services/push'
 import Navbar from '../components/Navbar'
 import { Avatar, Button, GlassCard, Input, XPBar } from '../components/ui'
 
@@ -27,6 +28,9 @@ export default function Profile() {
   const [comprimiendo, setComprimiendo] = useState(false)
   const [error, setError] = useState("")
 
+  const [pushActivo, setPushActivo] = useState(false)
+  const [cargandoPush, setCargandoPush] = useState(false)
+
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -44,7 +48,41 @@ export default function Profile() {
 
   useEffect(() => {
     cargarPerfil()
+    verificarSuscripcionPush()
   }, [])
+
+  const verificarSuscripcionPush = async () => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    try {
+      const registro = await navigator.serviceWorker.getRegistration()
+      if (!registro) return
+      const suscripcion = await registro.pushManager.getSubscription()
+      setPushActivo(!!suscripcion)
+    } catch {
+      setPushActivo(false)
+    }
+  }
+
+  const handleTogglePush = async () => {
+    setCargandoPush(true)
+    setError("")
+    try {
+      if (pushActivo) {
+        await desuscribirseDePush()
+        setPushActivo(false)
+      } else {
+        const exito = await suscribirseAPush()
+        if (!exito) {
+          setError("No se pudo activar las notificaciones. Verificá los permisos del navegador.")
+        }
+        setPushActivo(exito)
+      }
+    } catch (err) {
+      setError("Ocurrió un error al cambiar el estado de las notificaciones.")
+    } finally {
+      setCargandoPush(false)
+    }
+  }
 
   const cargarPerfil = async () => {
     try {
@@ -474,6 +512,23 @@ export default function Profile() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <GlassCard style={{ padding: '20px' }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 14px' }}>Notificaciones</h3>
+              <p style={{ color: '#778DA9', fontSize: '12px', margin: '0 0 14px', lineHeight: 1.5 }}>
+                Recibí avisos en tu navegador cuando ganes XP, subas de nivel, desbloquees insignias o te inviten a un equipo.
+              </p>
+              <Button
+                variant={pushActivo ? 'ghost' : 'primary'}
+                size="sm"
+                onClick={handleTogglePush}
+                disabled={cargandoPush}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              >
+                {pushActivo ? <BellOff size={15} /> : <Bell size={15} />}
+                {cargandoPush ? 'Procesando…' : pushActivo ? 'Desactivar notificaciones' : 'Activar notificaciones'}
+              </Button>
+            </GlassCard>
+
             <GlassCard style={{ padding: '20px' }}>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 16px' }}>Estadísticas</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

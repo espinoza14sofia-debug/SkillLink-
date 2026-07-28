@@ -26,6 +26,7 @@ namespace SkillLink.Infrastructure.Persistence
         public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
         public DbSet<ActividadReciente> Actividades => Set<ActividadReciente>();
         public DbSet<InvitacionEquipo> InvitacionesEquipo => Set<InvitacionEquipo>();
+        public DbSet<PushSubscription> PushSubscriptions => Set<PushSubscription>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -230,6 +231,22 @@ namespace SkillLink.Infrastructure.Persistence
                     .WithMany()
                     .HasForeignKey(i => i.UsuarioInvitaId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<PushSubscription>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.Endpoint).IsRequired().HasMaxLength(500);
+                entity.Property(p => p.P256dh).IsRequired().HasMaxLength(200);
+                entity.Property(p => p.Auth).IsRequired().HasMaxLength(200);
+                entity.Property(p => p.FechaCreacion).IsRequired();
+
+                entity.HasIndex(p => p.Endpoint).IsUnique();
+
+                entity.HasOne(p => p.Usuario)
+                    .WithMany()
+                    .HasForeignKey(p => p.UsuarioId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

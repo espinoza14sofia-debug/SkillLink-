@@ -7,10 +7,12 @@ namespace SkillLink.Application.Services;
 public class NotificacionService : INotificacionService
 {
     private readonly INotificacionRepository _repository;
+    private readonly IPushNotificationService _pushNotificationService;
 
-    public NotificacionService(INotificacionRepository repository)
+    public NotificacionService(INotificacionRepository repository, IPushNotificationService pushNotificationService)
     {
         _repository = repository;
+        _pushNotificationService = pushNotificationService;
     }
 
     public async Task<List<NotificacionRespuestaDto>> ObtenerMisNotificacionesAsync(Guid usuarioId)
@@ -56,6 +58,8 @@ public class NotificacionService : INotificacionService
 
         await _repository.AgregarAsync(notificacion);
         await _repository.GuardarCambiosAsync();
+
+        await _pushNotificationService.EnviarATodasLasSuscripcionesAsync(usuarioId, "SkillLink", mensaje);
     }
 
     private static NotificacionRespuestaDto MapearADto(Notificacion notificacion)
