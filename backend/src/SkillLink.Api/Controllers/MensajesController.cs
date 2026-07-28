@@ -12,10 +12,12 @@ namespace SkillLink.Api.Controllers;
 public class MensajesController : ControllerBase
 {
     private readonly IMensajeService _mensajeService;
+    private readonly ILogger<MensajesController> _logger;
 
-    public MensajesController(IMensajeService mensajeService)
+    public MensajesController(IMensajeService mensajeService, ILogger<MensajesController> logger)
     {
         _mensajeService = mensajeService;
+        _logger = logger;
     }
 
     private Guid? ObtenerUsuarioId()
@@ -46,6 +48,7 @@ public class MensajesController : ControllerBase
         }
         catch (UnauthorizedAccessException ex)
         {
+            _logger.LogWarning(ex, "Acceso no autorizado a mensajes del equipo {EquipoId} por el usuario {UsuarioId}", equipoId, usuarioId);
             return Forbid();
         }
     }
@@ -64,6 +67,7 @@ public class MensajesController : ControllerBase
         }
         catch (UnauthorizedAccessException ex)
         {
+            _logger.LogWarning(ex, "Acceso no autorizado al enviar mensaje al equipo {EquipoId} por el usuario {UsuarioId}", equipoId, usuarioId);
             return Forbid();
         }
         catch (InvalidOperationException ex)

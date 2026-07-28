@@ -16,8 +16,7 @@ namespace SkillLink.Infrastructure.Repositories
 
         public async Task CrearAsync(TokenRecuperacion token)
         {
-            _context.TokensRecuperacion.Add(token);
-            await _context.SaveChangesAsync();
+            await _context.TokensRecuperacion.AddAsync(token);
         }
 
         public async Task<TokenRecuperacion?> ObtenerPorTokenAsync(string token)

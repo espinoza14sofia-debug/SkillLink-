@@ -6,10 +6,10 @@ import FormularioCrearMision from "../components/FormularioCrearMision";
 import api from "../services/api";
 
 const statusConfig = {
-  urgent:       { label: "Urgente",     variant: "error",   icon: AlertCircle, color: "#c97070" },
-  in_progress: { label: "En progreso", variant: "accent",  icon: Circle,      color: "#9db5cc" },
-  pending:     { label: "Pendiente",    variant: "neutral", icon: Clock,       color: "#415A77" },
-  done:        { label: "Completada",  variant: "success", icon: CheckCircle, color: "#6db384" },
+  urgent: { label: "Urgente", variant: "error", icon: AlertCircle, color: "#c97070" },
+  in_progress: { label: "En progreso", variant: "accent", icon: Circle, color: "#9db5cc" },
+  pending: { label: "Pendiente", variant: "neutral", icon: Clock, color: "#415A77" },
+  done: { label: "Completada", variant: "success", icon: CheckCircle, color: "#6db384" },
 };
 
 function normalizar(m) {
@@ -52,6 +52,7 @@ export default function ProyectoDetalle() {
   const [error, setError] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [usuarioActualId, setUsuarioActualId] = useState(null);
+  const [equipoId, setEquipoId] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('usuario');
@@ -66,10 +67,11 @@ export default function ProyectoDetalle() {
       const proyectoData = resProyecto.data;
       setProyecto(proyectoData);
 
-      const equipoId = proyectoData.equipoId ?? proyectoData.EquipoId;
+      const equipoIdActual = proyectoData.equipoId ?? proyectoData.EquipoId;
+      setEquipoId(equipoIdActual);
 
-      if (equipoId) {
-        const resMisiones = await api.get(`/misiones/equipo/${equipoId}`);
+      if (equipoIdActual) {
+        const resMisiones = await api.get(`/misiones/equipo/${equipoIdActual}`);
         const todas = resMisiones.data.map(normalizar);
         setMisiones(todas.filter((m) => String(m.proyectoId) === String(id)));
       } else {
@@ -301,6 +303,7 @@ export default function ProyectoDetalle() {
             </p>
             <FormularioCrearMision
               proyectoId={id}
+              equipoId={equipoId}
               onCreada={handleMisionCreada}
               onCancelar={() => setShowAdd(false)}
             />
