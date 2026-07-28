@@ -99,4 +99,32 @@ public class HabilidadService : IHabilidadService
             Nivel = usuarioHabilidad.Nivel
         };
     }
+
+    public async Task<List<SugerenciaCompaneroDto>> SugerirCompanerosAsync(Guid usuarioId)
+    {
+        var misHabilidades = await _habilidadRepository.ObtenerPorUsuarioAsync(usuarioId);
+        if (misHabilidades.Count == 0)
+        {
+            return new List<SugerenciaCompaneroDto>();
+        }
+
+        var misHabilidadIds = misHabilidades.Select(h => h.HabilidadId).ToList();
+
+        var coincidencias = await _habilidadRepository.ObtenerPorHabilidadesAsync(misHabilidadIds, usuarioId);
+
+        var sugerencias = coincidencias
+            .GroupBy(uh => uh.UsuarioId)
+            .Select(g => new SugerenciaCompaneroDto
+            {
+                UsuarioId = g.Key,
+                Nombre = g.First().Usuario?.Nombre ?? "",
+                CantidadHabilidadesEnComun = g.Count(),
+                HabilidadesEnComun = g.Select(uh => uh.Habilidad?.Nombre ?? "").ToList()
+            })
+            .OrderByDescending(s => s.CantidadHabilidadesEnComun)
+            .Take(10)
+            .ToList();
+
+        return sugerencias;
+    }
 }

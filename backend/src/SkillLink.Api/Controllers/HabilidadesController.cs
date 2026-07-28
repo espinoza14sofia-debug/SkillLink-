@@ -17,6 +17,13 @@ namespace SkillLink.Api.Controllers
             _habilidadService = habilidadService;
         }
 
+        private Guid? ObtenerUsuarioId()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                               ?? User.FindFirstValue("sub");
+            return Guid.TryParse(userIdClaim, out var id) ? id : null;
+        }
+
         // POST: api/habilidades/usuario/{id}
         [HttpPost("usuario/{id}")]
         [Authorize]
@@ -75,6 +82,18 @@ namespace SkillLink.Api.Controllers
             {
                 return BadRequest(new { error = ex.Message });
             }
+        }
+
+        // GET: api/habilidades/sugerencias-companeros
+        [HttpGet("sugerencias-companeros")]
+        [Authorize]
+        public async Task<IActionResult> SugerirCompaneros()
+        {
+            var usuarioId = ObtenerUsuarioId();
+            if (usuarioId == null) return Unauthorized();
+
+            var sugerencias = await _habilidadService.SugerirCompanerosAsync(usuarioId.Value);
+            return Ok(sugerencias);
         }
     }
 }

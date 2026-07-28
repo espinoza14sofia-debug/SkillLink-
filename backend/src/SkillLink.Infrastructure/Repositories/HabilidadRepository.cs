@@ -64,4 +64,13 @@ public class HabilidadRepository : IHabilidadRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<UsuarioHabilidad>> ObtenerPorHabilidadesAsync(List<Guid> habilidadIds, Guid excluirUsuarioId)
+    {
+        return await _context.UsuarioHabilidades
+            .Include(uh => uh.Usuario)
+            .Include(uh => uh.Habilidad)
+            .Where(uh => habilidadIds.Contains(uh.HabilidadId) && uh.UsuarioId != excluirUsuarioId)
+            .ToListAsync();
+    }
 }

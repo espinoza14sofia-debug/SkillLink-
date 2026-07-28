@@ -12,17 +12,20 @@ public class XpService : IXpService
     private readonly INivelService _nivelService;
     private readonly ILogroService _logroService;
     private readonly IMisionRepository _misionRepository;
+    private readonly INotificacionService _notificacionService;
 
     public XpService(
         IUsuarioRepository usuarioRepository,
         INivelService nivelService,
         ILogroService logroService,
-        IMisionRepository misionRepository)
+        IMisionRepository misionRepository,
+        INotificacionService notificacionService)
     {
         _usuarioRepository = usuarioRepository;
         _nivelService = nivelService;
         _logroService = logroService;
         _misionRepository = misionRepository;
+        _notificacionService = notificacionService;
     }
 
     public async Task<NivelInfoDto> OtorgarXpAsync(Guid usuarioId, int cantidad)
@@ -53,6 +56,24 @@ public class XpService : IXpService
         var nuevosLogros = await _logroService.EvaluarYOtorgarAsync(usuarioId, usuario.Xp, misionesCompletadas);
 
         nivelInfo.NuevosLogros = nuevosLogros;
+
+        if (nivelInfo.SubioDeNivel)
+        {
+            await _notificacionService.CrearAsync(
+                usuarioId,
+                "subida_nivel",
+                $"¡Subiste al nivel {nivelInfo.Nivel}!"
+            );
+        }
+
+        foreach (var logro in nuevosLogros)
+        {
+            await _notificacionService.CrearAsync(
+                usuarioId,
+                "logro_desbloqueado",
+                $"Desbloqueaste la insignia \"{logro.Nombre}\"."
+            );
+        }
 
         return nivelInfo;
     }
