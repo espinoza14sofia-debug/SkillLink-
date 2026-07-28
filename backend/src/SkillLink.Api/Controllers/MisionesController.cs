@@ -12,10 +12,12 @@ namespace SkillLink.Api.Controllers;
 public class MisionesController : ControllerBase
 {
     private readonly IMisionService _misionService;
+    private readonly IEquipoRepository _equipoRepository;
 
-    public MisionesController(IMisionService misionService)
+    public MisionesController(IMisionService misionService, IEquipoRepository equipoRepository)
     {
         _misionService = misionService;
+        _equipoRepository = equipoRepository;
     }
 
     private Guid? ObtenerUsuarioId()
@@ -25,15 +27,28 @@ public class MisionesController : ControllerBase
         return Guid.TryParse(userIdClaim, out var id) ? id : null;
     }
 
-    // GET: api/misiones (Devuelve las misiones del usuario autenticado)
+    // GET: api/misiones
     [HttpGet]
     public async Task<IActionResult> ObtenerMisPropias()
     {
         var usuarioId = ObtenerUsuarioId();
         if (usuarioId == null) return Unauthorized();
 
-        var misiones = await _misionService.ObtenerPorUsuarioAsync(usuarioId.Value);
-        return Ok(misiones);
+        var equipos = await _equipoRepository.ObtenerEquiposPorUsuarioAsync(usuarioId.Value);
+
+        var grupos = new List<object>();
+        foreach (var equipo in equipos)
+        {
+            var misionesDelEquipo = await _misionService.ObtenerPorEquipoAsync(equipo.Id);
+            grupos.Add(new
+            {
+                equipoId = equipo.Id,
+                equipoNombre = equipo.Nombre,
+                misiones = misionesDelEquipo
+            });
+        }
+
+        return Ok(grupos);
     }
 
     // GET: api/misiones/todas
@@ -59,9 +74,12 @@ public class MisionesController : ControllerBase
         var usuarioId = ObtenerUsuarioId();
         if (usuarioId == null) return Unauthorized();
 
-        if (dto.UsuarioAsignadoId == null || dto.UsuarioAsignadoId == Guid.Empty)
+        var equipos = await _equipoRepository.ObtenerEquiposPorUsuarioAsync(usuarioId.Value);
+
+        // Validamos que el equipoId venga en el DTO y que el usuario pertenezca a ese equipo.
+        if (dto.EquipoId == null || !equipos.Any(e => e.Id == dto.EquipoId))
         {
-            dto.UsuarioAsignadoId = usuarioId.Value;
+            return Forbid();
         }
 
         var mision = await _misionService.CrearAsync(dto);

@@ -12,5 +12,6 @@ namespace SkillLink.Application.DTOs
         public string Estado { get; set; } = string.Empty;
         public double PorcentajeAvance { get; set; }
         public DateTime FechaCreacion { get; set; }
+        public Guid EquipoId { get; set; }
     }
 }

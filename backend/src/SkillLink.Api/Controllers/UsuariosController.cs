@@ -16,6 +16,7 @@ namespace SkillLink.Api.Controllers
         private readonly IMisionRepository _misionRepository;
         private readonly IUsuarioService _usuarioService;
         private readonly IRachaService _rachaService;
+        private readonly IEquipoRepository _equipoRepository;
 
         public UsuariosController(
             IUsuarioRepository usuarioRepository,
@@ -23,7 +24,8 @@ namespace SkillLink.Api.Controllers
             ILogroService logroService,
             IMisionRepository misionRepository,
             IUsuarioService usuarioService,
-            IRachaService rachaService)
+            IRachaService rachaService,
+            IEquipoRepository equipoRepository)
         {
             _usuarioRepository = usuarioRepository;
             _nivelService = nivelService;
@@ -31,6 +33,14 @@ namespace SkillLink.Api.Controllers
             _misionRepository = misionRepository;
             _usuarioService = usuarioService;
             _rachaService = rachaService;
+            _equipoRepository = equipoRepository;
+        }
+
+        private Guid? ObtenerUsuarioId()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                               ?? User.FindFirstValue("sub");
+            return Guid.TryParse(userIdClaim, out var id) ? id : null;
         }
 
         // GET: api/usuarios/me
@@ -66,6 +76,10 @@ namespace SkillLink.Api.Controllers
             // Obtenemos las habilidades del usuario para incluirlas en la respuesta
             var habilidadesUsuario = await _usuarioService.ObtenerHabilidadesDeUsuarioAsync(userId);
 
+            // Todos los equipos a los que pertenece el usuario (puede estar en varios a la vez)
+            var equipos = await _equipoRepository.ObtenerEquiposPorUsuarioAsync(userId);
+            var equiposDto = equipos.Select(e => new { id = e.Id, nombre = e.Nombre }).ToList();
+
             // Insignias como lista (id, nombre), no solo el conteo — igual que en el perfil público
             var insigniasDesbloqueadas = logros
                 .Where(l => l.Desbloqueado)
@@ -93,7 +107,8 @@ namespace SkillLink.Api.Controllers
                 misionesCompletadas = misionesCompletadas,
                 rachaActual = racha,
                 logrosNuevos = logrosNuevos,
-                habilidades = habilidadesUsuario
+                habilidades = habilidadesUsuario,
+                equipos = equiposDto
             });
         }
 
@@ -178,50 +193,23 @@ namespace SkillLink.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ActualizarPerfil(Guid id, [FromBody] ActualizarPerfilDto dto)
         {
+            var usuarioActualId = ObtenerUsuarioId();
+            if (usuarioActualId == null) return Unauthorized();
+
+            // Un usuario solo puede editar su propio perfil.
+            if (usuarioActualId.Value != id) return Forbid();
+
             try
             {
                 await _usuarioService.ActualizarPerfilAsync(id, dto);
-
-                return Ok(new
-                {
-                    mensaje = "Perfil actualizado correctamente"
-                });
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest(new
-                {
-                    error = ex.Message
-                });
+                return NotFound(new { mensaje = ex.Message });
             }
-        }
 
-        // POST: api/usuarios/{id}/habilidades
-        [HttpPost("{id}/habilidades")]
-        [Authorize]
-        public async Task<IActionResult> ActualizarHabilidades(Guid id, [FromBody] ActualizarHabilidadesDto dto)
-        {
-            try
-            {
-                if (dto?.HabilidadIds == null)
-                {
-                    return BadRequest(new { error = "La lista de habilidades no puede ser nula." });
-                }
-
-                await _usuarioService.ActualizarHabilidadesUsuarioAsync(id, dto.HabilidadIds);
-
-                return Ok(new
-                {
-                    mensaje = "Habilidades actualizadas correctamente"
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new
-                {
-                    error = ex.Message
-                });
-            }
+            var perfilActualizado = await _usuarioService.ObtenerPerfilPublicoAsync(id);
+            return Ok(perfilActualizado);
         }
     }
 }

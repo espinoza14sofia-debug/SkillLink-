@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ==========================
 // Registro de servicios
 // ==========================
-builder.Services.AddScoped<IPushSubscriptionRepository, SkillLink.Infrastructure.Repositories.PushSubscriptionRepository>();
+ 
 builder.Services.AddScoped<IPushNotificationService, SkillLink.Infrastructure.Services.PushNotificationService>();
 builder.Services.AddScoped<IPushSubscriptionRepository, PushSubscriptionRepository>();
 builder.Services.AddScoped<IRachaService, RachaService>();

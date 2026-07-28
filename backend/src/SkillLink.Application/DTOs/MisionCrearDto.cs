@@ -9,6 +9,7 @@ namespace SkillLink.Application.DTOs
         public int XpValor { get; set; }
         public Guid? UsuarioAsignadoId { get; set; }
         public Guid? ProyectoId { get; set; }
+        public Guid? EquipoId { get; set; }
         public DateTime? FechaLimite { get; set; }
         public string? Etiquetas { get; set; }
         public bool EsUrgente { get; set; }

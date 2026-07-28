@@ -35,6 +35,7 @@ namespace SkillLink.Application.Services
                 Estado = "pendiente",
                 FechaCreacion = DateTime.UtcNow,
                 UsuarioAsignadoId = dto.UsuarioAsignadoId,
+                EquipoId = dto.EquipoId,
                 ProyectoId = dto.ProyectoId,
                 FechaLimite = dto.FechaLimite,
                 Etiquetas = dto.Etiquetas,

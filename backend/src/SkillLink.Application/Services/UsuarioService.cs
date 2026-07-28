@@ -60,6 +60,7 @@ namespace SkillLink.Application.Services
         public async Task<IEnumerable<object>> ObtenerHabilidadesDeUsuarioAsync(Guid usuarioId)
         {
             var habilidades = await _usuarioRepository.ObtenerHabilidadesDeUsuarioAsync(usuarioId);
+
             return habilidades.Select(uh => new
             {
                 id = uh.Habilidad!.Id,

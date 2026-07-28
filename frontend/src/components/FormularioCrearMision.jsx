@@ -32,7 +32,6 @@ export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, 
         const { data } = await api.get(`/equipos/${equipoId}/miembros`);
         setMiembros(data);
       } catch (err) {
-        // Si falla, simplemente no se muestra el selector con opciones (queda "Sin asignar")
         setMiembros([]);
       } finally {
         setCargandoMiembros(false);
@@ -74,6 +73,7 @@ export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, 
         descripcion,
         xpValor: Number(xpValor),
         proyectoId: proyectoId || null,
+        equipoId: equipoId || null,
         fechaLimite: fechaLimite ? new Date(fechaLimite).toISOString() : null,
         etiquetas: etiquetas.join(","),
         esUrgente,
@@ -120,7 +120,6 @@ export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, 
         />
       </div>
 
-      {/* Asignar a */}
       {equipoId && (
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9", display: "flex", alignItems: "center", gap: "6px" }}>
@@ -152,7 +151,6 @@ export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, 
         </div>
       )}
 
-      {/* Etiquetas */}
       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9" }}>Etiquetas</label>
 
@@ -179,7 +177,6 @@ export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, 
           </div>
         )}
 
-        {/* Sugerencias rápidas */}
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
           {ETIQUETAS_SUGERIDAS.filter((s) => !etiquetas.includes(s)).map((s) => (
             <button
@@ -201,7 +198,6 @@ export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, 
           ))}
         </div>
 
-        {/* Etiqueta libre */}
         <div style={{ display: "flex", gap: "8px" }}>
           <input
             value={etiquetaLibre}
