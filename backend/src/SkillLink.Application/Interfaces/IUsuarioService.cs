@@ -1,10 +1,9 @@
-﻿using SkillLink.Application.DTOs;
-
-namespace SkillLink.Application.Interfaces
+﻿public interface IUsuarioService
 {
-    public interface IUsuarioService
-    {
-        Task<bool> ActualizarPerfilAsync(Guid id, ActualizarPerfilDto dto);
-        Task<PerfilPublicoDto?> ObtenerPerfilPublicoAsync(Guid id);
-    }
+    Task ActualizarPerfilAsync(Guid id, ActualizarPerfilDto dto);
+    Task<object> ObtenerPerfilPublicoAsync(Guid id);
+
+    
+    Task<IEnumerable<object>> ObtenerHabilidadesDeUsuarioAsync(Guid usuarioId);
+    Task ActualizarHabilidadesUsuarioAsync(Guid usuarioId, List<Guid> habilidadIds);
 }

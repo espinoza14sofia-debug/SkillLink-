@@ -20,6 +20,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.10" />
     <PackageReference Include="MimeKit" Version="4.17.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
+    <PackageReference Include="WebPush" Version="1.0.13" />
   </ItemGroup>
 
   <PropertyGroup>

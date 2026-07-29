@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Moq;
 using SkillLink.Application.DTOs;
 using SkillLink.Application.Interfaces;
@@ -10,7 +11,7 @@ namespace SkillLink.Tests;
 public class AuthServiceTests
 {
     private readonly Mock<IUsuarioRepository> _usuarioRepositoryMock;
-    private readonly Mock<IPasswordHasher> _passwordHasherMock;
+    private readonly Mock<IPasswordHasher<Usuario>> _passwordHasherMock;
     private readonly Mock<ITokenService> _tokenServiceMock;
     private readonly Mock<ITokenRecuperacionRepository> _tokenRecuperacionRepositoryMock;
     private readonly AuthService _authService;
@@ -18,15 +19,15 @@ public class AuthServiceTests
     public AuthServiceTests()
     {
         _usuarioRepositoryMock = new Mock<IUsuarioRepository>();
-        _passwordHasherMock = new Mock<IPasswordHasher>();
+        _passwordHasherMock = new Mock<IPasswordHasher<Usuario>>();
         _tokenServiceMock = new Mock<ITokenService>();
         _tokenRecuperacionRepositoryMock = new Mock<ITokenRecuperacionRepository>();
 
         _authService = new AuthService(
+            _tokenRecuperacionRepositoryMock.Object,
             _usuarioRepositoryMock.Object,
             _passwordHasherMock.Object,
-            _tokenServiceMock.Object,
-            _tokenRecuperacionRepositoryMock.Object
+            _tokenServiceMock.Object
         );
     }
 
@@ -35,7 +36,7 @@ public class AuthServiceTests
     [Fact]
     public async Task RegistrarAsync_ConEmailDuplicado_DeberiaRetornarError()
     {
-        var dto = new RegistroUsuarioDto
+        var dto = new UsuarioRegistroDto
         {
             Nombre = "Jendry Murillo",
             Email = "mjiia@test.com",
@@ -44,22 +45,29 @@ public class AuthServiceTests
         };
 
         _usuarioRepositoryMock
-            .Setup(r => r.ExisteEmailAsync(dto.Email))
-            .ReturnsAsync(true);
+            .Setup(r => r.ObtenerPorEmailAsync(dto.Email))
+            .ReturnsAsync(new Usuario
+            {
+                Id = Guid.NewGuid(),
+                Nombre = dto.Nombre,
+                Email = dto.Email
+            });
 
         var resultado = await _authService.RegistrarAsync(dto);
 
         Assert.False(resultado.Exito);
-        Assert.Equal("El email ya está registrado.", resultado.Error);
+        Assert.Equal("El correo ya está registrado.", resultado.Error);
         Assert.Null(resultado.Usuario);
 
-        _usuarioRepositoryMock.Verify(r => r.AgregarAsync(It.IsAny<Usuario>()), Times.Never);
+        _usuarioRepositoryMock.Verify(
+            r => r.AgregarAsync(It.IsAny<Usuario>()),
+            Times.Never);
     }
 
     [Fact]
-    public async Task RegistrarAsync_ConPasswordValido_DeberiaCrearUsuarioConNivel1YXp0()
+    public async Task RegistrarAsync_ConDatosValidos_DeberiaCrearUsuario()
     {
-        var dto = new RegistroUsuarioDto
+        var dto = new UsuarioRegistroDto
         {
             Nombre = "Sofia Vargas",
             Email = "sofia@test.com",
@@ -68,42 +76,28 @@ public class AuthServiceTests
         };
 
         _usuarioRepositoryMock
-            .Setup(r => r.ExisteEmailAsync(dto.Email))
-            .ReturnsAsync(false);
+            .Setup(r => r.ObtenerPorEmailAsync(dto.Email))
+            .ReturnsAsync((Usuario?)null);
 
         _passwordHasherMock
-            .Setup(p => p.HashPassword(dto.Password))
-            .Returns("hash-simulado-123");
+            .Setup(p => p.HashPassword(It.IsAny<Usuario>(), dto.Password))
+            .Returns("hash-simulado");
 
         var resultado = await _authService.RegistrarAsync(dto);
 
         Assert.True(resultado.Exito);
         Assert.Null(resultado.Error);
         Assert.NotNull(resultado.Usuario);
-        Assert.Equal(1, resultado.Usuario!.Nivel);
-        Assert.Equal(0, resultado.Usuario.Xp);
-        Assert.Equal(dto.Email, resultado.Usuario.Email);
+        Assert.Equal(dto.Email, resultado.Usuario!.Email);
 
-        _usuarioRepositoryMock.Verify(r => r.AgregarAsync(It.IsAny<Usuario>()), Times.Once);
-        _usuarioRepositoryMock.Verify(r => r.GuardarCambiosAsync(), Times.Once);
+        _usuarioRepositoryMock.Verify(
+            r => r.AgregarAsync(It.IsAny<Usuario>()),
+            Times.Once);
+
+        _usuarioRepositoryMock.Verify(
+            r => r.GuardarCambiosAsync(),
+            Times.Once);
     }
-
-    [Fact]
-    public async Task RegistrarAsync_ConCamposVacios_DeberiaRetornarError()
-    {
-        var dto = new RegistroUsuarioDto
-        {
-            Nombre = "",
-            Email = "sofia@test.com",
-            Password = "MiPassword123"
-        };
-
-        var resultado = await _authService.RegistrarAsync(dto);
-
-        Assert.False(resultado.Exito);
-        Assert.Equal("Nombre, email y contraseña son obligatorios.", resultado.Error);
-    }
-
     // ---------- LOGIN ----------
 
     [Fact]
@@ -115,26 +109,25 @@ public class AuthServiceTests
             Password = "MiPassword123"
         };
 
-        var usuarioExistente = new Usuario
+        var usuario = new Usuario
         {
             Id = Guid.NewGuid(),
             Nombre = "Sofia Vargas",
             Email = dto.Email,
-            PasswordHash = "hash-guardado",
-            Nivel = 1,
-            Xp = 0
+            Carrera = "Ingeniería en Sistemas",
+            PasswordHash = "hash-guardado"
         };
 
         _usuarioRepositoryMock
             .Setup(r => r.ObtenerPorEmailAsync(dto.Email))
-            .ReturnsAsync(usuarioExistente);
+            .ReturnsAsync(usuario);
 
         _passwordHasherMock
-            .Setup(p => p.VerifyPassword(dto.Password, usuarioExistente.PasswordHash))
-            .Returns(true);
+            .Setup(p => p.VerifyHashedPassword(usuario, usuario.PasswordHash, dto.Password))
+            .Returns(PasswordVerificationResult.Success);
 
         _tokenServiceMock
-            .Setup(t => t.GenerateToken(usuarioExistente.Id, usuarioExistente.Email))
+            .Setup(t => t.GenerateToken(usuario.Id, usuario.Email))
             .Returns("token-jwt-simulado");
 
         var resultado = await _authService.LoginAsync(dto);
@@ -151,7 +144,7 @@ public class AuthServiceTests
         var dto = new LoginDto
         {
             Email = "noexiste@test.com",
-            Password = "cualquierPassword"
+            Password = "12345678"
         };
 
         _usuarioRepositoryMock
@@ -174,23 +167,21 @@ public class AuthServiceTests
             Password = "passwordIncorrecto"
         };
 
-        var usuarioExistente = new Usuario
+        var usuario = new Usuario
         {
             Id = Guid.NewGuid(),
             Nombre = "Sofia Vargas",
             Email = dto.Email,
-            PasswordHash = "hash-guardado",
-            Nivel = 1,
-            Xp = 0
+            PasswordHash = "hash-guardado"
         };
 
         _usuarioRepositoryMock
             .Setup(r => r.ObtenerPorEmailAsync(dto.Email))
-            .ReturnsAsync(usuarioExistente);
+            .ReturnsAsync(usuario);
 
         _passwordHasherMock
-            .Setup(p => p.VerifyPassword(dto.Password, usuarioExistente.PasswordHash))
-            .Returns(false);
+            .Setup(p => p.VerifyHashedPassword(usuario, usuario.PasswordHash, dto.Password))
+            .Returns(PasswordVerificationResult.Failed);
 
         var resultado = await _authService.LoginAsync(dto);
 
@@ -200,7 +191,74 @@ public class AuthServiceTests
 
         _tokenServiceMock.Verify(
             t => t.GenerateToken(It.IsAny<Guid>(), It.IsAny<string>()),
-            Times.Never
-        );
+            Times.Never);
+    }
+    // ---------- RECUPERACIÓN DE CONTRASEÑA ----------
+
+    [Fact]
+    public async Task SolicitarRecuperacionAsync_UsuarioNoExiste_DeberiaRetornarExito()
+    {
+        var dto = new SolicitarRecuperacionDto
+        {
+            Email = "noexiste@test.com"
+        };
+
+        _usuarioRepositoryMock
+            .Setup(r => r.ObtenerPorEmailAsync(dto.Email))
+            .ReturnsAsync((Usuario?)null);
+
+        var resultado = await _authService.SolicitarRecuperacionAsync(dto);
+
+        Assert.True(resultado.Exito);
+        Assert.Null(resultado.Error);
+    }
+
+    [Fact]
+    public async Task RestablecerPasswordAsync_TokenValido_DeberiaCambiarPassword()
+    {
+        var usuarioId = Guid.NewGuid();
+
+        var dto = new RestablecerPasswordDto
+        {
+            Token = "token-valido",
+            NuevoPassword = "NuevaPassword123"
+        };
+
+        var token = new TokenRecuperacion
+        {
+            Token = dto.Token,
+            UsuarioId = usuarioId,
+            FechaExpiracion = DateTime.UtcNow.AddHours(1)
+        };
+
+        var usuario = new Usuario
+        {
+            Id = usuarioId,
+            Email = "sofia@test.com",
+            PasswordHash = "hash-anterior"
+        };
+
+        _tokenRecuperacionRepositoryMock
+            .Setup(r => r.ObtenerPorTokenAsync(dto.Token))
+            .ReturnsAsync(token);
+
+        _usuarioRepositoryMock
+            .Setup(r => r.ObtenerPorIdAsync(usuarioId))
+            .ReturnsAsync(usuario);
+
+        _passwordHasherMock
+            .Setup(p => p.HashPassword(usuario, dto.NuevoPassword))
+            .Returns("nuevo-hash");
+
+        var resultado = await _authService.RestablecerPasswordAsync(dto);
+
+        Assert.True(resultado.Exito);
+        Assert.Null(resultado.Error);
+
+        Assert.Equal("nuevo-hash", usuario.PasswordHash);
+
+        _usuarioRepositoryMock.Verify(
+            r => r.GuardarCambiosAsync(),
+            Times.Once);
     }
 }

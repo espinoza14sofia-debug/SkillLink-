@@ -38,4 +38,15 @@ public class RankingController : ControllerBase
 
         return Ok(posicion);
     }
+
+    // GET: api/ranking/usuario/{id}
+     
+    [HttpGet("usuario/{id}")]
+    public async Task<IActionResult> ObtenerPosicionDeUsuario(Guid id)
+    {
+        var posicion = await _rankingService.ObtenerPosicionAsync(id);
+        if (posicion == null) return NotFound();
+
+        return Ok(posicion);
+    }
 }

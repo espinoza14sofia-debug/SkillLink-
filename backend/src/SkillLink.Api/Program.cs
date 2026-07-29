@@ -16,53 +16,43 @@ var builder = WebApplication.CreateBuilder(args);
 // ==========================
 // Registro de servicios
 // ==========================
-
+ 
+builder.Services.AddScoped<IPushNotificationService, SkillLink.Infrastructure.Services.PushNotificationService>();
+builder.Services.AddScoped<IPushSubscriptionRepository, PushSubscriptionRepository>();
 builder.Services.AddScoped<IRachaService, RachaService>();
 builder.Services.AddScoped<INotificacionRepository, NotificacionRepository>();
 builder.Services.AddScoped<INotificacionService, NotificacionService>();
-
 builder.Services.AddScoped<IRankingRepository, RankingRepository>();
 builder.Services.AddScoped<IRankingService, RankingService>();
-
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-
 builder.Services.AddScoped<IActividadRepository, ActividadRepository>();
 builder.Services.AddScoped<IActividadService, ActividadService>();
-
 builder.Services.AddScoped<INivelConfiguracionRepository, NivelConfiguracionRepository>();
 builder.Services.AddScoped<INivelService, NivelService>();
 builder.Services.AddScoped<IXpService, XpService>();
-
 builder.Services.AddScoped<IMisionRepository, MisionRepository>();
 builder.Services.AddScoped<IMisionService, MisionService>();
-
 builder.Services.AddScoped<ILogroRepository, LogroRepository>();
 builder.Services.AddScoped<ILogroService, LogroService>();
 
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<ITokenService, TokenService>();
+// Corregido: Registro del hasher genérico de ASP.NET Core Identity
+builder.Services.AddScoped<Microsoft.AspNetCore.Identity.IPasswordHasher<SkillLink.Domain.Entities.Usuario>, Microsoft.AspNetCore.Identity.PasswordHasher<SkillLink.Domain.Entities.Usuario>>();
 
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHabilidadRepository, HabilidadRepository>();
 builder.Services.AddScoped<IHabilidadService, HabilidadService>();
-
 builder.Services.AddScoped<ITokenRecuperacionRepository, TokenRecuperacionRepository>();
-
 builder.Services.AddScoped<IEquipoRepository, EquipoRepository>();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
-
 builder.Services.AddScoped<IProyectoRepository, ProyectoRepository>();
 builder.Services.AddScoped<IProyectoService, ProyectoService>();
-
 builder.Services.AddControllers();
-
 builder.Services.AddScoped<IMensajeRepository, MensajeRepository>();
 builder.Services.AddScoped<IMensajeService, MensajeService>();
-
 builder.Services.AddScoped<IMensajePrivadoRepository, MensajePrivadoRepository>();
 builder.Services.AddScoped<IMensajePrivadoService, MensajePrivadoService>();
-
 builder.Services.AddScoped<IInvitacionRepository, InvitacionRepository>();
 builder.Services.AddScoped<IInvitacionService, InvitacionService>();
 
@@ -140,7 +130,6 @@ if (app.Environment.IsDevelopment())
 app.UseCors("FrontendPolicy");
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

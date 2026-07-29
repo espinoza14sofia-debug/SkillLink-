@@ -160,10 +160,7 @@ export default function Login() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-8px' }}>
-              <Link
-                to="/recuperar-password"
-                style={{ fontSize: '13px', color: '#778DA9', textDecoration: 'none' }}
-              >
+              <Link to="/olvide-contrasena" style={{ color: '#778DA9', fontSize: '13px', textDecoration: 'none' }}>
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
@@ -189,16 +186,13 @@ export default function Login() {
             }}
           >
             <span style={{ color: '#778DA9', fontSize: '13px' }}>¿No tienes cuenta? </span>
-            <Link to="/register" style={{ color: '#9db5cc', fontSize: '13px', fontWeight: 500 }}>
-            <br /> 
-             Regístrate gratis
-              
+            <Link to="/register" style={{ color: '#9db5cc', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>
+              Regístrate gratis
             </Link>
           </div>
         </div>
 
         <p style={{ textAlign: 'center', color: '#415A77', fontSize: '12px', marginTop: '24px' }}>
-     
           Plataforma de aprendizaje colaborativo
         </p>
       </div>

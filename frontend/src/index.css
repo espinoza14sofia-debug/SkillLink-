@@ -1,338 +1,681 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --bg-base: #0D1B2A;
+  --bg-surface: #1B263B;
+  --accent: #415A77;
+  --muted: #778DA9;
+  --light: #E0E1DD;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --success: #4A7C59;
+  --success-light: rgba(74,124,89,.15);
 
-  font: 16px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --warning: #8A6A2E;
+  --warning-light: rgba(138,106,46,.15);
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --error: #7C3A3A;
+  --error-light: rgba(124,58,58,.15);
+
+  --font-display: "Sora", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --radius:16px;
+  --radius-sm:12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+*{
+    box-sizing:border-box;
 }
 
-body {
-  margin: 0;
+html,
+body,
+#root{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+}
+
+body{
+    background:var(--bg-base);
+    color:var(--light);
+    font-family:var(--font-body);
+    font-size:14px;
+    line-height:1.6;
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3,
+h4{
+    margin:0;
+    font-family:var(--font-display);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+a{
+    color:inherit;
+    text-decoration:none;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+button{
+    cursor:pointer;
+    font-family:var(--font-body);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+input,
+textarea,
+select{
+    font-family:var(--font-body);
 }
+ /* ===== Sistema Glassmorphism ===== */
 
-:root {
-  --eq-bg: #F7F1EE;
-  --eq-surface: #FFFFFF;
-  --eq-surface-hover: #F3EBEA;
-  --eq-border: #E3D5D9;
-  --eq-secondary: #CFA8BB;
-  --eq-accent: #614051;
-  --eq-accent-hover: #4d3341;
-  --eq-highlight: #967284;
-  --eq-text: #0A0000;
-  --eq-text-dim: #7a6a70;
-
-  --eq-font-display: 'Space Grotesk', sans-serif;
-  --eq-font-body: 'Inter', sans-serif;
-  --eq-font-mono: 'JetBrains Mono', monospace;
-}
-
-/* ===== Estilos del diseño Stitch (glassmorphism) ===== */
-
-.glass {
-  background: rgba(224, 225, 221, 0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(224, 225, 221, 0.15);
-}
-
-.orb {
-  position: fixed;
-  border-radius: 9999px;
-  filter: blur(80px);
-  z-index: -1;
-  pointer-events: none;
-}
-
-.xp-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.xp-shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-  animation: shimmer 2.5s infinite;
-}
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-/* ===== Estilos específicos del Login (Stitch) ===== */
-
-.glass-panel {
-  background: rgba(224, 225, 221, 0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(224, 225, 221, 0.15);
-}
-
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  z-index: -1;
-  animation: move 20s infinite alternate ease-in-out;
-}
-
-@keyframes move {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(100px, 50px) scale(1.2);
-  }
-}
-
-.blob-1 {
-  width: 400px;
-  height: 400px;
-  background: #415A77;
-  top: -10%;
-  left: -10%;
-  opacity: 0.4;
-}
-
-.blob-2 {
-  width: 500px;
-  height: 500px;
-  background: #1B263B;
-  bottom: -10%;
-  right: -5%;
-  opacity: 0.6;
-  animation-delay: -5s;
-}
-
-/* Efecto de label flotante: sube y se achica cuando el input tiene foco o contenido */
-input:focus + label,
-input:not(:placeholder-shown) + label {
-  transform: translateY(-24px) scale(0.85);
-  color: #afc9ea;
-}
-
-/* ===== Alias de variables usadas por los componentes de Figma Make (ui.jsx) ===== */
-:root {
-  --font-display: var(--eq-font-display);
-  --font-mono: var(--eq-font-mono);
-  --font-body: var(--eq-font-body);
-}
-
-/* ===== Clases usadas por ui.jsx y las páginas de Figma Make ===== */
 .glass-card {
-  background: rgba(224, 225, 221, 0.05);
-  border: 1px solid rgba(224, 225, 221, 0.1);
-  border-radius: 16px;
+  background: rgba(224, 225, 221, 0.08);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(224, 225, 221, 0.15);
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 8px 32px rgba(13, 27, 42, 0.4);
 }
 
-.glass-nested {
-  background: rgba(224, 225, 221, 0.05);
-  border: 1px solid rgba(224, 225, 221, 0.1);
-  border-radius: 10px;
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-card {
+    background: rgba(27, 38, 59, 0.95);
+  }
 }
 
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(224, 225, 221, 0.06) 25%,
-    rgba(224, 225, 221, 0.12) 37%,
-    rgba(224, 225, 221, 0.06) 63%
-  );
-  background-size: 400% 100%;
-  animation: skeleton-loading 1.4s ease infinite;
-}
-@keyframes skeleton-loading {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* ===== Barra de XP (usada por el componente XPBar) ===== */
-.xp-track {
-  height: 8px;
-  width: 100%;
-  background: rgba(224, 225, 221, 0.08);
-  border-radius: 999px;
-  overflow: hidden;
-}
-.xp-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #415A77, #778DA9);
-  transition: width 0.6s ease-in-out;
-}
-
-/* ===== Blobs decorativos usados por Login/Register de Figma Make ===== */
-.bg-blob {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(90px);
-  z-index: -1;
-  pointer-events: none;
-  animation: move 20s infinite alternate ease-in-out;
-}
-.bg-blob-1 {
-  width: 420px;
-  height: 420px;
-  background: #415A77;
-  top: -12%;
-  left: -10%;
-  opacity: 0.35;
-}
-.bg-blob-2 {
-  width: 480px;
-  height: 480px;
-  background: #1B263B;
-  bottom: -12%;
-  right: -8%;
-  opacity: 0.5;
-  animation-delay: -6s;
-}
-.bg-blob-3 {
-  width: 320px;
-  height: 320px;
-  background: #778DA9;
-  top: 35%;
-  right: 15%;
-  opacity: 0.2;
-  animation-delay: -3s;
-}
-
-/* ===== Modal overlay usado por Team.jsx y otras pantallas con modales ===== */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(13, 27, 42, 0.75);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000;
-}
 
 .glass-float {
-  background: rgba(27, 38, 59, 0.95);
-  border: 1px solid rgba(224, 225, 221, 0.12);
-  border-radius: 16px;
+  background: rgba(224, 225, 221, 0.12);
+
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+  border: 1px solid rgba(224,225,221,0.15);
+
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 12px 40px rgba(13,27,42,0.5);
+}
+
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-float {
+    background: rgba(27,38,59,0.97);
+  }
+}
+
+
+.glass-nested {
+
+  background:
+    rgba(224,225,221,0.15);
+
+  border:
+    1px solid rgba(224,225,221,0.12);
+
+  border-radius:
+    var(--radius-sm);
+}
+
+
+
+/* ===== Fondos decorativos ===== */
+
+.bg-blob {
+
+  position:fixed;
+
+  border-radius:50%;
+
+  filter:blur(90px);
+
+  z-index:0;
+
+  pointer-events:none;
+}
+
+
+.bg-blob-1 {
+
+  width:700px;
+
+  height:700px;
+
+  background:
+    rgba(65,90,119,0.18);
+
+  top:-250px;
+
+  right:-200px;
+}
+
+
+
+.bg-blob-2 {
+
+  width:550px;
+
+  height:550px;
+
+  background:
+    rgba(27,38,59,0.25);
+
+  bottom:-150px;
+
+  left:-150px;
+
+}
+
+
+
+.bg-blob-3 {
+
+  width:400px;
+
+  height:400px;
+
+  background:
+    rgba(65,90,119,0.12);
+
+  top:45%;
+
+  left:35%;
+
+  transform:
+    translate(-50%,-50%);
+}
+
+
+
+/* ===== Barra de experiencia XP ===== */
+
+
+.xp-track {
+
+  background:
+    var(--bg-surface);
+
+  border-radius:
+    999px;
+
+  height:
+    8px;
+
+  overflow:hidden;
+
+  border:
+    1px solid rgba(224,225,221,0.08);
+
+}
+
+
+
+.xp-fill {
+
+  background:
+    linear-gradient(
+      90deg,
+      #415A77,
+      #778DA9
+    );
+
+  height:100%;
+
+  border-radius:
+    999px;
+
+  transition:
+    width .6s cubic-bezier(.4,0,.2,1);
+}
+/* ===== Skeleton Loading ===== */
+
+@keyframes shimmer {
+
+  0% {
+    background-position:
+      -200% 0;
+  }
+
+  100% {
+    background-position:
+      200% 0;
+  }
+
+}
+
+
+.skeleton {
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(224,225,221,0.04) 25%,
+      rgba(224,225,221,0.09) 50%,
+      rgba(224,225,221,0.04) 75%
+    );
+
+  background-size:
+    200% 100%;
+
+  animation:
+    shimmer 1.8s infinite;
+
+  border-radius:
+    8px;
+}
+
+
+
+/* ===== Scrollbar personalizada ===== */
+
+
+::-webkit-scrollbar {
+
+  width:4px;
+
+  height:4px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+  background:
+    transparent;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    rgba(224,225,221,0.12);
+
+  border-radius:
+    4px;
+
+}
+
+
+
+/* ===== Efecto Hover ===== */
+
+
+.hover-lift {
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+
+}
+
+
+.hover-lift:hover {
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 12px 40px rgba(13,27,42,0.5);
+
+}
+
+
+
+/* ===== Chat ===== */
+
+
+.bubble-self {
+
+  background:
+    rgba(65,90,119,0.35);
+
+  border:
+    1px solid rgba(65,90,119,0.4);
+
+  border-radius:
+    16px 16px 4px 16px;
+
+}
+
+
+
+.bubble-other {
+
+  background:
+    rgba(224,225,221,0.08);
+
+  border:
+    1px solid rgba(224,225,221,0.12);
+
+  border-radius:
+    16px 16px 16px 4px;
+
+}
+
+
+
+/* ===== Overlay de modales ===== */
+
+
+.overlay {
+
+  position:fixed;
+
+  inset:0;
+
+  background:
+    rgba(13,27,42,0.75);
+
+  backdrop-filter:
+    blur(4px);
+
+  -webkit-backdrop-filter:
+    blur(4px);
+
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  z-index:1000;
+
+}
+
+
+
+/* ===== Indicador activo del menú ===== */
+
+
+.nav-link-active {
+
+  background:
+    rgba(65,90,119,0.35);
+
+  color:
+    var(--light);
+
+}
+
+
+
+/* ===== Toggle ===== */
+
+
+.toggle-track {
+
+  width:
+    44px;
+
+  height:
+    24px;
+
+  border-radius:
+    999px;
+
+  transition:
+    background .2s;
+
+  position:relative;
+
+  border:none;
+
+  cursor:pointer;
+
+}
+
+
+.toggle-thumb {
+
+  width:
+    18px;
+
+  height:
+    18px;
+
+  background:
+    var(--light);
+
+  border-radius:
+    50%;
+
+  position:absolute;
+
+  top:
+    3px;
+
+  transition:
+    left .2s;
+
+}
+/* ===== Badge Glow ===== */
+
+@keyframes glow-pulse {
+
+  0%, 100% {
+
+    box-shadow:
+      0 0 10px rgba(119,141,169,0.3);
+
+  }
+
+
+  50% {
+
+    box-shadow:
+      0 0 22px rgba(119,141,169,0.55);
+
+  }
+
+}
+
+
+.badge-glow {
+
+  animation:
+    glow-pulse 2.5s ease-in-out infinite;
+
+}
+
+
+
+/* ===== Skill bars ===== */
+
+
+.skill-seg {
+
+  height:
+    6px;
+
+  border-radius:
+    3px;
+
+  transition:
+    background .2s;
+
+}
+
+
+
+/* ===== Input focus ===== */
+
+
+input:focus,
+textarea:focus,
+select:focus {
+
+  border-color:
+    #415A77;
+
+  outline:none;
+
+  box-shadow:
+    0 0 0 3px rgba(65,90,119,0.25);
+
+}
+
+
+
+/* ===== Mobile ===== */
+
+
+@media (max-width:768px){
+
+  .nav-desktop{
+
+    display:none !important;
+
+  }
+
+
+  .nav-mobile-open{
+
+    display:flex !important;
+
+  }
+
+}
+
+
+@media (min-width:769px){
+
+  .nav-mobile-btn{
+
+    display:none !important;
+
+  }
+
+}
+
+
+
+/* ===== Utilidades de texto ===== */
+
+
+.text-primary {
+
+  color:
+    var(--light);
+
+}
+
+
+.text-muted {
+
+  color:
+    var(--muted);
+
+}
+
+
+.text-accent {
+
+  color:
+    var(--accent);
+
+}
+
+
+
+/* ===== Fondo general de páginas ===== */
+
+
+.page-container {
+
+  min-height:
+    100vh;
+
+  position:
+    relative;
+
+  z-index:
+    1;
+
+}
+
+
+
+/* ===== Animaciones suaves ===== */
+
+
+.fade-in {
+
+  animation:
+    fadeIn .35s ease forwards;
+
+}
+
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity:0;
+
+    transform:
+      translateY(10px);
+
+  }
+
+
+  to {
+
+    opacity:1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+
+
+/* ===== Loading ===== */
+
+
+.loading-spinner {
+
+  width:
+    32px;
+
+  height:
+    32px;
+
+  border-radius:
+    50%;
+
+  border:
+    3px solid rgba(224,225,221,.15);
+
+  border-top-color:
+    #415A77;
+
+  animation:
+    spin .8s linear infinite;
+
+}
+
+
+@keyframes spin {
+
+  to {
+
+    transform:
+      rotate(360deg);
+
+  }
+
 }

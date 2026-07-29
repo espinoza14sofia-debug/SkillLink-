@@ -363,18 +363,20 @@ namespace SkillLink.Infrastructure.Migrations
 
                     b.Property<string>("Mensaje")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioId");
+                    b.HasIndex("UsuarioId", "Leida");
 
                     b.ToTable("Notificaciones");
                 });
@@ -407,6 +409,43 @@ namespace SkillLink.Infrastructure.Migrations
                     b.HasIndex("EquipoId");
 
                     b.ToTable("Proyectos");
+                });
+
+            modelBuilder.Entity("SkillLink.Domain.Entities.PushSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Auth")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("P256dh")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Endpoint")
+                        .IsUnique();
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("PushSubscriptions");
                 });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.TokenRecuperacion", b =>
@@ -448,6 +487,9 @@ namespace SkillLink.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -457,6 +499,12 @@ namespace SkillLink.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Foto")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Github")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Linkedin")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Nivel")
@@ -472,6 +520,9 @@ namespace SkillLink.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RachaActual")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Semestre")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UltimaActividad")
@@ -493,8 +544,7 @@ namespace SkillLink.Infrastructure.Migrations
 
             modelBuilder.Entity("SkillLink.Domain.Entities.UsuarioHabilidad", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("HabilidadId")
@@ -504,17 +554,11 @@ namespace SkillLink.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
+                    b.HasKey("UsuarioId", "HabilidadId");
 
                     b.HasIndex("HabilidadId");
 
-                    b.HasIndex("UsuarioId", "HabilidadId")
-                        .IsUnique();
-
-                    b.ToTable("UsuarioHabilidades");
+                    b.ToTable("UsuarioHabilidades", (string)null);
                 });
 
             modelBuilder.Entity("SkillLink.Domain.Entities.UsuarioLogro", b =>
@@ -657,6 +701,17 @@ namespace SkillLink.Infrastructure.Migrations
                     b.Navigation("Equipo");
                 });
 
+            modelBuilder.Entity("SkillLink.Domain.Entities.PushSubscription", b =>
+                {
+                    b.HasOne("SkillLink.Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("SkillLink.Domain.Entities.TokenRecuperacion", b =>
                 {
                     b.HasOne("SkillLink.Domain.Entities.Usuario", "Usuario")
@@ -677,7 +732,7 @@ namespace SkillLink.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("SkillLink.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
+                        .WithMany("UsuarioHabilidades")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -701,6 +756,11 @@ namespace SkillLink.Infrastructure.Migrations
             modelBuilder.Entity("SkillLink.Domain.Entities.Equipo", b =>
                 {
                     b.Navigation("Miembros");
+                });
+
+            modelBuilder.Entity("SkillLink.Domain.Entities.Usuario", b =>
+                {
+                    b.Navigation("UsuarioHabilidades");
                 });
 #pragma warning restore 612, 618
         }

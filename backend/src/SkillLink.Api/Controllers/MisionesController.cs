@@ -12,10 +12,12 @@ namespace SkillLink.Api.Controllers;
 public class MisionesController : ControllerBase
 {
     private readonly IMisionService _misionService;
+    private readonly IEquipoRepository _equipoRepository;
 
-    public MisionesController(IMisionService misionService)
+    public MisionesController(IMisionService misionService, IEquipoRepository equipoRepository)
     {
         _misionService = misionService;
+        _equipoRepository = equipoRepository;
     }
 
     private Guid? ObtenerUsuarioId()
@@ -27,20 +29,33 @@ public class MisionesController : ControllerBase
 
     // GET: api/misiones
     [HttpGet]
-    public async Task<IActionResult> ObtenerTodas()
-    {
-        var misiones = await _misionService.ObtenerTodasAsync();
-        return Ok(misiones);
-    }
-
-    // GET: api/misiones/mias
-    [HttpGet("mias")]
     public async Task<IActionResult> ObtenerMisPropias()
     {
         var usuarioId = ObtenerUsuarioId();
         if (usuarioId == null) return Unauthorized();
 
-        var misiones = await _misionService.ObtenerPorUsuarioAsync(usuarioId.Value);
+        var equipos = await _equipoRepository.ObtenerEquiposPorUsuarioAsync(usuarioId.Value);
+
+        var grupos = new List<object>();
+        foreach (var equipo in equipos)
+        {
+            var misionesDelEquipo = await _misionService.ObtenerPorEquipoAsync(equipo.Id);
+            grupos.Add(new
+            {
+                equipoId = equipo.Id,
+                equipoNombre = equipo.Nombre,
+                misiones = misionesDelEquipo
+            });
+        }
+
+        return Ok(grupos);
+    }
+
+    // GET: api/misiones/todas
+    [HttpGet("todas")]
+    public async Task<IActionResult> ObtenerTodas()
+    {
+        var misiones = await _misionService.ObtenerTodasAsync();
         return Ok(misiones);
     }
 
@@ -56,8 +71,19 @@ public class MisionesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Crear([FromBody] MisionCrearDto dto)
     {
+        var usuarioId = ObtenerUsuarioId();
+        if (usuarioId == null) return Unauthorized();
+
+        var equipos = await _equipoRepository.ObtenerEquiposPorUsuarioAsync(usuarioId.Value);
+
+        // Validamos que el equipoId venga en el DTO y que el usuario pertenezca a ese equipo.
+        if (dto.EquipoId == null || !equipos.Any(e => e.Id == dto.EquipoId))
+        {
+            return Forbid();
+        }
+
         var mision = await _misionService.CrearAsync(dto);
-        return CreatedAtAction(nameof(ObtenerTodas), new { id = mision.Id }, mision);
+        return CreatedAtAction(nameof(ObtenerMisPropias), new { id = mision.Id }, mision);
     }
 
     // PUT: api/misiones/{id}/asignar
@@ -90,7 +116,7 @@ public class MisionesController : ControllerBase
             var mision = await _misionService.CompletarAsync(id, usuarioId.Value);
             return Ok(mision);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
@@ -100,37 +126,21 @@ public class MisionesController : ControllerBase
         }
     }
 
-   
     // PUT: api/misiones/{id}/reasignar
     [HttpPut("{id}/reasignar")]
-    [Authorize]
-    public async Task<IActionResult> Reasignar(
-        Guid id,
-        [FromBody] ReasignarDto dto)
+    public async Task<IActionResult> Reasignar(Guid id, [FromBody] ReasignarDto dto)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                       ?? User.FindFirst("sub")?.Value;
-
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var usuarioActualId))
-        {
-            return Unauthorized();
-        }
+        var usuarioActualId = ObtenerUsuarioId();
+        if (usuarioActualId == null) return Unauthorized();
 
         try
         {
-            var resultado = await _misionService.ReasignarAsync(
-                id,
-                usuarioActualId,
-                dto.NuevoUsuarioId);
-
+            var resultado = await _misionService.ReasignarAsync(id, usuarioActualId.Value, dto.NuevoUsuarioId);
             return Ok(resultado);
         }
         catch (Exception ex)
         {
-            return BadRequest(new
-            {
-                error = ex.Message
-            });
+            return BadRequest(new { error = ex.Message });
         }
     }
 
@@ -146,7 +156,7 @@ public class MisionesController : ControllerBase
             var mision = await _misionService.ActualizarProgresoAsync(id, usuarioId.Value, dto.Progreso);
             return Ok(mision);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }

@@ -1,12 +1,12 @@
-﻿namespace SkillLink.Domain.Entities;
-
-public class UsuarioHabilidad
+﻿namespace SkillLink.Domain.Entities
 {
-    public Guid Id { get; set; }
-    public Guid UsuarioId { get; set; }
-    public Guid HabilidadId { get; set; }
-    public string Nivel { get; set; } = "Básico";
+    public class UsuarioHabilidad
+    {
+        public Guid UsuarioId { get; set; }
+        public Guid HabilidadId { get; set; }
+        public string Nivel { get; set; } = "Básico";
 
-    public Usuario? Usuario { get; set; }
-    public Habilidad? Habilidad { get; set; }
+        public Usuario? Usuario { get; set; }
+        public Habilidad? Habilidad { get; set; }
+    }
 }

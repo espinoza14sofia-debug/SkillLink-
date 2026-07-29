@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Target, Zap, Calendar, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Target, Zap, Calendar, X, User } from "lucide-react";
 import { Input, Button } from "./ui";
 import api from "../services/api";
 
@@ -8,7 +8,7 @@ const ETIQUETAS_SUGERIDAS = [
   "Testing", "DevOps", "Diseño", "Análisis", "API", "Docs",
 ];
 
-export default function FormularioCrearMision({ proyectoId, onCreada, onCancelar }) {
+export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, onCancelar }) {
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [xpValor, setXpValor] = useState(50);
@@ -18,6 +18,28 @@ export default function FormularioCrearMision({ proyectoId, onCreada, onCancelar
   const [etiquetaLibre, setEtiquetaLibre] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
+
+  const [miembros, setMiembros] = useState([]);
+  const [usuarioAsignadoId, setUsuarioAsignadoId] = useState("");
+  const [cargandoMiembros, setCargandoMiembros] = useState(false);
+
+  useEffect(() => {
+    if (!equipoId) return;
+
+    const cargarMiembros = async () => {
+      setCargandoMiembros(true);
+      try {
+        const { data } = await api.get(`/equipos/${equipoId}/miembros`);
+        setMiembros(data);
+      } catch (err) {
+        setMiembros([]);
+      } finally {
+        setCargandoMiembros(false);
+      }
+    };
+
+    cargarMiembros();
+  }, [equipoId]);
 
   const agregarEtiqueta = (tag) => {
     const limpio = tag.trim();
@@ -51,9 +73,11 @@ export default function FormularioCrearMision({ proyectoId, onCreada, onCancelar
         descripcion,
         xpValor: Number(xpValor),
         proyectoId: proyectoId || null,
+        equipoId: equipoId || null,
         fechaLimite: fechaLimite ? new Date(fechaLimite).toISOString() : null,
         etiquetas: etiquetas.join(","),
         esUrgente,
+        usuarioAsignadoId: usuarioAsignadoId || null,
       });
       onCreada?.(data);
     } catch (err) {
@@ -96,7 +120,37 @@ export default function FormularioCrearMision({ proyectoId, onCreada, onCancelar
         />
       </div>
 
-      {/* Etiquetas */}
+      {equipoId && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9", display: "flex", alignItems: "center", gap: "6px" }}>
+            <User size={13} />Asignar a
+          </label>
+          <select
+            value={usuarioAsignadoId}
+            onChange={(e) => setUsuarioAsignadoId(e.target.value)}
+            disabled={cargandoMiembros}
+            style={{
+              width: "100%",
+              background: "rgba(224, 225, 221, 0.06)",
+              border: "1px solid rgba(224, 225, 221, 0.15)",
+              borderRadius: "12px",
+              padding: "10px 14px",
+              color: "#E0E1DD",
+              fontSize: "14px",
+              outline: "none",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            <option value="">Sin asignar (queda disponible para el equipo)</option>
+            {miembros.map((m) => (
+              <option key={m.usuarioId ?? m.UsuarioId} value={m.usuarioId ?? m.UsuarioId}>
+                {m.nombre ?? m.Nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9" }}>Etiquetas</label>
 
@@ -123,7 +177,6 @@ export default function FormularioCrearMision({ proyectoId, onCreada, onCancelar
           </div>
         )}
 
-        {/* Sugerencias rápidas */}
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
           {ETIQUETAS_SUGERIDAS.filter((s) => !etiquetas.includes(s)).map((s) => (
             <button
@@ -145,7 +198,6 @@ export default function FormularioCrearMision({ proyectoId, onCreada, onCancelar
           ))}
         </div>
 
-        {/* Etiqueta libre */}
         <div style={{ display: "flex", gap: "8px" }}>
           <input
             value={etiquetaLibre}

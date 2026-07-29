@@ -41,7 +41,8 @@ public class ProyectoService : IProyectoService
             Descripcion = creado.Descripcion,
             Estado = creado.Estado.ToString(),
             PorcentajeAvance = 0,
-            FechaCreacion = creado.FechaCreacion
+            FechaCreacion = creado.FechaCreacion,
+            EquipoId = creado.EquipoId
         };
     }
 
@@ -63,7 +64,8 @@ public class ProyectoService : IProyectoService
             Descripcion = proyecto.Descripcion,
             Estado = proyecto.Estado.ToString(),
             PorcentajeAvance = avance,
-            FechaCreacion = proyecto.FechaCreacion
+            FechaCreacion = proyecto.FechaCreacion,
+            EquipoId = proyecto.EquipoId
         };
     }
 
@@ -85,7 +87,8 @@ public class ProyectoService : IProyectoService
                 Descripcion = proyecto.Descripcion,
                 Estado = proyecto.Estado.ToString(),
                 PorcentajeAvance = avance,
-                FechaCreacion = proyecto.FechaCreacion
+                FechaCreacion = proyecto.FechaCreacion,
+                EquipoId = proyecto.EquipoId
             });
         }
 
@@ -113,7 +116,8 @@ public class ProyectoService : IProyectoService
                 Descripcion = proyecto.Descripcion,
                 Estado = proyecto.Estado.ToString(),
                 PorcentajeAvance = avance,
-                FechaCreacion = proyecto.FechaCreacion
+                FechaCreacion = proyecto.FechaCreacion,
+                EquipoId = proyecto.EquipoId
             });
         }
 

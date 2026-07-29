@@ -1,7 +1,8 @@
-﻿namespace SkillLink.Application.DTOs;
-
-public class LoginRespuestaDto
+﻿namespace SkillLink.Application.DTOs
 {
-    public string Token { get; set; } = string.Empty;
-    public UsuarioRespuestaDto Usuario { get; set; } = null!;
+    public class LoginRespuestaDto
+    {
+        public string Token { get; set; } = string.Empty;
+        public UsuarioRespuestaDto Usuario { get; set; } = null!;
+    }
 }

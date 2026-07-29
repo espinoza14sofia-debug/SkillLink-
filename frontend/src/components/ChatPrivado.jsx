@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
-import "./ChatPrivado.css";
 
 const INTERVALO_POLLING_MS = 4000;
 
@@ -80,19 +80,70 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
   };
 
   return (
-    <div className="chat-privado-overlay" onClick={onCerrar}>
-      <div className="chat-privado-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="chat-privado-header">
-          <span>{otroUsuarioNombre}</span>
-          <button className="chat-privado-cerrar" onClick={onCerrar}>✕</button>
+    <div className="overlay" onClick={onCerrar}>
+      <div
+        className="glass-float fade-in"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          maxWidth: "380px",
+          height: "480px",
+          margin: "24px",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "16px 20px",
+            borderBottom: "1px solid rgba(224, 225, 221, 0.1)",
+          }}
+        >
+          <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "15px", color: "#E0E1DD" }}>
+            {otroUsuarioNombre}
+          </span>
+          <button
+            onClick={onCerrar}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "#778DA9",
+              padding: "4px",
+              display: "flex",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#E0E1DD")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#778DA9")}
+          >
+            <X size={18} />
+          </button>
         </div>
 
+        {/* Mensajes */}
         {cargando ? (
-          <p className="chat-mensaje-estado">Cargando chat...</p>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <p style={{ color: "#778DA9", fontSize: "13px" }}>Cargando chat...</p>
+          </div>
         ) : (
-          <div className="chat-mensajes" ref={contenedorRef}>
+          <div
+            ref={contenedorRef}
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "16px 20px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+          >
             {mensajes.length === 0 && (
-              <p className="chat-mensaje-estado">Aún no hay mensajes. ¡Escribí el primero!</p>
+              <p style={{ textAlign: "center", color: "#778DA9", fontSize: "13px", padding: "12px" }}>
+                Aún no hay mensajes. ¡Escribí el primero!
+              </p>
             )}
 
             {mensajes.map((m) => {
@@ -100,10 +151,26 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
               return (
                 <div
                   key={m.id}
-                  className={`chat-burbuja-privada ${esPropia ? "propia" : ""}`}
+                  className={esPropia ? "bubble-self" : "bubble-other"}
+                  style={{
+                    maxWidth: "78%",
+                    minWidth: "100px",
+                    padding: "8px 12px",
+                    alignSelf: esPropia ? "flex-end" : "flex-start",
+                  }}
                 >
-                  <p className="chat-contenido">{m.contenido}</p>
-                  <span className="chat-hora">
+                  <p style={{ margin: 0, fontSize: "13px", lineHeight: 1.4, color: "#E0E1DD", wordBreak: "break-word" }}>
+                    {m.contenido}
+                  </p>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      color: "#778DA9",
+                      textAlign: "right",
+                      marginTop: "3px",
+                    }}
+                  >
                     {new Date(m.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
@@ -112,17 +179,56 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
           </div>
         )}
 
-        {error && <p className="chat-mensaje-estado error">{error}</p>}
+        {error && (
+          <p style={{ textAlign: "center", color: "#c97070", fontSize: "12px", padding: "0 16px 8px" }}>
+            {error}
+          </p>
+        )}
 
-        <form className="chat-form" onSubmit={handleEnviar}>
+        {/* Form */}
+        <form
+          onSubmit={handleEnviar}
+          style={{
+            display: "flex",
+            gap: "8px",
+            padding: "12px 16px",
+            borderTop: "1px solid rgba(224, 225, 221, 0.1)",
+          }}
+        >
           <input
             type="text"
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             placeholder="Escribí un mensaje..."
             disabled={enviando}
+            style={{
+              flex: 1,
+              background: "rgba(224, 225, 221, 0.06)",
+              border: "1px solid rgba(224, 225, 221, 0.15)",
+              borderRadius: "999px",
+              padding: "10px 16px",
+              color: "#E0E1DD",
+              fontSize: "13px",
+              outline: "none",
+              fontFamily: "var(--font-body)",
+            }}
           />
-          <button type="submit" disabled={enviando || !texto.trim()}>
+          <button
+            type="submit"
+            disabled={enviando || !texto.trim()}
+            style={{
+              padding: "10px 20px",
+              borderRadius: "999px",
+              border: "none",
+              background: "#415A77",
+              color: "#E0E1DD",
+              cursor: enviando || !texto.trim() ? "not-allowed" : "pointer",
+              opacity: enviando || !texto.trim() ? 0.5 : 1,
+              fontWeight: 500,
+              fontSize: "13px",
+              fontFamily: "var(--font-body)",
+            }}
+          >
             Enviar
           </button>
         </form>

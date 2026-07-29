@@ -102,7 +102,7 @@ public class MensajeService : IMensajeService
             EmisorId = mensaje.EmisorId,
             EmisorNombre = mensaje.Emisor?.Nombre ?? "Desconocido",
             Contenido = mensaje.Contenido,
-            Fecha = mensaje.Fecha
+            Fecha = DateTime.SpecifyKind(mensaje.Fecha, DateTimeKind.Utc)
         };
     }
 }

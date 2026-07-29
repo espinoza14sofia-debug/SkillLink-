@@ -1,13 +1,17 @@
-namespace SkillLink.Application.DTOs;
+using System;
 
-public class MisionCrearDto
+namespace SkillLink.Application.DTOs
 {
-    public string Titulo { get; set; } = string.Empty;
-    public string? Descripcion { get; set; }
-    public int XpValor { get; set; } = 50;
-    public Guid? UsuarioAsignadoId { get; set; }
-    public Guid? ProyectoId { get; set; }
-    public DateTime? FechaLimite { get; set; }
-    public string? Etiquetas { get; set; }
-    public bool EsUrgente { get; set; } = false;
+    public class MisionCrearDto
+    {
+        public string Titulo { get; set; } = string.Empty;
+        public string Descripcion { get; set; } = string.Empty;
+        public int XpValor { get; set; }
+        public Guid? UsuarioAsignadoId { get; set; }
+        public Guid? ProyectoId { get; set; }
+        public Guid? EquipoId { get; set; }
+        public DateTime? FechaLimite { get; set; }
+        public string? Etiquetas { get; set; }
+        public bool EsUrgente { get; set; }
+    }
 }

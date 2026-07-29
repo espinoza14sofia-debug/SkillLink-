@@ -4,76 +4,96 @@ using Microsoft.AspNetCore.Mvc;
 using SkillLink.Application.DTOs;
 using SkillLink.Application.Interfaces;
 
-namespace SkillLink.Api.Controllers;
-
-[ApiController]
-[Route("api/usuarios")]
-public class HabilidadesController : ControllerBase
+namespace SkillLink.Api.Controllers
 {
-    private readonly IHabilidadService _habilidadService;
-
-    public HabilidadesController(IHabilidadService habilidadService)
+    [ApiController]
+    [Route("api/habilidades")]
+    public class HabilidadesController : ControllerBase
     {
-        _habilidadService = habilidadService;
-    }
+        private readonly IHabilidadService _habilidadService;
 
-    // POST: api/usuarios/{id}/habilidades
-    [HttpPost("{id}/habilidades")]
-    [Authorize]
-    public async Task<IActionResult> AgregarHabilidad(Guid id, [FromBody] HabilidadCrearDto dto)
-    {
-        try
+        public HabilidadesController(IHabilidadService habilidadService)
         {
-            var resultado = await _habilidadService.AgregarHabilidadAsync(id, dto);
-            return Ok(resultado);
+            _habilidadService = habilidadService;
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-    }
 
-    // GET: api/usuarios/{id}/habilidades
-    [HttpGet("{id}/habilidades")]
-    [Authorize]
-    public async Task<IActionResult> ObtenerHabilidades(Guid id)
-    {
-        var habilidades = await _habilidadService.ObtenerHabilidadesDeUsuarioAsync(id);
-        return Ok(habilidades);
-    }
+        private Guid? ObtenerUsuarioId()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                               ?? User.FindFirstValue("sub");
+            return Guid.TryParse(userIdClaim, out var id) ? id : null;
+        }
 
-    // PUT: api/usuarios/{id}/habilidades/{habilidadId}
-    [HttpPut("{id}/habilidades/{habilidadId}")]
-    [Authorize]
-    public async Task<IActionResult> ActualizarNivelHabilidad(
-        Guid id,
-        Guid habilidadId,
-        [FromBody] ActualizarNivelHabilidadDto dto)
-    {
-        try
+        // POST: api/habilidades/usuario/{id}
+        [HttpPost("usuario/{id}")]
+        [Authorize]
+        public async Task<IActionResult> AgregarHabilidad(Guid id, [FromBody] HabilidadCrearDto dto)
         {
-            var resultado = await _habilidadService.ActualizarNivelHabilidadAsync(id, habilidadId, dto);
-            return Ok(resultado);
+            try
+            {
+                var resultado = await _habilidadService.AgregarHabilidadAsync(id, dto);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-    }
 
-    // DELETE: api/usuarios/{id}/habilidades/{habilidadId}
-    [HttpDelete("{id}/habilidades/{habilidadId}")]
-    [Authorize]
-    public async Task<IActionResult> EliminarHabilidad(Guid id, Guid habilidadId)
-    {
-        try
+        // GET: api/habilidades/usuario/{id}
+        [HttpGet("usuario/{id}")]
+        [Authorize]
+        public async Task<IActionResult> ObtenerHabilidades(Guid id)
         {
-            await _habilidadService.EliminarHabilidadAsync(id, habilidadId);
-            return Ok(new { mensaje = "Habilidad eliminada correctamente" });
+            var habilidades = await _habilidadService.ObtenerHabilidadesDeUsuarioAsync(id);
+            return Ok(habilidades);
         }
-        catch (Exception ex)
+
+        // PUT: api/habilidades/usuario/{id}/{habilidadId}
+        [HttpPut("usuario/{id}/{habilidadId}")]
+        [Authorize]
+        public async Task<IActionResult> ActualizarNivelHabilidad(
+            Guid id,
+            Guid habilidadId,
+            [FromBody] ActualizarNivelHabilidadDto dto)
         {
-            return BadRequest(new { error = ex.Message });
+            try
+            {
+                var resultado = await _habilidadService.ActualizarNivelHabilidadAsync(id, habilidadId, dto);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        // DELETE: api/habilidades/usuario/{id}/{habilidadId}
+        [HttpDelete("usuario/{id}/{habilidadId}")]
+        [Authorize]
+        public async Task<IActionResult> EliminarHabilidad(Guid id, Guid habilidadId)
+        {
+            try
+            {
+                await _habilidadService.EliminarHabilidadAsync(id, habilidadId);
+                return Ok(new { mensaje = "Habilidad eliminada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        // GET: api/habilidades/sugerencias-companeros
+        [HttpGet("sugerencias-companeros")]
+        [Authorize]
+        public async Task<IActionResult> SugerirCompaneros()
+        {
+            var usuarioId = ObtenerUsuarioId();
+            if (usuarioId == null) return Unauthorized();
+
+            var sugerencias = await _habilidadService.SugerirCompanerosAsync(usuarioId.Value);
+            return Ok(sugerencias);
         }
     }
 }

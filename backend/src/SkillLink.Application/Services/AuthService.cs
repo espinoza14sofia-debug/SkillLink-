@@ -1,166 +1,143 @@
-﻿using SkillLink.Application.DTOs;
+﻿using Microsoft.AspNetCore.Identity;
+using SkillLink.Application.DTOs;
 using SkillLink.Application.Interfaces;
 using SkillLink.Domain.Entities;
+using System;
+using System.Threading.Tasks;
 
-namespace SkillLink.Application.Services;
-
-public class AuthService : IAuthService
+namespace SkillLink.Application.Services
 {
-    private readonly IUsuarioRepository _usuarioRepository;
-    private readonly IPasswordHasher _passwordHasher;
-    private readonly ITokenService _tokenService;
-    private readonly ITokenRecuperacionRepository _tokenRecuperacionRepository;
-
-    public AuthService(
-        IUsuarioRepository usuarioRepository,
-        IPasswordHasher passwordHasher,
-        ITokenService tokenService,
-        ITokenRecuperacionRepository tokenRecuperacionRepository)
+    public class AuthService : IAuthService
     {
-        _usuarioRepository = usuarioRepository;
-        _passwordHasher = passwordHasher;
-        _tokenService = tokenService;
-        _tokenRecuperacionRepository = tokenRecuperacionRepository;
-    }
+        private readonly ITokenRecuperacionRepository _tokenRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IPasswordHasher<Usuario> _passwordHasher;
+        private readonly ITokenService _tokenService;
 
-    public async Task<(bool Exito, string? Error, UsuarioRespuestaDto? Usuario)> RegistrarAsync(RegistroUsuarioDto dto)
-    {
-        if (string.IsNullOrWhiteSpace(dto.Nombre) || string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
+        public AuthService(
+            ITokenRecuperacionRepository tokenRepository,
+            IUsuarioRepository usuarioRepository,
+            IPasswordHasher<Usuario> passwordHasher,
+            ITokenService tokenService)
         {
-            return (false, "Nombre, email y contraseña son obligatorios.", null);
+            _tokenRepository = tokenRepository;
+            _usuarioRepository = usuarioRepository;
+            _passwordHasher = passwordHasher;
+            _tokenService = tokenService;
         }
 
-        var existe = await _usuarioRepository.ExisteEmailAsync(dto.Email);
-        if (existe)
+        public async Task<(bool Exito, string? Error, UsuarioRespuestaDto? Usuario)> RegistrarAsync(UsuarioRegistroDto dto)
         {
-            return (false, "El email ya está registrado.", null);
-        }
-
-        var usuario = new Usuario
-        {
-            Id = Guid.NewGuid(),
-            Nombre = dto.Nombre,
-            Email = dto.Email,
-            PasswordHash = _passwordHasher.HashPassword(dto.Password),
-            Carrera = dto.Carrera,
-            Nivel = 1,
-            Xp = 0,
-            FechaRegistro = DateTime.UtcNow
-        };
-
-        await _usuarioRepository.AgregarAsync(usuario);
-        await _usuarioRepository.GuardarCambiosAsync();
-
-        var respuesta = new UsuarioRespuestaDto
-        {
-            Id = usuario.Id,
-            Nombre = usuario.Nombre,
-            Email = usuario.Email,
-            Carrera = usuario.Carrera,
-            Nivel = usuario.Nivel,
-            Xp = usuario.Xp
-        };
-
-        return (true, null, respuesta);
-    }
-
-    public async Task<(bool Exito, string? Error, LoginRespuestaDto? Resultado)> LoginAsync(LoginDto dto)
-    {
-        if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
-        {
-            return (false, "Email y contraseña son obligatorios.", null);
-        }
-
-        var usuario = await _usuarioRepository.ObtenerPorEmailAsync(dto.Email);
-        if (usuario == null)
-        {
-            return (false, "Credenciales inválidas.", null);
-        }
-
-        var passwordValido = _passwordHasher.VerifyPassword(dto.Password, usuario.PasswordHash);
-        if (!passwordValido)
-        {
-            return (false, "Credenciales inválidas.", null);
-        }
-
-        var token = _tokenService.GenerateToken(usuario.Id, usuario.Email);
-
-        var respuesta = new LoginRespuestaDto
-        {
-            Token = token,
-            Usuario = new UsuarioRespuestaDto
+            var existe = await _usuarioRepository.ObtenerPorEmailAsync(dto.Email);
+            if (existe != null)
             {
-                Id = usuario.Id,
-                Nombre = usuario.Nombre,
-                Email = usuario.Email,
-                Carrera = usuario.Carrera,
-                Nivel = usuario.Nivel,
-                Xp = usuario.Xp
+                return (false, "El correo ya está registrado.", null);
             }
-        };
 
-        return (true, null, respuesta);
-    }
+            var nuevoUsuario = new Usuario
+            {
+                Nombre = dto.Nombre,
+                Email = dto.Email,
+                Carrera = dto.Carrera,
+                FechaRegistro = DateTime.UtcNow
+            };
 
-    public async Task<(bool Exito, string? Error)> SolicitarRecuperacionAsync(SolicitarRecuperacionDto dto)
-    {
-        if (string.IsNullOrWhiteSpace(dto.Email))
-        {
-            return (false, "El email es obligatorio.");
+            nuevoUsuario.PasswordHash = _passwordHasher.HashPassword(nuevoUsuario, dto.Password);
+
+            await _usuarioRepository.AgregarAsync(nuevoUsuario);
+            await _usuarioRepository.GuardarCambiosAsync();
+
+            var respuesta = new UsuarioRespuestaDto
+            {
+                Id = nuevoUsuario.Id,
+                Nombre = nuevoUsuario.Nombre,
+                Email = nuevoUsuario.Email,
+                Carrera = nuevoUsuario.Carrera
+            };
+
+            return (true, null, respuesta);
         }
 
-        var usuario = await _usuarioRepository.ObtenerPorEmailAsync(dto.Email);
-        if (usuario == null)
+        public async Task<(bool Exito, string? Error, LoginRespuestaDto? Resultado)> LoginAsync(LoginDto dto)
         {
-            // No revelamos si el email existe o no, por seguridad
+            var usuario = await _usuarioRepository.ObtenerPorEmailAsync(dto.Email);
+            if (usuario == null)
+            {
+                return (false, "Credenciales inválidas.", null);
+            }
+
+            var verificacion = _passwordHasher.VerifyHashedPassword(usuario, usuario.PasswordHash, dto.Password);
+            if (verificacion == PasswordVerificationResult.Failed)
+            {
+                return (false, "Credenciales inválidas.", null);
+            }
+
+            var token = _tokenService.GenerateToken(usuario.Id, usuario.Email);
+
+            var respuesta = new LoginRespuestaDto
+            {
+                Token = token,
+                Usuario = new UsuarioRespuestaDto
+                {
+                    Id = usuario.Id,
+                    Nombre = usuario.Nombre,
+                    Email = usuario.Email,
+                    Carrera = usuario.Carrera
+                }
+            };
+
+            return (true, null, respuesta);
+        }
+
+        public async Task<(bool Exito, string? Error)> SolicitarRecuperacionAsync(SolicitarRecuperacionDto dto)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorEmailAsync(dto.Email);
+
+            if (usuario == null)
+            {
+                return (true, null);
+            }
+
+            var tokenString = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+
+            var tokenRecuperacion = new TokenRecuperacion
+            {
+                Token = tokenString,
+                UsuarioId = usuario.Id,
+                FechaExpiracion = DateTime.UtcNow.AddHours(2)
+            };
+
+            await _tokenRepository.CrearAsync(tokenRecuperacion);
+            await _tokenRepository.GuardarCambiosAsync();
+
             return (true, null);
         }
 
-        var token = new TokenRecuperacion
+        public async Task<(bool Exito, string? Error)> RestablecerPasswordAsync(RestablecerPasswordDto dto)
         {
-            Id = Guid.NewGuid(),
-            UsuarioId = usuario.Id,
-            Token = Guid.NewGuid().ToString("N"),
-            FechaExpiracion = DateTime.UtcNow.AddMinutes(15),
-            Usado = false
-        };
+            var tokenRecuperacion = await _tokenRepository.ObtenerPorTokenAsync(dto.Token);
 
-        await _tokenRecuperacionRepository.CrearAsync(token);
+            if (tokenRecuperacion == null)
+            {
+                return (false, "El token de recuperación es inválido.");
+            }
 
-        // Simulación de envío de email (se ve en la consola/log del servidor)
-        Console.WriteLine($"[SIMULACIÓN EMAIL] Para: {usuario.Email}");
-        Console.WriteLine($"[SIMULACIÓN EMAIL] Token de recuperación: {token.Token}");
-        Console.WriteLine($"[SIMULACIÓN EMAIL] Expira: {token.FechaExpiracion:u}");
+            if (tokenRecuperacion.FechaExpiracion < DateTime.UtcNow)
+            {
+                return (false, "El token de recuperación ha expirado.");
+            }
 
-        return (true, null);
-    }
+            var usuario = await _usuarioRepository.ObtenerPorIdAsync(tokenRecuperacion.UsuarioId);
+            if (usuario == null)
+            {
+                return (false, "El usuario asociado al token no existe.");
+            }
 
-    public async Task<(bool Exito, string? Error)> RestablecerPasswordAsync(RestablecerPasswordDto dto)
-    {
-        if (string.IsNullOrWhiteSpace(dto.Token) || string.IsNullOrWhiteSpace(dto.NuevaPassword))
-        {
-            return (false, "Token y nueva contraseña son obligatorios.");
+            usuario.PasswordHash = _passwordHasher.HashPassword(usuario, dto.NuevoPassword);
+
+            await _usuarioRepository.GuardarCambiosAsync();
+
+            return (true, null);
         }
-
-        var tokenEntity = await _tokenRecuperacionRepository.ObtenerPorTokenAsync(dto.Token);
-
-        if (tokenEntity == null || tokenEntity.Usado || tokenEntity.FechaExpiracion < DateTime.UtcNow)
-        {
-            return (false, "Token inválido o expirado.");
-        }
-
-        var usuario = await _usuarioRepository.ObtenerPorIdAsync(tokenEntity.UsuarioId);
-        if (usuario == null)
-        {
-            return (false, "Usuario no encontrado.");
-        }
-
-        usuario.PasswordHash = _passwordHasher.HashPassword(dto.NuevaPassword);
-        tokenEntity.Usado = true;
-
-        await _usuarioRepository.GuardarCambiosAsync();
-        await _tokenRecuperacionRepository.GuardarCambiosAsync();
-
-        return (true, null);
     }
 }

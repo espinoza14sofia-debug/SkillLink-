@@ -52,7 +52,14 @@ export default function Dashboard() {
                     const respuestaMisiones = await api.get("/misiones");
                     const miId = String(respuestaPerfil.data.id);
 
-                    const misMisiones = respuestaMisiones.data.filter(
+                    // El endpoint devuelve un array agrupado por equipo:
+                    // [{ equipoId, equipoNombre, misiones: [...] }, ...]
+                    // Hay que aplanar todas las misiones de todos los grupos antes de filtrar.
+                    const todasLasMisiones = (respuestaMisiones.data || []).flatMap(
+                        (grupo) => grupo.misiones || []
+                    );
+
+                    const misMisiones = todasLasMisiones.filter(
                         (m) => String(m.usuarioAsignadoId) === miId
                     );
 
