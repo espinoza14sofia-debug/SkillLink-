@@ -15,6 +15,8 @@ import Mensajes from './pages/Mensajes';
 import Ranking from './pages/Ranking';
 import Perfil from './pages/Perfil';
 import PerfilPublico from './pages/PerfilPublico';
+import OlvideContrasena from './pages/OlvideContrasena';
+import RestablecerContrasena from './pages/RestablecerContrasena';
 
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/olvide-contrasena" element={<OlvideContrasena />} />
+          <Route path="/restablecer-password" element={<RestablecerContrasena />} />
           <Route
             path="/dashboard"
             element={
@@ -117,6 +121,8 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+
+    
   );
 }
 
