@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using SkillLink.Api.Services;
 using SkillLink.Application.Interfaces;
 using SkillLink.Application.Services;
 using SkillLink.Infrastructure.Persistence;
 using SkillLink.Infrastructure.Repositories;
 using SkillLink.Infrastructure.Security;
 using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +66,9 @@ builder.Services.AddScoped<IMensajePrivadoService, MensajePrivadoService>();
 builder.Services.AddScoped<IInvitacionRepository, InvitacionRepository>();
 builder.Services.AddScoped<IInvitacionService, InvitacionService>();
 
-// ==========================
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// ==========================B
 // Base de datos
 // ==========================
 builder.Services.AddDbContext<SkillLinkDbContext>(options =>
