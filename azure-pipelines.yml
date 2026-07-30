@@ -27,9 +27,10 @@ stages:
             workingDirectory: backend
 
           - script: dotnet test SkillLink.sln --no-build --configuration Release --logger trx
-            displayName: 'Ejecutar pruebas unitarias'
+            displayName: 'Ejecutar pruebas unitarias e integración'
             workingDirectory: backend
-            continueOnError: true
+            env:
+              Jwt__Key: $(Jwt.Key)
 
           - task: PublishTestResults@2
             displayName: 'Publicar resultados de pruebas'
@@ -38,6 +39,7 @@ stages:
               testResultsFormat: 'VSTest'
               testResultsFiles: '**/*.trx'
               searchFolder: 'backend'
+              failTaskOnFailedTests: true
 
   - stage: Frontend
     displayName: 'Build Frontend (React + Vite)'
