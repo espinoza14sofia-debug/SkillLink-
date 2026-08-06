@@ -1,92 +1,374 @@
 # SkillLink
 
-Plataforma gamificada de colaboración estudiantil. Los usuarios crean equipos, se organizan en proyectos, completan misiones y ganan XP, niveles e insignias por su progreso.
+## Descripción
 
-## Estado del proyecto
+SkillLink es una plataforma web desarrollada para optimizar la gestión colaborativa de equipos de trabajo, facilitando la administración de usuarios, proyectos, equipos, actividades y comunicación entre sus integrantes. La aplicación implementa una arquitectura desacoplada basada en una API REST y un cliente web moderno, priorizando la seguridad, escalabilidad y mantenibilidad del sistema.
 
-En desarrollo — Sprint 1
+---
 
-## Sprint 1 — Objetivo
+# Tabla de Contenidos
 
-Sentar las bases técnicas del proyecto: repositorio, CI/CD, seguridad y el flujo de registro/login de usuarios. Sin esto no se puede avanzar con equipos, proyectos ni el sistema de XP.
+- Descripción
+- Objetivos
+- Características
+- Arquitectura
+- Tecnologías
+- Estructura del Proyecto
+- Requisitos
+- Instalación
+- Configuración
+- Ejecución
+- Seguridad
+- API REST
+- Funcionalidades
+- Pruebas
+- Futuras Mejoras
+- Autor
+- Licencia
 
-**Features incluidas:**
+---
 
-| # | Feature | Resumen |
-|---|---------|---------|
-| 1 | Configuración del Proyecto | Repositorio, estructura de carpetas, `.env.example`, README |
-| 2 | CI/CD | Pipeline en Azure Pipelines que compila y corre pruebas en cada push |
-| 3 | Seguridad | Hash de contraseñas con BCrypt, generación/validación de JWT, middleware de autorización |
-| 4 | Registro y Autenticación | Registro de usuario, login, y protección de rutas |
+# Objetivos
 
-**Criterio de "Sprint 1 terminado":**
-- El pipeline corre automáticamente en cada push a la rama principal y muestra su estado (éxito/fallo).
-- Un usuario nuevo puede registrarse (email + contraseña) y quedar creado con nivel 1 y 0 XP.
-- Un usuario registrado puede iniciar sesión y recibir un JWT válido.
-- Las rutas protegidas rechazan peticiones sin token o con token expirado.
-- Las contraseñas nunca se guardan en texto plano.
+## Objetivo General
 
-## Estructura del repositorio
+Desarrollar una plataforma web que permita gestionar equipos de trabajo de forma eficiente mediante herramientas para la administración de usuarios, proyectos, actividades y comunicación colaborativa.
 
+## Objetivos Específicos
+
+- Administrar usuarios y autenticación.
+- Gestionar proyectos y equipos.
+- Organizar actividades y misiones.
+- Implementar un sistema de mensajería.
+- Gestionar notificaciones.
+- Garantizar la seguridad mediante JWT.
+- Mantener una arquitectura escalable y modular.
+
+---
+
+# Características
+
+- Autenticación mediante JWT.
+- Gestión de usuarios.
+- Administración de proyectos.
+- Gestión de equipos.
+- Gestión de actividades.
+- Administración de misiones.
+- Sistema de habilidades.
+- Sistema de logros.
+- Sistema de niveles y experiencia (XP).
+- Sistema de ranking.
+- Gestión de rachas.
+- Mensajería entre usuarios.
+- Mensajes privados.
+- Sistema de invitaciones.
+- Notificaciones.
+- Notificaciones Push.
+- Recuperación de contraseña mediante correo electrónico.
+- Documentación automática con Swagger.
+- API REST.
+- Arquitectura en capas.
+
+---
+
+# Arquitectura
+
+SkillLink implementa una arquitectura basada en Clean Architecture, separando las responsabilidades de cada capa para facilitar el mantenimiento y la escalabilidad.
+
+```text
+Frontend (React + Vite)
+        │
+        ▼
+Axios
+        │
+        ▼
+ASP.NET Core Web API
+        │
+        ▼
+Controllers
+        │
+        ▼
+Application
+        │
+        ▼
+Domain
+        │
+        ▼
+Infrastructure
+        │
+        ▼
+SQL Server
 ```
-/backend      → API, lógica de negocio, acceso a datos
-/frontend     → cliente web
-/docs         → documentación adicional (diagramas, decisiones técnicas)
-.env.example  → variables de entorno de referencia
-azure-pipelines.yml → definición del pipeline CI/CD
+
+---
+
+# Tecnologías
+
+## Frontend
+
+- React
+- Vite
+- JavaScript
+- Tailwind CSS
+- Axios
+- React Router DOM
+- ESLint
+- pnpm
+
+## Backend
+
+- ASP.NET Core Web API
+- C#
+- Entity Framework Core
+- SQL Server
+- JWT Authentication
+- Swagger / OpenAPI
+- Dependency Injection
+- CORS
+
+## Base de Datos
+
+- SQL Server
+
+## Herramientas
+
+- Visual Studio 2022
+- Visual Studio Code
+- Git
+- GitHub
+- Postman
+
+---
+
+# Estructura del Proyecto
+
+```text
+SkillLink
+│
+├── Frontend
+│   ├── public
+│   ├── src
+│   │   ├── assets
+│   │   ├── components
+│   │   ├── pages
+│   │   ├── services
+│   │   ├── hooks
+│   │   └── styles
+│   ├── package.json
+│   └── vite.config.js
+│
+├── src
+│   ├── SkillLink.Api
+│   ├── SkillLink.Application
+│   ├── SkillLink.Domain
+│   └── SkillLink.Infrastructure
+│
+├── tests
+│   └── SkillLink.Tests
+│
+└── SkillLink.sln
 ```
 
-## Cómo levantar el proyecto localmente
+---
 
-> Ajusta estos comandos al stack real una vez definido (Node, .NET, etc.).
+# Requisitos
 
-1. Clonar el repositorio:
+Antes de ejecutar el proyecto es necesario contar con:
+
+- .NET SDK 8.0 o superior
+- Node.js
+- pnpm
+- SQL Server
+- Git
+
+---
+
+# Instalación
+
+## Clonar el repositorio
+
+### GitHub
+
+
+https://github.com/espinoza14sofia-debug/SkillLink-.git
+
+### Azure DevOps
+
+Repositorio utilizado para la gestión del desarrollo mediante Azure DevOps:
+
+https://sofiavargas11@dev.azure.com/sofiavargas11/SkillLink/_git/SkillLink.Api
+
+## Backend
+
 ```bash
-   git clone <url-del-repositorio>
-   cd skilllink
+cd src/SkillLink.Api
+
+dotnet restore
+
+dotnet ef database update
+
+dotnet run
 ```
-2. Copiar las variables de entorno:
+
+## Frontend
+
 ```bash
-   cp .env.example .env
+cd Frontend
+
+pnpm install
+
+pnpm dev
 ```
-   y completar los valores (conexión a base de datos, secreto JWT, etc.).
-3. Backend:
+
+---
+
+# Configuración
+
+## Variables de entorno del Backend
+
+```env
+ConnectionStrings__DefaultConnection=
+
+Jwt__Key=
+
+Jwt__Issuer=
+
+Jwt__Audience=
+```
+
+## Variables de entorno del Frontend
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+---
+
+# Ejecución
+
+Backend
+
 ```bash
-   cd backend
-   # instalar dependencias y levantar el servicio
+dotnet run
 ```
-4. Frontend:
+
+Frontend
+
 ```bash
-   cd frontend
-   # instalar dependencias y levantar el cliente
+pnpm dev
 ```
-5. Verificar que el backend expone `POST /api/auth/register` y `POST /api/auth/login`.
 
-## Autenticación
+Compilar Frontend
 
-- Contraseñas: hash con **BCrypt**, nunca texto plano.
-- Sesión: **JWT** con expiración configurable.
-- Rutas protegidas: requieren header `Authorization: Bearer <token>`; tokens inválidos o expirados se rechazan con 401.
+```bash
+pnpm build
+```
 
-## CI/CD
+Vista previa
 
-El pipeline (`azure-pipelines.yml`) se dispara en cada push a la rama principal y ejecuta:
-1. Restauración de dependencias
-2. Compilación
-3. Pruebas automáticas
+```bash
+pnpm preview
+```
 
-El resultado (éxito/fallo) queda visible en la pestaña **Pipelines** de Azure DevOps.
+---
 
-## Convenciones de trabajo
+# Seguridad
 
-- **Ramas:** `feature/<nombre-corto>` a partir de `main`/`develop`.
-- **Commits:** mensajes breves y descriptivos, en español, en modo imperativo (ej. `Agrega endpoint de login`).
-- **Pull Requests:** vinculados al PBI/Task correspondiente en Azure Boards; requieren pipeline en verde antes de mergear.
+El sistema implementa mecanismos de seguridad como:
 
-## Próximos sprints
+- Autenticación mediante JSON Web Token (JWT).
+- Hash de contraseñas mediante Password Hasher de ASP.NET Identity.
+- Control de acceso mediante autorización.
+- Configuración de CORS.
+- Protección de endpoints.
+- Validación de tokens.
+- Documentación segura mediante Swagger.
 
-Una vez cerrado el Sprint 1, el siguiente bloque de trabajo cubre perfil de usuario, equipos y gestión de proyectos (Features 5 a 7 del backlog).
+---
 
-## Licencia
+# API REST
 
-Pendiente de definir.
+La aplicación expone una API REST para la comunicación entre el frontend y el backend.
+
+Algunos módulos disponibles son:
+
+- Auth
+- Usuarios
+- Equipos
+- Proyectos
+- Actividades
+- Misiones
+- Habilidades
+- Logros
+- Niveles
+- Ranking
+- Rachas
+- Invitaciones
+- Mensajes
+- Mensajes Privados
+- Notificaciones
+
+---
+
+# Funcionalidades
+
+- Registro e inicio de sesión.
+- Gestión de usuarios.
+- Administración de proyectos.
+- Gestión de equipos.
+- Gestión de actividades.
+- Administración de misiones.
+- Sistema de experiencia (XP).
+- Sistema de niveles.
+- Sistema de logros.
+- Ranking de usuarios.
+- Rachas de actividad.
+- Mensajería.
+- Mensajes privados.
+- Invitaciones.
+- Recuperación de contraseña.
+- Envío de correos electrónicos.
+- Notificaciones Push.
+- Panel administrativo.
+
+---
+
+# Pruebas
+
+El proyecto cuenta con un proyecto de pruebas independiente.
+
+```text
+tests
+└── SkillLink.Tests
+```
+
+Para ejecutarlas:
+
+```bash
+dotnet test
+```
+
+---
+
+# Futuras Mejoras
+
+- Dashboard analítico.
+- Calendario colaborativo.
+- Reportes en PDF y Excel.
+- Integración con servicios externos.
+- Aplicación móvil.
+- Mayor cobertura de pruebas automatizadas.
+
+---
+
+# Autor
+
+**Sofía Espinoza**
+
+GitHub: https://github.com/espinoza14sofia-debug
+
+---
+
+# Licencia
+
+Este proyecto fue desarrollado con fines académicos y de aprendizaje. Su distribución y utilización deben respetar los créditos correspondientes a la autora.
