@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, Save, Plus, X, Edit2, Check, Award, Bell, BellOff } from 'lucide-react'
+import { Camera, Save, Plus, X, Edit2, Check, Award, Bell, BellOff, Flame, Users, Trophy, CheckCircle2 } from 'lucide-react'
 import api from '../services/api'
-import { suscribirseAPush, desuscribirseDePush } from '../services/push'
+import { suscribirseAPush, desuscribirseDePush, obtenerEstadoPermiso } from '../services/push'
 import Navbar from '../components/Navbar'
-import { Avatar, Button, GlassCard, Input, XPBar } from '../components/ui'
+import { Avatar, Button, GlassCard, Input, XPBar, Badge } from '../components/ui'
 
 const levelColors = {
-  'Básico': '#778DA9',
-  'Intermedio': '#9db5cc',
-  'Avanzado': '#E0E1DD'
+  'Básico': '#4E7276',
+  'Intermedio': '#006D77',
+  'Avanzado': '#0F3538'
 }
 
 const LADO_MAXIMO_PX = 400
 const CALIDAD_JPEG = 0.8
 const TAMANO_MAXIMO_BYTES = 1.5 * 1024 * 1024
+const TEXTO_CONFIRMACION = 'ELIMINAR'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -30,6 +31,14 @@ export default function Profile() {
 
   const [pushActivo, setPushActivo] = useState(false)
   const [cargandoPush, setCargandoPush] = useState(false)
+  // 'no-soportado' | 'denied' | 'default' (pendiente) | 'granted-sin-suscripcion' | 'activo'
+  const [estadoPush, setEstadoPush] = useState('default')
+
+  // --- Eliminar cuenta ---
+  const [mostrarConfirmDelete, setMostrarConfirmDelete] = useState(false)
+  const [confirmacionTexto, setConfirmacionTexto] = useState('')
+  const [eliminando, setEliminando] = useState(false)
+  const [errorDelete, setErrorDelete] = useState("")
 
   const [form, setForm] = useState({
     name: '',
@@ -52,14 +61,26 @@ export default function Profile() {
   }, [])
 
   const verificarSuscripcionPush = async () => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    const permiso = obtenerEstadoPermiso()
+    if (permiso === 'no-soportado') {
+      setEstadoPush('no-soportado')
+      return
+    }
+    if (permiso === 'denied') {
+      setEstadoPush('denied')
+      return
+    }
     try {
       const registro = await navigator.serviceWorker.getRegistration()
-      if (!registro) return
-      const suscripcion = await registro.pushManager.getSubscription()
-      setPushActivo(!!suscripcion)
+      const suscripcion = registro ? await registro.pushManager.getSubscription() : null
+      if (suscripcion) {
+        setPushActivo(true)
+        setEstadoPush('activo')
+      } else {
+        setEstadoPush(permiso === 'granted' ? 'granted-sin-suscripcion' : 'default')
+      }
     } catch {
-      setPushActivo(false)
+      setEstadoPush(permiso === 'granted' ? 'granted-sin-suscripcion' : 'default')
     }
   }
 
@@ -70,15 +91,21 @@ export default function Profile() {
       if (pushActivo) {
         await desuscribirseDePush()
         setPushActivo(false)
+        setEstadoPush(Notification.permission === 'granted' ? 'granted-sin-suscripcion' : 'default')
       } else {
-        const exito = await suscribirseAPush()
-        if (!exito) {
-          setError("No se pudo activar las notificaciones. Verificá los permisos del navegador.")
+        const resultado = await suscribirseAPush()
+        if (resultado.ok) {
+          setPushActivo(true)
+          setEstadoPush('activo')
+        } else {
+          setPushActivo(false)
+          setEstadoPush(resultado.reason === 'pendiente' ? 'default' : resultado.reason)
+          if (resultado.reason === 'error') setError("Ocurrió un error al activar las notificaciones. Intentá de nuevo.")
         }
-        setPushActivo(exito)
       }
     } catch (err) {
       setError("Ocurrió un error al cambiar el estado de las notificaciones.")
+      setEstadoPush('error')
     } finally {
       setCargandoPush(false)
     }
@@ -114,7 +141,7 @@ export default function Profile() {
       }
 
       setForm(perfilCompleto)
-      
+
       const habs = (data.habilidades || []).map(h => ({
         id: h.id,
         nombre: h.nombre,
@@ -262,6 +289,27 @@ export default function Profile() {
     }
   }
 
+  const handleEliminarCuenta = async () => {
+    setEliminando(true)
+    setErrorDelete("")
+    try {
+      await api.delete(`/usuarios/${perfil.id}`)
+      localStorage.removeItem('usuario')
+      localStorage.removeItem('token')
+      navigate('/login')
+    } catch (err) {
+      setErrorDelete(err.response?.data?.error || "No se pudo eliminar la cuenta. Intentá de nuevo.")
+      setEliminando(false)
+    }
+  }
+
+  const cerrarModalDelete = () => {
+    if (eliminando) return
+    setMostrarConfirmDelete(false)
+    setConfirmacionTexto('')
+    setErrorDelete("")
+  }
+
   if (cargando) {
     return (
       <div>
@@ -277,11 +325,11 @@ export default function Profile() {
     <div>
       <Navbar />
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '90px 24px 32px' }}>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
           <div>
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: 700, margin: '0 0 4px' }}>Mi Perfil</h1>
-            <p style={{ color: '#778DA9', margin: 0 }}>
+            <p style={{ color: '#4E7276', margin: 0 }}>
               {isEditing ? 'Actualiza tu información y habilidades' : 'Consulta tus datos y progreso'}
             </p>
           </div>
@@ -308,15 +356,15 @@ export default function Profile() {
         </div>
 
         {error && (
-          <div style={{ padding: '10px 14px', borderRadius: '10px', background: 'rgba(201, 112, 112, 0.12)', color: '#c97070', fontSize: '13px', marginBottom: '16px' }}>
+          <div style={{ padding: '10px 14px', borderRadius: '10px', background: 'rgba(201, 112, 112, 0.12)', color: '#C4453C', fontSize: '13px', marginBottom: '16px' }}>
             {error}
           </div>
         )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '20px' }}>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            
+
             <GlassCard style={{ padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <div style={{ position: 'relative' }}>
@@ -324,7 +372,7 @@ export default function Profile() {
                     <img
                       src={form.foto}
                       alt="Avatar"
-                      style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #c49a3f' }}
+                      style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #0F3538' }}
                     />
                   ) : (
                     <Avatar name={form.name || 'Usuario'} size={80} ring="gold" level={perfil?.nivel || 1} />
@@ -339,12 +387,12 @@ export default function Profile() {
                         style={{
                           position: 'absolute', bottom: 0, right: 0,
                           width: 28, height: 28, borderRadius: '50%',
-                          background: '#415A77', border: '2px solid #0D1B2A',
+                          background: '#006D77', border: '2px solid #EDF6F9',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           cursor: 'pointer',
                         }}
                       >
-                        <Camera size={13} color="#E0E1DD" />
+                        <Camera size={13} color="#FFFFFF" />
                       </button>
                       <input
                         ref={inputFileRef}
@@ -357,21 +405,48 @@ export default function Profile() {
                   )}
                 </div>
 
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, margin: '0 0 4px', fontSize: '18px' }}>
                     {form.name || 'Sin nombre'}
                   </h3>
-                  <p style={{ color: '#778DA9', margin: '0 0 8px', fontSize: '13px' }}>
+                  <p style={{ color: '#4E7276', margin: '0 0 8px', fontSize: '13px' }}>
                     Nivel {perfil?.nivel || 1} · {perfil?.rango || 'Principiante'}
                   </p>
                   <XPBar value={perfil?.xp || 0} max={(perfil?.nivel || 1) * 1000} showValues />
                 </div>
               </div>
+
+              {!isEditing && form.bio && (
+                <p style={{ color: '#4E7276', fontSize: '13px', lineHeight: 1.5, margin: '18px 0 0', whiteSpace: 'pre-line' }}>
+                  {form.bio}
+                </p>
+              )}
+
+              {!isEditing && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(15,53,56,0.08)' }}>
+                  {perfil?.racha > 0 && (
+                    <Badge variant="warning"><Flame size={12} /> {perfil.racha} días de racha</Badge>
+                  )}
+                  {perfil?.equipo && (
+                    <Badge variant="secondary"><Users size={12} /> {perfil.equipo}</Badge>
+                  )}
+                  {perfil?.misionesCompletadas > 0 && (
+                    <Badge variant="success"><CheckCircle2 size={12} /> {perfil.misionesCompletadas} misiones completadas</Badge>
+                  )}
+                  {perfil?.posicionGlobal && (
+                    <Badge variant="accent"><Trophy size={12} /> #{perfil.posicionGlobal} en el ranking</Badge>
+                  )}
+                  {skills.slice(0, 4).map(sk => (
+                    <Badge key={sk.id} variant="neutral">{sk.nombre}</Badge>
+                  ))}
+                  {skills.length > 4 && <Badge variant="neutral">+{skills.length - 4} más</Badge>}
+                </div>
+              )}
             </GlassCard>
 
             <GlassCard style={{ padding: '24px' }}>
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', fontWeight: 600, margin: '0 0 20px' }}>Información personal</h2>
-              
+
               {isEditing ? (
                 <>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -383,7 +458,7 @@ export default function Profile() {
                     <Input label="LinkedIn" value={form.linkedin} onChange={setField('linkedin')} placeholder="URL de tu perfil" />
                   </div>
                   <div style={{ marginTop: '16px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 500, color: '#778DA9', display: 'block', marginBottom: '6px' }}>Biografía</label>
+                    <label style={{ fontSize: '13px', fontWeight: 500, color: '#4E7276', display: 'block', marginBottom: '6px' }}>Biografía</label>
                     <textarea
                       value={form.bio}
                       onChange={setField('bio')}
@@ -391,9 +466,9 @@ export default function Profile() {
                       placeholder="Cuéntanos sobre ti…"
                       style={{
                         width: '100%', padding: '12px 14px',
-                        background: 'rgba(224, 225, 221, 0.06)',
-                        border: '1px solid rgba(224, 225, 221, 0.15)',
-                        borderRadius: '12px', color: '#E0E1DD', fontSize: '14px',
+                        background: 'rgba(15, 53, 56, 0.06)',
+                        border: '1px solid rgba(15, 53, 56, 0.15)',
+                        borderRadius: '12px', color: '#0F3538', fontSize: '14px',
                         outline: 'none', resize: 'vertical', fontFamily: 'var(--font-body)',
                         boxSizing: 'border-box',
                       }}
@@ -404,34 +479,34 @@ export default function Profile() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div>
-                      <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '4px' }}>Nombre completo</span>
-                      <span style={{ fontSize: '14px', color: '#E0E1DD', fontWeight: 500 }}>{form.name || '—'}</span>
+                      <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '4px' }}>Nombre completo</span>
+                      <span style={{ fontSize: '14px', color: '#0F3538', fontWeight: 500 }}>{form.name || '—'}</span>
                     </div>
                     <div>
-                      <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '4px' }}>Correo institucional</span>
-                      <span style={{ fontSize: '14px', color: '#E0E1DD', fontWeight: 500 }}>{form.email || '—'}</span>
+                      <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '4px' }}>Correo institucional</span>
+                      <span style={{ fontSize: '14px', color: '#0F3538', fontWeight: 500 }}>{form.email || '—'}</span>
                     </div>
                     <div>
-                      <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '4px' }}>Carrera</span>
-                      <span style={{ fontSize: '14px', color: '#E0E1DD', fontWeight: 500 }}>{form.career || '—'}</span>
+                      <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '4px' }}>Carrera</span>
+                      <span style={{ fontSize: '14px', color: '#0F3538', fontWeight: 500 }}>{form.career || '—'}</span>
                     </div>
                     <div>
-                      <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '4px' }}>Semestre</span>
-                      <span style={{ fontSize: '14px', color: '#E0E1DD', fontWeight: 500 }}>{form.semester || '—'}</span>
+                      <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '4px' }}>Semestre</span>
+                      <span style={{ fontSize: '14px', color: '#0F3538', fontWeight: 500 }}>{form.semester || '—'}</span>
                     </div>
                     <div>
-                      <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '4px' }}>GitHub</span>
-                      <span style={{ fontSize: '14px', color: '#E0E1DD', fontWeight: 500 }}>{form.github || '—'}</span>
+                      <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '4px' }}>GitHub</span>
+                      <span style={{ fontSize: '14px', color: '#0F3538', fontWeight: 500 }}>{form.github || '—'}</span>
                     </div>
                     <div>
-                      <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '4px' }}>LinkedIn</span>
-                      <span style={{ fontSize: '14px', color: '#E0E1DD', fontWeight: 500 }}>{form.linkedin || '—'}</span>
+                      <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '4px' }}>LinkedIn</span>
+                      <span style={{ fontSize: '14px', color: '#0F3538', fontWeight: 500 }}>{form.linkedin || '—'}</span>
                     </div>
                   </div>
-                  
+
                   <div style={{ marginTop: '8px' }}>
-                    <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '4px' }}>Biografía</span>
-                    <p style={{ fontSize: '14px', color: '#E0E1DD', margin: 0, lineHeight: '1.5', whiteSpace: 'pre-line' }}>
+                    <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '4px' }}>Biografía</span>
+                    <p style={{ fontSize: '14px', color: '#0F3538', margin: 0, lineHeight: '1.5', whiteSpace: 'pre-line' }}>
                       {form.bio || 'Sin biografía añadida.'}
                     </p>
                   </div>
@@ -445,7 +520,7 @@ export default function Profile() {
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    style={{ fontSize: '13px', color: '#778DA9', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    style={{ fontSize: '13px', color: '#4E7276', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                   >
                     <Edit2 size={13} /> Gestionar
                   </button>
@@ -458,19 +533,19 @@ export default function Profile() {
                     <div key={sk.id} style={{
                       display: 'flex', alignItems: 'center', gap: '8px',
                       padding: '7px 12px', borderRadius: '999px',
-                      background: 'rgba(65, 90, 119, 0.2)', border: '1px solid rgba(65, 90, 119, 0.35)',
+                      background: 'rgba(0, 109, 119, 0.2)', border: '1px solid rgba(0, 109, 119, 0.35)',
                     }}>
-                      <span style={{ fontSize: '13px', fontWeight: 500, color: '#E0E1DD' }}>{sk.nombre}</span>
-                      <span style={{ fontSize: '11px', color: levelColors[sk.nivel] || '#778DA9' }}>{sk.nivel}</span>
+                      <span style={{ fontSize: '13px', fontWeight: 500, color: '#0F3538' }}>{sk.nombre}</span>
+                      <span style={{ fontSize: '11px', color: levelColors[sk.nivel] || '#4E7276' }}>{sk.nivel}</span>
                       {isEditing && (
-                        <button onClick={() => removeSkill(sk.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#415A77' }}>
+                        <button onClick={() => removeSkill(sk.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#006D77' }}>
                           <X size={13} />
                         </button>
                       )}
                     </div>
                   ))
                 ) : (
-                  <p style={{ color: '#778DA9', fontSize: '13px', margin: 0 }}>No se han agregado habilidades.</p>
+                  <p style={{ color: '#4E7276', fontSize: '13px', margin: 0 }}>No se han agregado habilidades.</p>
                 )}
               </div>
 
@@ -482,18 +557,18 @@ export default function Profile() {
                     onKeyDown={e => e.key === 'Enter' && addSkill()}
                     placeholder="Agregar habilidad…"
                     style={{
-                      flex: 1, padding: '9px 14px', background: 'rgba(224,225,221,0.06)',
-                      border: '1px solid rgba(224,225,221,0.12)', borderRadius: '999px',
-                      color: '#E0E1DD', fontSize: '13px', outline: 'none', fontFamily: 'var(--font-body)',
+                      flex: 1, padding: '9px 14px', background: 'rgba(15,53,56,0.06)',
+                      border: '1px solid rgba(15,53,56,0.12)', borderRadius: '999px',
+                      color: '#0F3538', fontSize: '13px', outline: 'none', fontFamily: 'var(--font-body)',
                     }}
                   />
                   <select
                     value={newSkillLevel}
                     onChange={e => setNewSkillLevel(e.target.value)}
                     style={{
-                      padding: '9px 12px', background: 'rgba(13, 27, 42, 0.8)',
-                      border: '1px solid rgba(224,225,221,0.12)', borderRadius: '999px',
-                      color: '#E0E1DD', fontSize: '13px', outline: 'none', fontFamily: 'var(--font-body)', cursor: 'pointer'
+                      padding: '9px 12px', background: 'rgba(15,53,56,0.06)',
+                      border: '1px solid rgba(15,53,56,0.12)', borderRadius: '999px',
+                      color: '#0F3538', fontSize: '13px', outline: 'none', fontFamily: 'var(--font-body)', cursor: 'pointer'
                     }}
                   >
                     <option value="Básico">Básico</option>
@@ -502,9 +577,9 @@ export default function Profile() {
                   </select>
                   <button onClick={addSkill} style={{
                     width: 36, height: 36, borderRadius: '50%', border: 'none',
-                    background: '#415A77', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                    background: '#006D77', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                   }}>
-                    <Plus size={16} color="#E0E1DD" />
+                    <Plus size={16} color="#FFFFFF" />
                   </button>
                 </div>
               )}
@@ -514,38 +589,51 @@ export default function Profile() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <GlassCard style={{ padding: '20px' }}>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 14px' }}>Notificaciones</h3>
-              <p style={{ color: '#778DA9', fontSize: '12px', margin: '0 0 14px', lineHeight: 1.5 }}>
+              <p style={{ color: '#4E7276', fontSize: '12px', margin: '0 0 14px', lineHeight: 1.5 }}>
                 Recibí avisos en tu navegador cuando ganes XP, subas de nivel, desbloquees insignias o te inviten a un equipo.
               </p>
+
+              {estadoPush === 'no-soportado' && (
+                <Badge variant="neutral" style={{ marginBottom: '12px', width: '100%', justifyContent: 'center', padding: '8px' }}>
+                  Tu navegador no es compatible
+                </Badge>
+              )}
+              {estadoPush === 'denied' && (
+                <Badge variant="error" style={{ marginBottom: '12px', width: '100%', justifyContent: 'center', padding: '8px' }}>
+                  Permiso rechazado — habilitalo desde el navegador
+                </Badge>
+              )}
+              {estadoPush === 'activo' && (
+                <Badge variant="success" style={{ marginBottom: '12px', width: '100%', justifyContent: 'center', padding: '8px' }}>
+                  Notificaciones activadas
+                </Badge>
+              )}
+              {estadoPush === 'error' && (
+                <Badge variant="error" style={{ marginBottom: '12px', width: '100%', justifyContent: 'center', padding: '8px' }}>
+                  Error al activar las notificaciones
+                </Badge>
+              )}
+              {(estadoPush === 'default' || estadoPush === 'granted-sin-suscripcion') && (
+                <Badge variant="warning" style={{ marginBottom: '12px', width: '100%', justifyContent: 'center', padding: '8px' }}>
+                  Permiso pendiente
+                </Badge>
+              )}
+
               <Button
                 variant={pushActivo ? 'ghost' : 'primary'}
                 size="sm"
                 onClick={handleTogglePush}
-                disabled={cargandoPush}
+                disabled={cargandoPush || estadoPush === 'no-soportado' || estadoPush === 'denied'}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               >
                 {pushActivo ? <BellOff size={15} /> : <Bell size={15} />}
                 {cargandoPush ? 'Procesando…' : pushActivo ? 'Desactivar notificaciones' : 'Activar notificaciones'}
               </Button>
-            </GlassCard>
-
-            <GlassCard style={{ padding: '20px' }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 16px' }}>Estadísticas</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {[
-                  { label: 'XP total', value: perfil?.xp?.toLocaleString() || '0', mono: true },
-                  { label: 'Nivel', value: perfil?.nivel || '1', mono: true },
-                  { label: 'Misiones completadas', value: perfil?.misionesCompletadas || '0', mono: true },
-                  { label: 'Posición global', value: perfil?.posicionGlobal ? `#${perfil.posicionGlobal}` : '—', mono: true },
-                  { label: 'Racha actual', value: perfil?.racha ? `${perfil.racha} días` : '0 días', mono: false },
-                  { label: 'Equipo', value: perfil?.equipo || 'Sin equipo', mono: false },
-                ].map(({ label, value, mono }) => (
-                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid rgba(224,225,221,0.06)' }}>
-                    <span style={{ fontSize: '13px', color: '#778DA9' }}>{label}</span>
-                    <span style={{ fontFamily: mono ? 'var(--font-mono)' : 'var(--font-body)', fontSize: '14px', fontWeight: 600, color: '#E0E1DD' }}>{value}</span>
-                  </div>
-                ))}
-              </div>
+              {estadoPush === 'denied' && (
+                <p style={{ color: '#4E7276', fontSize: '11px', margin: '8px 0 0', textAlign: 'center' }}>
+                  Rechazaste el permiso antes. Cambialo en la configuración del sitio, en tu navegador.
+                </p>
+              )}
             </GlassCard>
 
             <GlassCard style={{ padding: '20px' }}>
@@ -555,21 +643,29 @@ export default function Profile() {
                   perfil.insignias.map((insignia) => (
                     <div key={insignia.id} title={insignia.nombre} style={{
                       width: 40, height: 40, borderRadius: '50%',
-                      background: 'rgba(65, 90, 119, 0.2)', border: '1px solid rgba(65, 90, 119, 0.35)',
+                      background: 'rgba(0, 109, 119, 0.2)', border: '1px solid rgba(0, 109, 119, 0.35)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center'
                     }}>
-                      <Award size={20} color="#c49a3f" />
+                      <Award size={20} color="#006D77" />
                     </div>
                   ))
                 ) : (
-                  <p style={{ color: '#778DA9', fontSize: '13px', margin: 0 }}>Aún no has ganado insignias.</p>
+                  <p style={{ color: '#4E7276', fontSize: '13px', margin: 0 }}>Aún no has ganado insignias.</p>
                 )}
               </div>
             </GlassCard>
 
             <GlassCard style={{ padding: '20px' }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 14px', color: '#c97070' }}>Zona de peligro</h3>
-              <Button variant="danger" size="sm" style={{ width: '100%' }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 14px', color: '#C4453C' }}>Zona de peligro</h3>
+              <p style={{ color: '#4E7276', fontSize: '12px', margin: '0 0 12px', lineHeight: 1.5 }}>
+                Esta acción es permanente. Se eliminará tu perfil, habilidades y progreso, y no podrás recuperarlos.
+              </p>
+              <Button
+                variant="danger"
+                size="sm"
+                style={{ width: '100%' }}
+                onClick={() => setMostrarConfirmDelete(true)}
+              >
                 Eliminar cuenta
               </Button>
             </GlassCard>
@@ -577,6 +673,58 @@ export default function Profile() {
 
         </div>
       </div>
+
+      {mostrarConfirmDelete && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(15,53,56,0.6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '16px'
+          }}
+          onClick={cerrarModalDelete}
+        >
+          <GlassCard
+            style={{ padding: '28px', maxWidth: '400px', width: '100%' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ margin: '0 0 12px', color: '#C4453C', fontFamily: 'var(--font-display)' }}>¿Eliminar tu cuenta?</h3>
+            <p style={{ fontSize: '13px', color: '#4E7276', lineHeight: 1.5, margin: '0 0 16px' }}>
+              Esta acción no se puede deshacer. Se borrará tu perfil, habilidades, progreso, insignias
+              y mensajes de forma permanente. Escribí <strong>{TEXTO_CONFIRMACION}</strong> para confirmar.
+            </p>
+
+            {errorDelete && (
+              <div style={{ padding: '10px 14px', borderRadius: '10px', background: 'rgba(201, 112, 112, 0.12)', color: '#C4453C', fontSize: '13px', marginBottom: '14px' }}>
+                {errorDelete}
+              </div>
+            )}
+
+            <input
+              value={confirmacionTexto}
+              onChange={e => setConfirmacionTexto(e.target.value)}
+              placeholder={TEXTO_CONFIRMACION}
+              autoFocus
+              style={{
+                width: '100%', padding: '10px 14px', borderRadius: '8px',
+                border: '1px solid rgba(15,53,56,0.15)', marginBottom: '16px',
+                boxSizing: 'border-box', fontFamily: 'var(--font-body)', fontSize: '14px'
+              }}
+            />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <Button variant="ghost" style={{ flex: 1 }} onClick={cerrarModalDelete} disabled={eliminando}>
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                style={{ flex: 1 }}
+                onClick={handleEliminarCuenta}
+                disabled={confirmacionTexto !== TEXTO_CONFIRMACION || eliminando}
+              >
+                {eliminando ? 'Eliminando…' : 'Confirmar'}
+              </Button>
+            </div>
+          </GlassCard>
+        </div>
+      )}
     </div>
   )
 }

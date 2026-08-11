@@ -62,11 +62,11 @@ export default function PanelRoles({ equipoId }) {
         {miembros.map(m => (
           <li key={m.usuarioId} className="miembro-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
             <div className="miembro-info" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div className="miembro-avatar" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#415A77", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", color: "#fff" }}>
+              <div className="miembro-avatar" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#006D77", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", color: "#fff" }}>
                 {m.nombre.charAt(0).toUpperCase()}
               </div>
-              <span className="miembro-nombre" style={{ color: "#E0E1DD", fontWeight: 500 }}>{m.nombre}</span>
-              <span className={`rol-badge ${m.rol.toLowerCase()}`} style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "4px", background: m.rol === "Lider" ? "rgba(196, 154, 63, 0.2)" : "rgba(119, 141, 169, 0.2)", color: m.rol === "Lider" ? "#c49a3f" : "#778DA9" }}>
+              <span className="miembro-nombre" style={{ color: "#0F3538", fontWeight: 500 }}>{m.nombre}</span>
+              <span className={`rol-badge ${m.rol.toLowerCase()}`} style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "4px", background: m.rol === "Lider" ? "rgba(15, 53, 56, 0.2)" : "rgba(78, 114, 118, 0.2)", color: m.rol === "Lider" ? "#0F3538" : "#4E7276" }}>
                 {m.rol}
               </span>
             </div>
@@ -87,10 +87,10 @@ export default function PanelRoles({ equipoId }) {
                   onChange={e => cambiarRol(m.usuarioId, Number(e.target.value), m.nombre)} 
                   defaultValue=""
                   style={{
-                    background: 'rgba(224,225,221,0.06)',
-                    border: '1px solid rgba(224,225,221,0.15)',
+                    background: 'rgba(15,53,56,0.06)',
+                    border: '1px solid rgba(15,53,56,0.15)',
                     borderRadius: '8px',
-                    color: '#E0E1DD',
+                    color: '#0F3538',
                     fontSize: '11px',
                     padding: '4px 8px',
                   }}

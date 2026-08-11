@@ -5,10 +5,12 @@ namespace SkillLink.Application.Services;
 public class RachaService : IRachaService
 {
     private readonly IUsuarioRepository _usuarioRepository;
+    private readonly ILogroService _logroService;
 
-    public RachaService(IUsuarioRepository usuarioRepository)
+    public RachaService(IUsuarioRepository usuarioRepository, ILogroService logroService)
     {
         _usuarioRepository = usuarioRepository;
+        _logroService = logroService;
     }
 
     public async Task<int> RegistrarActividadAsync(Guid usuarioId)
@@ -46,6 +48,11 @@ public class RachaService : IRachaService
 
         usuario.UltimaActividad = DateTime.UtcNow;
         await _usuarioRepository.GuardarCambiosAsync();
+
+        // La racha ya quedó persistida arriba, así que al evaluar aquí mismo
+        // "racha_dias" se compara contra el valor real y recién actualizado,
+        // no contra el que tenía antes de este registro de actividad.
+        await _logroService.EvaluarYOtorgarAsync(usuarioId);
 
         return usuario.RachaActual;
     }

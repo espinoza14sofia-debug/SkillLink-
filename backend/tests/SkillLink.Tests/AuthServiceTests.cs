@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using SkillLink.Application.DTOs;
 using SkillLink.Application.Interfaces;
@@ -14,6 +15,8 @@ public class AuthServiceTests
     private readonly Mock<IPasswordHasher<Usuario>> _passwordHasherMock;
     private readonly Mock<ITokenService> _tokenServiceMock;
     private readonly Mock<ITokenRecuperacionRepository> _tokenRecuperacionRepositoryMock;
+    private readonly Mock<IEmailService> _emailServiceMock;
+    private readonly Mock<IConfiguration> _configurationMock;
     private readonly AuthService _authService;
 
     public AuthServiceTests()
@@ -22,12 +25,15 @@ public class AuthServiceTests
         _passwordHasherMock = new Mock<IPasswordHasher<Usuario>>();
         _tokenServiceMock = new Mock<ITokenService>();
         _tokenRecuperacionRepositoryMock = new Mock<ITokenRecuperacionRepository>();
-
+        _emailServiceMock = new Mock<IEmailService>();
+        _configurationMock = new Mock<IConfiguration>();
         _authService = new AuthService(
             _tokenRecuperacionRepositoryMock.Object,
             _usuarioRepositoryMock.Object,
             _passwordHasherMock.Object,
-            _tokenServiceMock.Object
+            _tokenServiceMock.Object,
+            _emailServiceMock.Object,
+            _configurationMock.Object
         );
     }
 

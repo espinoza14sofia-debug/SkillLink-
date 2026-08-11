@@ -15,6 +15,7 @@ import Mensajes from './pages/Mensajes';
 import Ranking from './pages/Ranking';
 import Perfil from './pages/Perfil';
 import PerfilPublico from './pages/PerfilPublico';
+import BuscarPorHabilidad from './pages/BuscarPorHabilidad';
 import OlvideContrasena from './pages/OlvideContrasena';
 import RestablecerContrasena from './pages/RestablecerContrasena';
 
@@ -114,6 +115,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <PerfilPublico />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/buscar-habilidad"
+            element={
+              <ProtectedRoute>
+                <BuscarPorHabilidad />
               </ProtectedRoute>
             }
           />

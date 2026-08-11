@@ -7,7 +7,7 @@ import { GlassCard, Badge as BadgePill } from "../components/ui";
 
 
 const ICONOS = [Star, Users, Flame, Shield, Award, BookOpen, Code, Globe, Heart, Target];
-const COLORES = ["#c49a3f", "#9db5cc", "#c97070", "#6db384", "#778DA9"];
+const COLORES = ["#0F3538", "#006D77", "#C4453C", "#6db384", "#4E7276"];
 
 function hexToRgb(hex) {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -81,16 +81,16 @@ export default function Insignias() {
                     <h1 style={{ fontFamily: "var(--font-display)", fontSize: "28px", fontWeight: 700, margin: "0 0 6px" }}>
                         Insignias
                     </h1>
-                    <p style={{ color: "#778DA9", margin: 0 }}>
-                        <span style={{ fontFamily: "var(--font-mono)", color: "#E0E1DD", fontWeight: 500 }}>{desbloqueadas.length}</span>{" "}
+                    <p style={{ color: "#4E7276", margin: 0 }}>
+                        <span style={{ fontFamily: "var(--font-mono)", color: "#0F3538", fontWeight: 500 }}>{desbloqueadas.length}</span>{" "}
                         de{" "}
-                        <span style={{ fontFamily: "var(--font-mono)", color: "#E0E1DD", fontWeight: 500 }}>{total}</span>{" "}
+                        <span style={{ fontFamily: "var(--font-mono)", color: "#0F3538", fontWeight: 500 }}>{total}</span>{" "}
                         insignias desbloqueadas
                     </p>
                 </div>
 
                 {error && (
-                    <GlassCard style={{ padding: "14px 18px", marginBottom: "20px", color: "#c97070", textAlign: "center" }}>
+                    <GlassCard style={{ padding: "14px 18px", marginBottom: "20px", color: "#C4453C", textAlign: "center" }}>
                         {error}
                     </GlassCard>
                 )}
@@ -99,21 +99,21 @@ export default function Insignias() {
                 <GlassCard
                     style={{
                         padding: "22px 28px", marginBottom: "28px",
-                        background: "rgba(65, 90, 119, 0.1)", border: "1px solid rgba(65, 90, 119, 0.25)",
+                        background: "rgba(0, 109, 119, 0.1)", border: "1px solid rgba(0, 109, 119, 0.25)",
                     }}
                 >
                     <div style={{ display: "flex", alignItems: "center", gap: "32px", flexWrap: "wrap" }}>
                         <div>
-                            <div style={{ fontFamily: "var(--font-mono)", fontSize: "40px", fontWeight: 700, color: "#E0E1DD", lineHeight: 1 }}>
+                            <div style={{ fontFamily: "var(--font-mono)", fontSize: "40px", fontWeight: 700, color: "#0F3538", lineHeight: 1 }}>
                                 {desbloqueadas.length}
                             </div>
-                            <div style={{ fontSize: "13px", color: "#778DA9", marginTop: "4px" }}>Insignias ganadas</div>
+                            <div style={{ fontSize: "13px", color: "#4E7276", marginTop: "4px" }}>Insignias ganadas</div>
                         </div>
 
                         <div style={{ flex: 1, minWidth: 160 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                                <span style={{ fontSize: "13px", color: "#778DA9" }}>Progreso total</span>
-                                <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", color: "#E0E1DD" }}>{progreso}%</span>
+                                <span style={{ fontSize: "13px", color: "#4E7276" }}>Progreso total</span>
+                                <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", color: "#0F3538" }}>{progreso}%</span>
                             </div>
                             <div className="xp-track">
                                 <div className="xp-fill" style={{ width: `${progreso}%` }} />
@@ -139,9 +139,9 @@ export default function Insignias() {
                             {desbloqueadas.length > 5 && (
                                 <div style={{
                                     width: 36, height: 36, borderRadius: "50%",
-                                    background: "rgba(65, 90, 119, 0.2)", border: "2px solid rgba(65, 90, 119, 0.4)",
+                                    background: "rgba(0, 109, 119, 0.2)", border: "2px solid rgba(0, 109, 119, 0.4)",
                                     display: "flex", alignItems: "center", justifyContent: "center",
-                                    fontSize: "12px", fontWeight: 600, color: "#778DA9",
+                                    fontSize: "12px", fontWeight: 600, color: "#4E7276",
                                 }}>
                                     +{desbloqueadas.length - 5}
                                 </div>
@@ -159,8 +159,8 @@ export default function Insignias() {
                             style={{
                                 padding: "7px 16px", borderRadius: "999px", border: "none", cursor: "pointer",
                                 fontSize: "13px", fontWeight: 500, transition: "all 0.18s",
-                                background: filtro === f ? "#415A77" : "rgba(224, 225, 221, 0.08)",
-                                color: filtro === f ? "#E0E1DD" : "#778DA9",
+                                background: filtro === f ? "#006D77" : "rgba(15, 53, 56, 0.08)",
+                                color: filtro === f ? "#FFFFFF" : "#4E7276",
                             }}
                         >
                             {LABEL_FILTRO[f]}
@@ -171,7 +171,7 @@ export default function Insignias() {
                 {/* Badge grid */}
                 {filtradas.length === 0 ? (
                     <GlassCard style={{ padding: "48px", textAlign: "center" }}>
-                        <p style={{ color: "#778DA9", margin: 0 }}>No hay insignias en esta categoría.</p>
+                        <p style={{ color: "#4E7276", margin: 0 }}>No hay insignias en esta categoría.</p>
                     </GlassCard>
                 ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "14px" }}>
@@ -189,19 +189,19 @@ export default function Insignias() {
                             >
                                 <div style={{
                                     width: 60, height: 60, borderRadius: "50%", margin: "0 auto 14px",
-                                    background: logro.desbloqueado ? `rgba(${hexToRgb(logro.color)}, 0.18)` : "rgba(65, 90, 119, 0.12)",
-                                    border: logro.desbloqueado ? `2px solid ${logro.color}` : "2px solid rgba(65, 90, 119, 0.3)",
+                                    background: logro.desbloqueado ? `rgba(${hexToRgb(logro.color)}, 0.18)` : "rgba(0, 109, 119, 0.12)",
+                                    border: logro.desbloqueado ? `2px solid ${logro.color}` : "2px solid rgba(0, 109, 119, 0.3)",
                                     display: "flex", alignItems: "center", justifyContent: "center",
                                     boxShadow: logro.desbloqueado ? `0 0 18px rgba(${hexToRgb(logro.color)}, 0.3)` : "none",
                                 }}>
-                                    {logro.desbloqueado ? <logro.icon size={26} color={logro.color} /> : <Lock size={22} color="#415A77" />}
+                                    {logro.desbloqueado ? <logro.icon size={26} color={logro.color} /> : <Lock size={22} color="#006D77" />}
                                 </div>
 
-                                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: logro.desbloqueado ? "#E0E1DD" : "#778DA9" }}>
+                                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 600, margin: "0 0 4px", color: logro.desbloqueado ? "#0F3538" : "#4E7276" }}>
                                     {logro.nombre}
                                 </h3>
                                 {logro.descripcion && (
-                                    <p style={{ fontSize: "12px", color: "#778DA9", margin: "0 0 12px", lineHeight: 1.4 }}>
+                                    <p style={{ fontSize: "12px", color: "#4E7276", margin: "0 0 12px", lineHeight: 1.4 }}>
                                         {logro.descripcion}
                                     </p>
                                 )}
@@ -211,7 +211,7 @@ export default function Insignias() {
                                         Desbloqueada{logro.fechaObtenido && ` · ${new Date(logro.fechaObtenido).toLocaleDateString()}`}
                                     </span>
                                 ) : (
-                                    <span style={{ fontSize: "11px", color: "#778DA9", fontWeight: 500 }}>Bloqueada</span>
+                                    <span style={{ fontSize: "11px", color: "#4E7276", fontWeight: 500 }}>Bloqueada</span>
                                 )}
                             </div>
                         ))}
@@ -229,14 +229,14 @@ export default function Insignias() {
                     >
                         <div style={{
                             width: 80, height: 80, borderRadius: "50%", margin: "0 auto 20px",
-                            background: seleccionado.desbloqueado ? `rgba(${hexToRgb(seleccionado.color)}, 0.18)` : "rgba(65,90,119,0.12)",
-                            border: `3px solid ${seleccionado.desbloqueado ? seleccionado.color : "rgba(65,90,119,0.3)"}`,
+                            background: seleccionado.desbloqueado ? `rgba(${hexToRgb(seleccionado.color)}, 0.18)` : "rgba(0,109,119,0.12)",
+                            border: `3px solid ${seleccionado.desbloqueado ? seleccionado.color : "rgba(0,109,119,0.3)"}`,
                             display: "flex", alignItems: "center", justifyContent: "center",
                             boxShadow: seleccionado.desbloqueado ? `0 0 30px rgba(${hexToRgb(seleccionado.color)}, 0.4)` : "none",
                         }}>
                             {seleccionado.desbloqueado
                                 ? <seleccionado.icon size={36} color={seleccionado.color} />
-                                : <Lock size={32} color="#415A77" />}
+                                : <Lock size={32} color="#006D77" />}
                         </div>
 
                         <BadgePill variant={seleccionado.desbloqueado ? "success" : "neutral"} style={{ marginBottom: "12px" }}>
@@ -246,7 +246,7 @@ export default function Insignias() {
                         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "22px", fontWeight: 700, margin: "0 0 8px" }}>
                             {seleccionado.nombre}
                         </h2>
-                        <p style={{ color: "#778DA9", fontSize: "14px", margin: "0 0 20px", lineHeight: 1.6 }}>
+                        <p style={{ color: "#4E7276", fontSize: "14px", margin: "0 0 20px", lineHeight: 1.6 }}>
                             {seleccionado.descripcion}
                         </p>
 

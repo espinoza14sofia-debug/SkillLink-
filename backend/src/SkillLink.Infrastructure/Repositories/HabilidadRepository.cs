@@ -73,4 +73,16 @@ public class HabilidadRepository : IHabilidadRepository
             .Where(uh => habilidadIds.Contains(uh.HabilidadId) && uh.UsuarioId != excluirUsuarioId)
             .ToListAsync();
     }
+
+    public async Task<List<UsuarioHabilidad>> BuscarPorNombreHabilidadAsync(string query, Guid excluirUsuarioId)
+    {
+        var texto = query.Trim().ToLower();
+
+        return await _context.UsuarioHabilidades
+            .Include(uh => uh.Usuario)
+            .Include(uh => uh.Habilidad)
+            .Where(uh => uh.Habilidad!.Nombre.ToLower().Contains(texto) && uh.UsuarioId != excluirUsuarioId)
+            .OrderBy(uh => uh.Usuario!.Nombre)
+            .ToListAsync();
+    }
 }

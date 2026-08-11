@@ -12,5 +12,6 @@ namespace SkillLink.Application.Interfaces
         Task<IEnumerable<UsuarioHabilidad>> ObtenerHabilidadesDeUsuarioAsync(Guid usuarioId);
         Task ActualizarHabilidadesUsuarioAsync(Guid usuarioId, List<Guid> habilidadIds);
         Task GuardarCambiosAsync();
+        Task EliminarAsync(Usuario usuario);
     }
 }

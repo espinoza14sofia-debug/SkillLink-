@@ -127,4 +127,29 @@ public class HabilidadService : IHabilidadService
 
         return sugerencias;
     }
+
+    public async Task<List<UsuarioPorHabilidadDto>> BuscarUsuariosPorHabilidadAsync(string query, Guid usuarioActualId)
+    {
+        if (string.IsNullOrWhiteSpace(query) || query.Trim().Length < 2)
+            return new List<UsuarioPorHabilidadDto>();
+
+        var coincidencias = await _habilidadRepository.BuscarPorNombreHabilidadAsync(query, usuarioActualId);
+
+        return coincidencias
+            .Select(uh => new UsuarioPorHabilidadDto
+            {
+                UsuarioId = uh.UsuarioId,
+                Nombre = uh.Usuario?.Nombre ?? "",
+                Foto = uh.Usuario?.Foto,
+                Carrera = uh.Usuario?.Carrera,
+                NivelHabilidad = uh.Nivel,
+                HabilidadCoincidente = uh.Habilidad?.Nombre ?? ""
+            })
+            // si el mismo usuario tiene varias habilidades que hacen match (ej "Java" y "JavaScript"),
+            // se muestra una sola vez, priorizando la de mayor nivel
+            .GroupBy(u => u.UsuarioId)
+            .Select(g => g.OrderByDescending(u => u.NivelHabilidad == "Avanzado" ? 2 : u.NivelHabilidad == "Intermedio" ? 1 : 0).First())
+            .Take(30)
+            .ToList();
+    }
 }

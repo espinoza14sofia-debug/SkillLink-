@@ -49,6 +49,47 @@ namespace SkillLink.Infrastructure.Repositories
             return habilidades;
         }
 
+        // Antes: solo hacía _context.Usuarios.Remove(usuario), lo cual falla con
+        // DbUpdateException apenas el usuario tiene FKs con DeleteBehavior.Restrict
+        // (MiembroEquipo, MensajePrivado, InvitacionEquipo). Ahora se borran esas
+        // relaciones a mano, en orden, antes de borrar el Usuario. El resto de
+        // tablas (UsuarioHabilidades, Notificaciones, PushSubscriptions, UsuarioLogros)
+        // están configuradas con Cascade y EF/la BD las borra solas.
+        public async Task EliminarAsync(Usuario usuario)
+        {
+            var usuarioId = usuario.Id;
+
+            // 1. Membresías de equipo (Restrict) — el usuario deja los equipos
+            var membresias = await _context.MiembrosEquipo
+                .Where(m => m.UsuarioId == usuarioId)
+                .ToListAsync();
+            _context.MiembrosEquipo.RemoveRange(membresias);
+
+            // 2. Mensajes privados enviados o recibidos (Restrict en ambos lados)
+            var mensajesPrivados = await _context.MensajesPrivados
+                .Where(m => m.EmisorId == usuarioId || m.ReceptorId == usuarioId)
+                .ToListAsync();
+            _context.MensajesPrivados.RemoveRange(mensajesPrivados);
+
+            // 3. Invitaciones a equipos, como invitado o como quien invita (Restrict)
+            var invitaciones = await _context.InvitacionesEquipo
+                .Where(i => i.UsuarioInvitadoId == usuarioId || i.UsuarioInvitaId == usuarioId)
+                .ToListAsync();
+            _context.InvitacionesEquipo.RemoveRange(invitaciones);
+
+            // 4. Actividad reciente — se borra explícitamente por seguridad, ya que
+            //    su relación con Usuario no tiene un OnDelete configurado en el DbContext.
+            //    Confirmar en ActividadReciente.cs si esto es necesario o si ya cascada.
+            var actividades = await _context.Actividades
+                .Where(a => a.UsuarioId == usuarioId)
+                .ToListAsync();
+            _context.Actividades.RemoveRange(actividades);
+
+            // 5. Finalmente, el usuario. UsuarioHabilidades, Notificaciones,
+            //    PushSubscriptions y UsuarioLogros se borran solos por Cascade.
+            _context.Usuarios.Remove(usuario);
+        }
+
         public async Task ActualizarHabilidadesUsuarioAsync(Guid usuarioId, List<Guid> habilidadIds)
         {
             var relacionesActuales = await _context.UsuarioHabilidades

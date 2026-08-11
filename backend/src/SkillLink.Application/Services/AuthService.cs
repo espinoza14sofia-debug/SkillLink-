@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using SkillLink.Application.DTOs;
 using SkillLink.Application.Interfaces;
 using SkillLink.Domain.Entities;
@@ -13,17 +14,23 @@ namespace SkillLink.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IPasswordHasher<Usuario> _passwordHasher;
         private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuracion;
 
         public AuthService(
             ITokenRecuperacionRepository tokenRepository,
             IUsuarioRepository usuarioRepository,
             IPasswordHasher<Usuario> passwordHasher,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IEmailService emailService,
+            IConfiguration configuracion)
         {
             _tokenRepository = tokenRepository;
             _usuarioRepository = usuarioRepository;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
+            _emailService = emailService;
+            _configuracion = configuracion;
         }
 
         public async Task<(bool Exito, string? Error, UsuarioRespuestaDto? Usuario)> RegistrarAsync(UsuarioRegistroDto dto)
@@ -89,6 +96,32 @@ namespace SkillLink.Application.Services
             return (true, null, respuesta);
         }
 
+        public async Task<(bool Exito, string? Error)> CambiarPasswordAsync(Guid usuarioId, CambiarPasswordDto dto)
+        {
+            var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId);
+            if (usuario == null)
+            {
+                return (false, "Usuario no encontrado.");
+            }
+
+            var verificacion = _passwordHasher.VerifyHashedPassword(usuario, usuario.PasswordHash, dto.PasswordActual);
+            if (verificacion == PasswordVerificationResult.Failed)
+            {
+                return (false, "La contraseña actual es incorrecta.");
+            }
+
+            if (string.IsNullOrWhiteSpace(dto.PasswordNueva) || dto.PasswordNueva.Length < 6)
+            {
+                return (false, "La nueva contraseña debe tener al menos 6 caracteres.");
+            }
+
+            usuario.PasswordHash = _passwordHasher.HashPassword(usuario, dto.PasswordNueva);
+
+            await _usuarioRepository.GuardarCambiosAsync();
+
+            return (true, null);
+        }
+
         public async Task<(bool Exito, string? Error)> SolicitarRecuperacionAsync(SolicitarRecuperacionDto dto)
         {
             var usuario = await _usuarioRepository.ObtenerPorEmailAsync(dto.Email);
@@ -109,6 +142,19 @@ namespace SkillLink.Application.Services
 
             await _tokenRepository.CrearAsync(tokenRecuperacion);
             await _tokenRepository.GuardarCambiosAsync();
+
+            var baseUrl = _configuracion["Frontend:BaseUrl"];
+            var linkRecuperacion = $"{baseUrl}/restablecer-password?token={tokenString}";
+
+            var asunto = "Recupera tu contraseña - SkillLink";
+            var cuerpo = $@"
+                <p>Hola {usuario.Nombre},</p>
+                <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+                <p><a href='{linkRecuperacion}'>Haz clic aquí para restablecer tu contraseña</a></p>
+                <p>Este enlace expira en 2 horas. Si no solicitaste esto, ignora este correo.</p>
+            ";
+
+            await _emailService.SendEmailAsync(usuario.Email, asunto, cuerpo);
 
             return (true, null);
         }

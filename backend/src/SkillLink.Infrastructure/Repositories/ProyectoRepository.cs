@@ -4,6 +4,7 @@ using SkillLink.Domain.Entities;
 using SkillLink.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SkillLink.Infrastructure.Repositories;
@@ -72,5 +73,10 @@ public class ProyectoRepository : IProyectoRepository
             .Where(p => p.EquipoId == equipoId)
             .OrderByDescending(p => p.FechaCreacion)
             .ToListAsync();
+    }
+
+    public async Task GuardarCambiosAsync()
+    {
+        await _context.SaveChangesAsync();
     }
 }

@@ -35,7 +35,7 @@ export default function FormularioInvitarUsuario({ equipoId, onInvitacionEnviada
     <form onSubmit={handleInvitar} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       <div style={{ display: 'flex', gap: '8px' }}>
         <div style={{ position: 'relative', flex: 1 }}>
-          <UserPlus size={16} color="#778DA9" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <UserPlus size={16} color="#4E7276" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Correo o nombre de usuario..."
@@ -44,11 +44,11 @@ export default function FormularioInvitarUsuario({ equipoId, onInvitacionEnviada
             disabled={cargando}
             style={{
               width: '100%',
-              background: 'rgba(224, 225, 221, 0.06)',
-              border: '1px solid rgba(224, 225, 221, 0.15)',
+              background: 'rgba(15, 53, 56, 0.06)',
+              border: '1px solid rgba(15, 53, 56, 0.15)',
               borderRadius: '10px',
               padding: '10px 12px 10px 38px',
-              color: '#E0E1DD',
+              color: '#0F3538',
               fontSize: '13px',
               outline: 'none',
               fontFamily: 'var(--font-body)',

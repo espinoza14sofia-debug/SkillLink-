@@ -35,7 +35,7 @@ export default function FormularioCrearProyecto({ equipoId, onCreado }) {
       />
 
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-        <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9" }}>Descripción</label>
+        <label style={{ fontSize: "13px", fontWeight: 500, color: "#4E7276" }}>Descripción</label>
         <textarea
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
@@ -43,13 +43,13 @@ export default function FormularioCrearProyecto({ equipoId, onCreado }) {
           rows={3}
           style={{
             width: "100%",
-            background: "rgba(224, 225, 221, 0.06)",
+            background: "rgba(15, 53, 56, 0.06)",
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
-            border: "1px solid rgba(224, 225, 221, 0.15)",
+            border: "1px solid rgba(15, 53, 56, 0.15)",
             borderRadius: "12px",
             padding: "12px 14px",
-            color: "#E0E1DD",
+            color: "#0F3538",
             fontSize: "14px",
             outline: "none",
             fontFamily: "var(--font-body)",
@@ -61,12 +61,12 @@ export default function FormularioCrearProyecto({ equipoId, onCreado }) {
       {error && (
         <div
           style={{
-            background: "rgba(124, 58, 58, 0.15)",
-            border: "1px solid rgba(124, 58, 58, 0.35)",
+            background: "rgba(196, 69, 60, 0.15)",
+            border: "1px solid rgba(196, 69, 60, 0.35)",
             borderRadius: "10px",
             padding: "10px 14px",
             fontSize: "13px",
-            color: "#c97070",
+            color: "#C4453C",
           }}
         >
           {error}

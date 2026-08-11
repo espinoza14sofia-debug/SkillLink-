@@ -100,10 +100,10 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
             alignItems: "center",
             justifyContent: "space-between",
             padding: "16px 20px",
-            borderBottom: "1px solid rgba(224, 225, 221, 0.1)",
+            borderBottom: "1px solid rgba(15, 53, 56, 0.1)",
           }}
         >
-          <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "15px", color: "#E0E1DD" }}>
+          <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "15px", color: "#0F3538" }}>
             {otroUsuarioNombre}
           </span>
           <button
@@ -112,12 +112,12 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
               background: "none",
               border: "none",
               cursor: "pointer",
-              color: "#778DA9",
+              color: "#4E7276",
               padding: "4px",
               display: "flex",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#E0E1DD")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#778DA9")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#0F3538")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#4E7276")}
           >
             <X size={18} />
           </button>
@@ -126,7 +126,7 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
         {/* Mensajes */}
         {cargando ? (
           <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ color: "#778DA9", fontSize: "13px" }}>Cargando chat...</p>
+            <p style={{ color: "#4E7276", fontSize: "13px" }}>Cargando chat...</p>
           </div>
         ) : (
           <div
@@ -141,7 +141,7 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
             }}
           >
             {mensajes.length === 0 && (
-              <p style={{ textAlign: "center", color: "#778DA9", fontSize: "13px", padding: "12px" }}>
+              <p style={{ textAlign: "center", color: "#4E7276", fontSize: "13px", padding: "12px" }}>
                 Aún no hay mensajes. ¡Escribí el primero!
               </p>
             )}
@@ -159,14 +159,14 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
                     alignSelf: esPropia ? "flex-end" : "flex-start",
                   }}
                 >
-                  <p style={{ margin: 0, fontSize: "13px", lineHeight: 1.4, color: "#E0E1DD", wordBreak: "break-word" }}>
+                  <p style={{ margin: 0, fontSize: "13px", lineHeight: 1.4, color: esPropia ? "#FFFFFF" : "#0F3538", wordBreak: "break-word" }}>
                     {m.contenido}
                   </p>
                   <span
                     style={{
                       display: "block",
                       fontSize: "11px",
-                      color: "#778DA9",
+                      color: esPropia ? "rgba(255,255,255,0.75)" : "#4E7276",
                       textAlign: "right",
                       marginTop: "3px",
                     }}
@@ -180,7 +180,7 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
         )}
 
         {error && (
-          <p style={{ textAlign: "center", color: "#c97070", fontSize: "12px", padding: "0 16px 8px" }}>
+          <p style={{ textAlign: "center", color: "#C4453C", fontSize: "12px", padding: "0 16px 8px" }}>
             {error}
           </p>
         )}
@@ -192,7 +192,7 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
             display: "flex",
             gap: "8px",
             padding: "12px 16px",
-            borderTop: "1px solid rgba(224, 225, 221, 0.1)",
+            borderTop: "1px solid rgba(15, 53, 56, 0.1)",
           }}
         >
           <input
@@ -203,11 +203,11 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
             disabled={enviando}
             style={{
               flex: 1,
-              background: "rgba(224, 225, 221, 0.06)",
-              border: "1px solid rgba(224, 225, 221, 0.15)",
+              background: "rgba(15, 53, 56, 0.06)",
+              border: "1px solid rgba(15, 53, 56, 0.15)",
               borderRadius: "999px",
               padding: "10px 16px",
-              color: "#E0E1DD",
+              color: "#0F3538",
               fontSize: "13px",
               outline: "none",
               fontFamily: "var(--font-body)",
@@ -220,8 +220,8 @@ export default function ChatPrivado({ otroUsuarioId, otroUsuarioNombre, onCerrar
               padding: "10px 20px",
               borderRadius: "999px",
               border: "none",
-              background: "#415A77",
-              color: "#E0E1DD",
+              background: "#006D77",
+              color: "#FFFFFF",
               cursor: enviando || !texto.trim() ? "not-allowed" : "pointer",
               opacity: enviando || !texto.trim() ? 0.5 : 1,
               fontWeight: 500,

@@ -6,9 +6,9 @@ import FormularioCrearMision from "../components/FormularioCrearMision";
 import api from "../services/api";
 
 const statusConfig = {
-  urgent: { label: "Urgente", variant: "error", icon: AlertCircle, color: "#c97070" },
-  in_progress: { label: "En progreso", variant: "accent", icon: Circle, color: "#9db5cc" },
-  pending: { label: "Pendiente", variant: "neutral", icon: Clock, color: "#415A77" },
+  urgent: { label: "Urgente", variant: "error", icon: AlertCircle, color: "#C4453C" },
+  in_progress: { label: "En progreso", variant: "accent", icon: Circle, color: "#006D77" },
+  pending: { label: "Pendiente", variant: "neutral", icon: Clock, color: "#006D77" },
   done: { label: "Completada", variant: "success", icon: CheckCircle, color: "#6db384" },
 };
 
@@ -134,7 +134,7 @@ export default function ProyectoDetalle() {
   if (error) {
     return (
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "32px 24px" }}>
-        <GlassCard style={{ padding: "24px", textAlign: "center", color: "#c97070" }}>{error}</GlassCard>
+        <GlassCard style={{ padding: "24px", textAlign: "center", color: "#C4453C" }}>{error}</GlassCard>
       </div>
     );
   }
@@ -152,10 +152,10 @@ export default function ProyectoDetalle() {
         onClick={() => navigate("/mi-equipo")}
         style={{
           display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none",
-          cursor: "pointer", color: "#778DA9", fontSize: "14px", marginBottom: "24px", padding: 0,
+          cursor: "pointer", color: "#4E7276", fontSize: "14px", marginBottom: "24px", padding: 0,
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "#E0E1DD")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "#778DA9")}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "#0F3538")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "#4E7276")}
       >
         <ArrowLeft size={16} />Mi Equipo
       </button>
@@ -163,8 +163,8 @@ export default function ProyectoDetalle() {
       {/* Project card */}
       <GlassCard style={{
         padding: "28px 32px", marginBottom: "24px",
-        background: "rgba(65, 90, 119, 0.12)",
-        border: "1px solid rgba(65, 90, 119, 0.3)",
+        background: "rgba(0, 109, 119, 0.12)",
+        border: "1px solid rgba(0, 109, 119, 0.3)",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px", flexWrap: "wrap" }}>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: "24px", fontWeight: 700, margin: 0 }}>
@@ -173,7 +173,7 @@ export default function ProyectoDetalle() {
           <Badge variant="accent">{proyecto.estado}</Badge>
         </div>
         {proyecto.descripcion && (
-          <p style={{ color: "#778DA9", fontSize: "14px", margin: "0 0 20px", lineHeight: 1.6 }}>{proyecto.descripcion}</p>
+          <p style={{ color: "#4E7276", fontSize: "14px", margin: "0 0 20px", lineHeight: 1.6 }}>{proyecto.descripcion}</p>
         )}
 
         <div style={{ marginBottom: "12px" }}>
@@ -190,7 +190,7 @@ export default function ProyectoDetalle() {
             { icon: Target, label: `${done} misiones completadas` },
             { icon: Users, label: `${misiones.length} misiones en total` },
           ].map(({ icon: Icon, label }) => (
-            <div key={label} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#778DA9" }}>
+            <div key={label} style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#4E7276" }}>
               <Icon size={14} />{label}
             </div>
           ))}
@@ -209,7 +209,7 @@ export default function ProyectoDetalle() {
 
       {misiones.length === 0 && (
         <GlassCard style={{ padding: "40px", textAlign: "center" }}>
-          <p style={{ color: "#778DA9", margin: 0, fontSize: "13px" }}>
+          <p style={{ color: "#4E7276", margin: 0, fontSize: "13px" }}>
             Este proyecto todavía no tiene misiones. Creá la primera con "Nueva misión".
           </p>
         </GlassCard>
@@ -223,7 +223,7 @@ export default function ProyectoDetalle() {
           <div key={grupo} style={{ marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
               <cfg.icon size={14} color={cfg.color} />
-              <span style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9" }}>{cfg.label} ({lista.length})</span>
+              <span style={{ fontSize: "13px", fontWeight: 500, color: "#4E7276" }}>{cfg.label} ({lista.length})</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               {lista.map((m) => {
@@ -240,19 +240,19 @@ export default function ProyectoDetalle() {
                       <span style={{
                         fontWeight: 500, fontSize: "14px",
                         textDecoration: m.estado === "completada" ? "line-through" : "none",
-                        color: m.estado === "completada" ? "#778DA9" : "#E0E1DD",
+                        color: m.estado === "completada" ? "#4E7276" : "#0F3538",
                       }}>{m.titulo}</span>
                       {m.descripcion && (
-                        <p style={{ margin: "3px 0 0", fontSize: "12px", color: "#778DA9" }}>{m.descripcion}</p>
+                        <p style={{ margin: "3px 0 0", fontSize: "12px", color: "#4E7276" }}>{m.descripcion}</p>
                       )}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
                       {vencimiento && (
-                        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "#778DA9" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "#4E7276" }}>
                           <Clock size={12} />{vencimiento}
                         </div>
                       )}
-                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: 600, color: "#9db5cc" }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: 600, color: "#006D77" }}>
                         +{m.xpValor}
                       </div>
 
@@ -276,7 +276,7 @@ export default function ProyectoDetalle() {
                       )}
                       {/* Asignada a otra persona */}
                       {m.usuarioAsignadoId && !esMia && m.estado !== "completada" && (
-                        <span style={{ fontSize: "11px", color: "#778DA9" }}>Asignada a otro</span>
+                        <span style={{ fontSize: "11px", color: "#4E7276" }}>Asignada a otro</span>
                       )}
                     </div>
                   </GlassCard>
@@ -298,7 +298,7 @@ export default function ProyectoDetalle() {
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "20px", fontWeight: 600, margin: "0 0 6px" }}>
               Nueva misión
             </h2>
-            <p style={{ color: "#778DA9", fontSize: "13px", margin: "0 0 24px" }}>
+            <p style={{ color: "#4E7276", fontSize: "13px", margin: "0 0 24px" }}>
               Agregá una misión a este proyecto
             </p>
             <FormularioCrearMision

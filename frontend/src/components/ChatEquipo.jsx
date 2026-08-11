@@ -86,7 +86,7 @@ export default function ChatEquipo({ equipoId }) {
 
   if (cargando)
     return (
-      <p style={{ color: "#778DA9", fontSize: "13px", padding: "16px", textAlign: "center" }}>
+      <p style={{ color: "#4E7276", fontSize: "13px", padding: "16px", textAlign: "center" }}>
         Cargando chat...
       </p>
     );
@@ -109,7 +109,7 @@ export default function ChatEquipo({ equipoId }) {
         style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}
       >
         {mensajes.length === 0 && (
-          <p style={{ color: "#778DA9", fontSize: "13px", textAlign: "center" }}>
+          <p style={{ color: "#4E7276", fontSize: "13px", textAlign: "center" }}>
             Aún no hay mensajes. ¡Sé el primero en escribir!
           </p>
         )}
@@ -127,25 +127,25 @@ export default function ChatEquipo({ equipoId }) {
               }}
             >
               {!esPropia && (
-                <span style={{ fontSize: "11px", color: "#778DA9", marginBottom: "3px", paddingLeft: "4px" }}>
+                <span style={{ fontSize: "11px", color: "#4E7276", marginBottom: "3px", paddingLeft: "4px" }}>
                   {m.emisorNombre}
                 </span>
               )}
               <div
                 style={{
-                  background: esPropia ? "#415A77" : "rgba(224, 225, 221, 0.08)",
-                  border: esPropia ? "1px solid rgba(65, 90, 119, 0.5)" : "1px solid rgba(224, 225, 221, 0.1)",
+                  background: esPropia ? "#006D77" : "rgba(15, 53, 56, 0.08)",
+                  border: esPropia ? "1px solid rgba(0, 109, 119, 0.5)" : "1px solid rgba(15, 53, 56, 0.1)",
                   borderRadius: "12px",
                   padding: "9px 13px",
                   maxWidth: "85%",
                   boxShadow: "none",
                 }}
               >
-                <p style={{ margin: 0, fontSize: "13px", color: "#E0E1DD", lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: "13px", color: esPropia ? "#FFFFFF" : "#0F3538", lineHeight: 1.5 }}>
                   {m.contenido}
                 </p>
               </div>
-              <span style={{ fontSize: "10px", color: "#415A77", marginTop: "3px", paddingLeft: "4px" }}>
+              <span style={{ fontSize: "10px", color: "#006D77", marginTop: "3px", paddingLeft: "4px" }}>
                 {new Date(m.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </span>
             </div>
@@ -154,14 +154,14 @@ export default function ChatEquipo({ equipoId }) {
       </div>
 
       {error && (
-        <p style={{ color: "#c97070", fontSize: "12px", padding: "0 16px" }}>{error}</p>
+        <p style={{ color: "#C4453C", fontSize: "12px", padding: "0 16px" }}>{error}</p>
       )}
 
       <form
         onSubmit={handleEnviar}
         style={{
           padding: "12px 16px",
-          borderTop: "1px solid rgba(224, 225, 221, 0.08)",
+          borderTop: "1px solid rgba(15, 53, 56, 0.08)",
           display: "flex",
           gap: "8px",
         }}
@@ -174,11 +174,11 @@ export default function ChatEquipo({ equipoId }) {
           disabled={enviando}
           style={{
             flex: 1,
-            background: "rgba(224, 225, 221, 0.06)",
-            border: "1px solid rgba(224, 225, 221, 0.12)",
+            background: "rgba(15, 53, 56, 0.06)",
+            border: "1px solid rgba(15, 53, 56, 0.12)",
             borderRadius: "10px",
             padding: "9px 13px",
-            color: "#E0E1DD",
+            color: "#0F3538",
             fontSize: "13px",
             outline: "none",
             fontFamily: "var(--font-body)",
@@ -192,7 +192,7 @@ export default function ChatEquipo({ equipoId }) {
             height: 38,
             borderRadius: "10px",
             border: "none",
-            background: "#415A77",
+            background: "#006D77",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -201,10 +201,10 @@ export default function ChatEquipo({ equipoId }) {
             opacity: enviando || !texto.trim() ? 0.5 : 1,
             transition: "background 0.18s",
           }}
-          onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.background = "#4d6b8a")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "#415A77")}
+          onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.background = "#00565E")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "#006D77")}
         >
-          <Send size={15} color="#E0E1DD" />
+          <Send size={15} color="#FFFFFF" />
         </button>
       </form>
     </div>

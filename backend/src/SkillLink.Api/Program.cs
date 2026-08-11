@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using SkillLink.Api.Services;
 using SkillLink.Application.Interfaces;
 using SkillLink.Application.Services;
 using SkillLink.Infrastructure.Persistence;
@@ -16,7 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 // ==========================
 // Registro de servicios
 // ==========================
- 
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPushNotificationService, SkillLink.Infrastructure.Services.PushNotificationService>();
 builder.Services.AddScoped<IPushSubscriptionRepository, PushSubscriptionRepository>();
 builder.Services.AddScoped<IRachaService, RachaService>();
@@ -37,7 +37,7 @@ builder.Services.AddScoped<IMisionService, MisionService>();
 builder.Services.AddScoped<ILogroRepository, LogroRepository>();
 builder.Services.AddScoped<ILogroService, LogroService>();
 
-// Corregido: Registro del hasher genérico de ASP.NET Core Identity
+
 builder.Services.AddScoped<Microsoft.AspNetCore.Identity.IPasswordHasher<SkillLink.Domain.Entities.Usuario>, Microsoft.AspNetCore.Identity.PasswordHasher<SkillLink.Domain.Entities.Usuario>>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -135,3 +135,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

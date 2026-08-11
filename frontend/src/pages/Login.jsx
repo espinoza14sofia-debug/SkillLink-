@@ -45,8 +45,9 @@ export default function Login() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '24px',
+        padding: '14px',
         position: 'relative',
+        overflowY: 'auto',
       }}
     >
       {/* Blobs decorativos */}
@@ -54,73 +55,73 @@ export default function Login() {
       <div className="bg-blob bg-blob-2" />
       <div className="bg-blob bg-blob-3" />
 
-      <div style={{ width: '100%', maxWidth: '420px' }}>
+      <div style={{ width: '100%', maxWidth: '400px' }}>
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
           <div
             style={{
-              width: 56,
-              height: 56,
-              borderRadius: '16px',
-              background: '#415A77',
+              width: 44,
+              height: 44,
+              borderRadius: '14px',
+              background: '#006D77',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 16px',
-              boxShadow: '0 0 30px rgba(65, 90, 119, 0.4)',
+              margin: '0 auto 10px',
+              boxShadow: '0 0 30px rgba(0, 109, 119, 0.4)',
             }}
           >
-            <Zap size={28} color="#E0E1DD" fill="#E0E1DD" />
+            <Zap size={22} color="#FFFFFF" fill="#FFFFFF" />
           </div>
           <h1
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '28px',
+              fontSize: '22px',
               fontWeight: 700,
-              margin: '0 0 6px',
-              color: '#E0E1DD',
+              margin: '0 0 4px',
+              color: '#0F3538',
             }}
           >
             SkillLink
           </h1>
-          <p style={{ color: '#778DA9', margin: 0, fontSize: '14px' }}>
+          <p style={{ color: '#4E7276', margin: 0, fontSize: '13px' }}>
             Colabora, aprende y sube de nivel
           </p>
         </div>
 
         {/* Card */}
-        <div className="glass-card" style={{ padding: '36px 32px' }}>
+        <div className="glass-card" style={{ padding: '22px 26px' }}>
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '20px',
+              fontSize: '18px',
               fontWeight: 600,
-              margin: '0 0 6px',
+              margin: '0 0 4px',
             }}
           >
             Bienvenido de vuelta
           </h2>
-          <p style={{ color: '#778DA9', fontSize: '13px', margin: '0 0 28px' }}>
+          <p style={{ color: '#4E7276', fontSize: '13px', margin: '0 0 16px' }}>
             Inicia sesión para continuar tu aventura
           </p>
 
           {error && (
             <div
               style={{
-                background: 'rgba(124, 58, 58, 0.15)',
-                border: '1px solid rgba(124, 58, 58, 0.35)',
+                background: 'rgba(196, 69, 60, 0.15)',
+                border: '1px solid rgba(196, 69, 60, 0.35)',
                 borderRadius: '10px',
-                padding: '10px 14px',
-                marginBottom: '20px',
+                padding: '9px 14px',
+                marginBottom: '14px',
                 fontSize: '13px',
-                color: '#c97070',
+                color: '#C4453C',
               }}
             >
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <Input
               label="Correo electrónico"
               type="email"
@@ -129,7 +130,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               icon={<Mail size={15} />}
             />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <Input
                 label="Contraseña"
                 type={showPass ? 'text' : 'password'}
@@ -145,7 +146,7 @@ export default function Login() {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#778DA9',
+                  color: '#4E7276',
                   fontSize: '12px',
                   alignSelf: 'flex-end',
                   display: 'flex',
@@ -159,13 +160,13 @@ export default function Login() {
               </button>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-8px' }}>
-              <Link to="/olvide-contrasena" style={{ color: '#778DA9', fontSize: '13px', textDecoration: 'none' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-6px' }}>
+              <Link to="/olvide-contrasena" style={{ color: '#4E7276', fontSize: '13px', textDecoration: 'none' }}>
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
 
-            <Button type="submit" size="lg" style={{ width: '100%', marginTop: '4px' }} disabled={cargando}>
+            <Button type="submit" size="md" style={{ width: '100%', marginTop: '2px' }} disabled={cargando}>
               {cargando ? (
                 <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <LoadingDots />
@@ -180,19 +181,19 @@ export default function Login() {
           <div
             style={{
               textAlign: 'center',
-              marginTop: '24px',
-              paddingTop: '24px',
-              borderTop: '1px solid rgba(224, 225, 221, 0.08)',
+              marginTop: '16px',
+              paddingTop: '16px',
+              borderTop: '1px solid rgba(15, 53, 56, 0.08)',
             }}
           >
-            <span style={{ color: '#778DA9', fontSize: '13px' }}>¿No tienes cuenta? </span>
-            <Link to="/register" style={{ color: '#9db5cc', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>
+            <span style={{ color: '#4E7276', fontSize: '13px' }}>¿No tienes cuenta? </span>
+            <Link to="/register" style={{ color: '#006D77', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>
               Regístrate gratis
             </Link>
           </div>
         </div>
 
-        <p style={{ textAlign: 'center', color: '#415A77', fontSize: '12px', marginTop: '24px' }}>
+        <p style={{ textAlign: 'center', color: '#006D77', fontSize: '12px', marginTop: '14px' }}>
           Plataforma de aprendizaje colaborativo
         </p>
       </div>
@@ -210,7 +211,7 @@ function LoadingDots() {
             width: 5,
             height: 5,
             borderRadius: '50%',
-            background: '#E0E1DD',
+            background: '#0F3538',
             animation: `shimmer 1s ease-in-out ${i * 0.15}s infinite alternate`,
             display: 'inline-block',
           }}

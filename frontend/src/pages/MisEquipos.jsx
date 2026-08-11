@@ -77,16 +77,16 @@ export default function MisEquipos() {
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: 0, color: '#E0E1DD' }}>
+                    <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: 0, color: '#0F3538' }}>
                       {eq.nombre}
                     </h3>
-                    {eq.rol === 'Lider' && <Crown size={13} color="#c49a3f" />}
+                    {eq.rol === 'Lider' && <Crown size={13} color="#E29578" />}
                   </div>
-                  <span style={{ fontSize: '12px', color: '#778DA9' }}>
+                  <span style={{ fontSize: '12px', color: '#4E7276' }}>
                     {eq.cantidadMiembros} {eq.cantidadMiembros === 1 ? 'miembro' : 'miembros'} · {eq.rol}
                   </span>
                 </div>
-                <ChevronRight size={16} color="#415A77" />
+                <ChevronRight size={16} color="#006D77" />
               </div>
             ))}
           </div>

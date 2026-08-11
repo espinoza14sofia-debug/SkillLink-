@@ -9,4 +9,5 @@ public interface IHabilidadService
     Task<HabilidadRespuestaDto> ActualizarNivelHabilidadAsync(Guid usuarioId, Guid habilidadId, ActualizarNivelHabilidadDto dto);
     Task EliminarHabilidadAsync(Guid usuarioId, Guid habilidadId);
     Task<List<SugerenciaCompaneroDto>> SugerirCompanerosAsync(Guid usuarioId);
+    Task<List<UsuarioPorHabilidadDto>> BuscarUsuariosPorHabilidadAsync(string query, Guid usuarioActualId);
 }

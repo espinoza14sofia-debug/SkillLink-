@@ -11,4 +11,5 @@ public interface IMisionRepository
     Task AgregarAsync(Mision mision);
     Task GuardarCambiosAsync();
     Task<List<Mision>> ObtenerPorEquipoAsync(Guid equipoId);
+    Task<List<Mision>> ObtenerPorProyectoAsync(Guid proyectoId);
 }

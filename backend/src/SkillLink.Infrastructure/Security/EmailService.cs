@@ -3,8 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
-using SkillLink.Api.Services;
-using SkillLink.Application.Interfaces; // Asegúrate de que esta sea la ruta correcta a tu interfaz
+using SkillLink.Application.Interfaces;  
 using System.Threading.Tasks;
 
 namespace SkillLink.Infrastructure.Security

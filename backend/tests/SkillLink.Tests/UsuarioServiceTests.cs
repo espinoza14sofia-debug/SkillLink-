@@ -18,7 +18,7 @@ public class UsuarioServiceTests
         _usuarioService = new UsuarioService(_usuarioRepositoryMock.Object);
     }
 
-    // ---------- ActualizarPerfilAsync ----------
+ 
 
     [Fact]
     public async Task ActualizarPerfilAsync_ConUsuarioInexistente_DeberiaLanzarExcepcion()
@@ -121,7 +121,7 @@ public class UsuarioServiceTests
         _usuarioRepositoryMock.Verify(r => r.GuardarCambiosAsync(), Times.Once);
     }
 
-    // ---------- ObtenerPerfilPublicoAsync ----------
+ 
 
     [Fact]
     public async Task ObtenerPerfilPublicoAsync_ConUsuarioExistente_DeberiaRetornarDatosPublicos()
@@ -165,8 +165,7 @@ public class UsuarioServiceTests
 
         Assert.Null(resultado);
     }
-
-    // ---------- ActualizarHabilidadesUsuarioAsync ----------
+ 
 
     [Fact]
     public async Task ActualizarHabilidadesUsuarioAsync_DeberiaLlamarRepositorioYGuardar()

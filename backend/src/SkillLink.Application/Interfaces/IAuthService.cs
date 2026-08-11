@@ -9,5 +9,6 @@ namespace SkillLink.Application.Interfaces
         Task<(bool Exito, string? Error, LoginRespuestaDto? Resultado)> LoginAsync(LoginDto dto);
         Task<(bool Exito, string? Error)> SolicitarRecuperacionAsync(SolicitarRecuperacionDto dto);
         Task<(bool Exito, string? Error)> RestablecerPasswordAsync(RestablecerPasswordDto dto);
+        Task<(bool Exito, string? Error)> CambiarPasswordAsync(Guid usuarioId, CambiarPasswordDto dto);
     }
 }

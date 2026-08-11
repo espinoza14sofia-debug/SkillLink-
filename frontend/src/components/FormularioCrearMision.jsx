@@ -88,193 +88,225 @@ export default function FormularioCrearMision({ proyectoId, equipoId, onCreada, 
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <Input
-        label="Título de la misión"
-        value={titulo}
-        onChange={(e) => setTitulo(e.target.value)}
-        placeholder="Optimizar consultas de usuarios"
-        icon={<Target size={15} />}
-        required
-      />
-
-      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-        <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9" }}>Descripción</label>
-        <textarea
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-          placeholder=" Mejorar repositorios y consultas usando Entity Framework."
-          rows={3}
-          style={{
-            width: "100%",
-            background: "rgba(224, 225, 221, 0.06)",
-            border: "1px solid rgba(224, 225, 221, 0.15)",
-            borderRadius: "12px",
-            padding: "12px 14px",
-            color: "#E0E1DD",
-            fontSize: "14px",
-            outline: "none",
-            fontFamily: "var(--font-body)",
-            resize: "vertical",
-          }}
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "760px",  
+        maxHeight: "min(90vh, 840px)",
+        margin: "0 auto",
+        overflowY: "auto",
+        overflowX: "hidden",
+        boxSizing: "border-box",
+        padding: "clamp(20px, 3vw, 32px)",
+        background: "rgba(255, 255, 255, 0.85)",  
+        border: "1px solid rgba(15, 53, 56, 0.2)",  
+        borderRadius: "16px",
+        boxShadow: "0 8px 32px rgba(15, 53, 56, 0.12)",  
+        WebkitOverflowScrolling: "touch",
+      }}
+    >
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "clamp(14px, 2.2vh, 20px)",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
+        <Input
+          label="Título de la misión"
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+          icon={<Target size={15} />}
+          required
         />
-      </div>
 
-      {equipoId && (
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9", display: "flex", alignItems: "center", gap: "6px" }}>
-            <User size={13} />Asignar a
-          </label>
-          <select
-            value={usuarioAsignadoId}
-            onChange={(e) => setUsuarioAsignadoId(e.target.value)}
-            disabled={cargandoMiembros}
+          <label style={{ fontSize: "13px", fontWeight: 500, color: "#4E7276" }}>Descripción</label>
+          <textarea
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+            rows={3}
             style={{
               width: "100%",
-              background: "rgba(224, 225, 221, 0.06)",
-              border: "1px solid rgba(224, 225, 221, 0.15)",
+              boxSizing: "border-box",
+              background: "rgba(15, 53, 56, 0.04)",
+              border: "1px solid rgba(15, 53, 56, 0.2)",   
               borderRadius: "12px",
-              padding: "10px 14px",
-              color: "#E0E1DD",
-              fontSize: "14px",
+              padding: "12px 14px",
+              color: "#0F3538",
+              fontSize: "clamp(13px, 1.6vw, 14px)",
               outline: "none",
               fontFamily: "var(--font-body)",
+              resize: "vertical",
+              minHeight: "88px",
             }}
-          >
-            <option value="">Sin asignar (queda disponible para el equipo)</option>
-            {miembros.map((m) => (
-              <option key={m.usuarioId ?? m.UsuarioId} value={m.usuarioId ?? m.UsuarioId}>
-                {m.nombre ?? m.Nombre}
-              </option>
-            ))}
-          </select>
+          />
         </div>
-      )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <label style={{ fontSize: "13px", fontWeight: 500, color: "#778DA9" }}>Etiquetas</label>
-
-        {etiquetas.length > 0 && (
-          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-            {etiquetas.map((t) => (
-              <span
-                key={t}
-                className="glass-nested"
-                style={{
-                  padding: "5px 10px",
-                  fontSize: "12px",
-                  color: "#9db5cc",
-                  borderRadius: "8px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                }}
-              >
-                {t}
-                <X size={12} style={{ cursor: "pointer" }} onClick={() => quitarEtiqueta(t)} />
-              </span>
-            ))}
+        {equipoId && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "13px", fontWeight: 500, color: "#4E7276", display: "flex", alignItems: "center", gap: "6px" }}>
+              <User size={13} />Asignar a
+            </label>
+            <select
+              value={usuarioAsignadoId}
+              onChange={(e) => setUsuarioAsignadoId(e.target.value)}
+              disabled={cargandoMiembros}
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                background: "rgba(15, 53, 56, 0.04)",
+                border: "1px solid rgba(15, 53, 56, 0.2)",
+                borderRadius: "12px",
+                padding: "10px 14px",
+                color: "#0F3538",
+                fontSize: "clamp(13px, 1.6vw, 14px)",
+                outline: "none",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              <option value=""> </option>
+              {miembros.map((m) => (
+                <option key={m.usuarioId ?? m.UsuarioId} value={m.usuarioId ?? m.UsuarioId}>
+                  {m.nombre ?? m.Nombre}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          {ETIQUETAS_SUGERIDAS.filter((s) => !etiquetas.includes(s)).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => agregarEtiqueta(s)}
-              style={{
-                padding: "4px 10px",
-                fontSize: "11px",
-                borderRadius: "999px",
-                border: "1px solid rgba(224, 225, 221, 0.12)",
-                background: "transparent",
-                color: "#778DA9",
-                cursor: "pointer",
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <label style={{ fontSize: "13px", fontWeight: 500, color: "#4E7276" }}>Etiquetas</label>
+
+          {etiquetas.length > 0 && (
+            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+              {etiquetas.map((t) => (
+                <span
+                  key={t}
+                  className="glass-nested"
+                  style={{
+                    padding: "5px 10px",
+                    fontSize: "12px",
+                    color: "#006D77",
+                    border: "1px solid rgba(0, 109, 119, 0.2)",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    maxWidth: "100%",
+                  }}
+                >
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t}</span>
+                  <X size={12} style={{ cursor: "pointer", flexShrink: 0 }} onClick={() => quitarEtiqueta(t)} />
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            {ETIQUETAS_SUGERIDAS.filter((s) => !etiquetas.includes(s)).map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => agregarEtiqueta(s)}
+                style={{
+                  padding: "4px 10px",
+                  fontSize: "11px",
+                  borderRadius: "999px",
+                  border: "1px solid rgba(15, 53, 56, 0.2)",
+                  background: "transparent",
+                  color: "#4E7276",
+                  cursor: "pointer",
+                }}
+              >
+                + {s}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <input
+              value={etiquetaLibre}
+              onChange={(e) => setEtiquetaLibre(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleAgregarLibre(e);
               }}
-            >
-              + {s}
-            </button>
-          ))}
+              placeholder="Nueva etiqueta…"
+              style={{
+                flex: "1 1 160px",
+                minWidth: 0,
+                boxSizing: "border-box",
+                background: "rgba(15, 53, 56, 0.04)",
+                border: "1px solid rgba(15, 53, 56, 0.2)",
+                borderRadius: "10px",
+                padding: "8px 12px",
+                color: "#0F3538",
+                fontSize: "13px",
+                outline: "none",
+              }}
+            />
+            <Button type="button" variant="ghost" size="sm" onClick={handleAgregarLibre}>
+              Agregar
+            </Button>
+          </div>
         </div>
 
-        <div style={{ display: "flex", gap: "8px" }}>
-          <input
-            value={etiquetaLibre}
-            onChange={(e) => setEtiquetaLibre(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleAgregarLibre(e);
-            }}
-            placeholder="Otra etiqueta…"
+        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+          <div style={{ flex: "1 1 180px", minWidth: 0 }}>
+            <Input
+              label="XP al completar"
+              type="number"
+              min="0"
+              value={xpValor}
+              onChange={(e) => setXpValor(e.target.value)}
+              icon={<Zap size={15} />}
+            />
+          </div>
+          <div style={{ flex: "1 1 180px", minWidth: 0 }}>
+            <Input
+              label="Fecha límite (opcional)"
+              type="date"
+              value={fechaLimite}
+              onChange={(e) => setFechaLimite(e.target.value)}
+              icon={<Calendar size={15} />}
+            />
+          </div>
+        </div>
+
+        <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#4E7276", cursor: "pointer" }}>
+          <input type="checkbox" checked={esUrgente} onChange={(e) => setEsUrgente(e.target.checked)} />
+          Marcar como urgente
+        </label>
+
+        {error && (
+          <div
             style={{
-              flex: 1,
-              background: "rgba(224, 225, 221, 0.06)",
-              border: "1px solid rgba(224, 225, 221, 0.15)",
+              background: "rgba(196, 69, 60, 0.15)",
+              border: "1px solid rgba(196, 69, 60, 0.35)",
               borderRadius: "10px",
-              padding: "8px 12px",
-              color: "#E0E1DD",
+              padding: "10px 14px",
               fontSize: "13px",
-              outline: "none",
+              color: "#C4453C",
             }}
-          />
-          <Button type="button" variant="ghost" size="sm" onClick={handleAgregarLibre}>
-            Agregar
-          </Button>
-        </div>
-      </div>
-
-      <div style={{ display: "flex", gap: "16px" }}>
-        <div style={{ flex: 1 }}>
-          <Input
-            label="XP al completar"
-            type="number"
-            min="0"
-            value={xpValor}
-            onChange={(e) => setXpValor(e.target.value)}
-            icon={<Zap size={15} />}
-          />
-        </div>
-        <div style={{ flex: 1 }}>
-          <Input
-            label="Fecha límite (opcional)"
-            type="date"
-            value={fechaLimite}
-            onChange={(e) => setFechaLimite(e.target.value)}
-            icon={<Calendar size={15} />}
-          />
-        </div>
-      </div>
-
-      <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#778DA9", cursor: "pointer" }}>
-        <input type="checkbox" checked={esUrgente} onChange={(e) => setEsUrgente(e.target.checked)} />
-        Marcar como urgente
-      </label>
-
-      {error && (
-        <div
-          style={{
-            background: "rgba(124, 58, 58, 0.15)",
-            border: "1px solid rgba(124, 58, 58, 0.35)",
-            borderRadius: "10px",
-            padding: "10px 14px",
-            fontSize: "13px",
-            color: "#c97070",
-          }}
-        >
-          {error}
-        </div>
-      )}
-
-      <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-        {onCancelar && (
-          <Button type="button" variant="ghost" onClick={onCancelar}>
-            Cancelar
-          </Button>
+          >
+            {error}
+          </div>
         )}
-        <Button type="submit" disabled={cargando}>
-          {cargando ? "Creando…" : "Crear misión"}
-        </Button>
-      </div>
-    </form>
+
+        <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", flexWrap: "wrap", marginTop: "4px" }}>
+          {onCancelar && (
+            <Button type="button" variant="ghost" onClick={onCancelar} style={{ flex: "0 1 auto" }}>
+              Cancelar
+            </Button>
+          )}
+          <Button type="submit" disabled={cargando} style={{ flex: "0 1 auto" }}>
+            {cargando ? "Creando…" : "Crear misión"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

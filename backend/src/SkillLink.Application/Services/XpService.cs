@@ -11,20 +11,17 @@ public class XpService : IXpService
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly INivelService _nivelService;
     private readonly ILogroService _logroService;
-    private readonly IMisionRepository _misionRepository;
     private readonly INotificacionService _notificacionService;
 
     public XpService(
         IUsuarioRepository usuarioRepository,
         INivelService nivelService,
         ILogroService logroService,
-        IMisionRepository misionRepository,
         INotificacionService notificacionService)
     {
         _usuarioRepository = usuarioRepository;
         _nivelService = nivelService;
         _logroService = logroService;
-        _misionRepository = misionRepository;
         _notificacionService = notificacionService;
     }
 
@@ -52,8 +49,10 @@ public class XpService : IXpService
 
         nivelInfo.SubioDeNivel = nivelInfo.Nivel > nivelAnterior;
 
-        var misionesCompletadas = await _misionRepository.ContarCompletadasPorUsuarioAsync(usuarioId);
-        var nuevosLogros = await _logroService.EvaluarYOtorgarAsync(usuarioId, usuario.Xp, misionesCompletadas);
+        // EvaluarYOtorgarAsync ya no recibe valores calculados aquí: consulta
+        // XP, misiones, proyectos y racha directamente en el momento de evaluar,
+        // así que siempre trabaja con el estado real y actual del usuario.
+        var nuevosLogros = await _logroService.EvaluarYOtorgarAsync(usuarioId);
 
         nivelInfo.NuevosLogros = nuevosLogros;
 

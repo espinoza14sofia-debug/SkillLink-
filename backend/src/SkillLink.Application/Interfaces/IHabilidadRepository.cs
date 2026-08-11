@@ -13,4 +13,5 @@ public interface IHabilidadRepository
     Task GuardarCambiosAsync();
     Task EliminarUsuarioHabilidadAsync(UsuarioHabilidad usuarioHabilidad);
     Task<List<UsuarioHabilidad>> ObtenerPorHabilidadesAsync(List<Guid> habilidadIds, Guid excluirUsuarioId);
+    Task<List<UsuarioHabilidad>> BuscarPorNombreHabilidadAsync(string query, Guid excluirUsuarioId);
 }

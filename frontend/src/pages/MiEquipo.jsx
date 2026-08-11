@@ -42,7 +42,7 @@ function FormularioInvitarUsuario({ equipoId, onInvitacionEnviada }) {
     <form onSubmit={handleInvitar} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       <div style={{ display: 'flex', gap: '6px' }}>
         <div style={{ position: 'relative', flex: 1 }}>
-          <UserPlus size={15} color="#778DA9" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+          <UserPlus size={15} color="#4E7276" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Correo o usuario..."
@@ -51,11 +51,11 @@ function FormularioInvitarUsuario({ equipoId, onInvitacionEnviada }) {
             disabled={cargando}
             style={{
               width: '100%',
-              background: 'rgba(224, 225, 221, 0.06)',
-              border: '1px solid rgba(224, 225, 221, 0.15)',
+              background: 'rgba(15, 53, 56, 0.06)',
+              border: '1px solid rgba(15, 53, 56, 0.15)',
               borderRadius: '8px',
               padding: '8px 10px 8px 34px',
-              color: '#E0E1DD',
+              color: '#0F3538',
               fontSize: '12px',
               outline: 'none',
               fontFamily: 'var(--font-body)',
@@ -123,17 +123,17 @@ function BandejaInvitaciones({ onInvitacionRespondida }) {
 
   return (
     <div style={{ marginBottom: '24px' }}>
-      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '8px', color: '#c49a3f' }}>
+      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '8px', color: '#0F3538' }}>
         <Bell size={15} /> Tienes invitaciones pendientes ({invitaciones.length})
       </h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {invitaciones.map((inv) => (
           <GlassCard key={inv.id} style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
             <div>
-              <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#E0E1DD' }}>
+              <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#0F3538' }}>
                 <strong>{inv.nombreQuienInvita}</strong> te invitó a <strong>{inv.nombreEquipo}</strong>
               </p>
-              <span style={{ fontSize: '11px', color: '#778DA9' }}>
+              <span style={{ fontSize: '11px', color: '#4E7276' }}>
                 {new Date(inv.fechaCreacion).toLocaleDateString()}
               </span>
             </div>
@@ -324,7 +324,7 @@ export default function Team() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: 700, margin: '0 0 4px' }}>
               Mi Equipo
             </h1>
-            <p style={{ color: '#778DA9', margin: 0 }}>
+            <p style={{ color: '#4E7276', margin: 0 }}>
               {miembros.length} {miembros.length === 1 ? 'miembro' : 'miembros'}
             </p>
           </div>
@@ -360,7 +360,7 @@ export default function Team() {
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 600, margin: '0 0 6px' }}>
                 Tus equipos y creación
               </h2>
-              <p style={{ color: '#778DA9', fontSize: '13px', margin: '0 0 20px' }}>
+              <p style={{ color: '#4E7276', fontSize: '13px', margin: '0 0 20px' }}>
                 Elige el equipo con el que deseas trabajar o crea uno nuevo:
               </p>
 
@@ -376,23 +376,23 @@ export default function Team() {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       cursor: 'pointer',
-                      border: String(eq.id) === String(equipoId) ? '1px solid #c49a3f' : undefined,
+                      border: String(eq.id) === String(equipoId) ? '1px solid #0F3538' : undefined,
                     }}
                   >
                     <div>
-                      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 4px', color: '#E0E1DD' }}>
+                      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: '0 0 4px', color: '#0F3538' }}>
                         {eq.nombre}
                       </h3>
-                      <span style={{ fontSize: '12px', color: '#778DA9' }}>ID: {eq.id}</span>
+                      <span style={{ fontSize: '12px', color: '#4E7276' }}>ID: {eq.id}</span>
                     </div>
-                    <ArrowRight size={16} color={String(eq.id) === String(equipoId) ? '#c49a3f' : '#778DA9'} />
+                    <ArrowRight size={16} color={String(eq.id) === String(equipoId) ? '#0F3538' : '#4E7276'} />
                   </div>
                 ))}
               </div>
 
               {/* Formulario rápido para crear equipo dentro del modal */}
-              <div style={{ borderTop: '1px solid rgba(224,225,221,0.1)', paddingTop: '16px' }}>
-                <p style={{ color: '#E0E1DD', fontSize: '13px', fontWeight: 600, margin: '0 0 10px' }}>Crear un nuevo equipo:</p>
+              <div style={{ borderTop: '1px solid rgba(15,53,56,0.1)', paddingTop: '16px' }}>
+                <p style={{ color: '#0F3538', fontSize: '13px', fontWeight: 600, margin: '0 0 10px' }}>Crear un nuevo equipo:</p>
                 <FormularioCrearEquipo onCreado={handleEquipoCreado} />
               </div>
 
@@ -422,11 +422,11 @@ export default function Team() {
                   gap: '8px',
                 }}
               >
-                <Users size={16} color="#778DA9" /> Miembros
+                <Users size={16} color="#4E7276" /> Miembros
               </h2>
 
               {/* Formulario de invitación de usuarios */}
-              <div style={{ paddingBottom: '12px', borderBottom: '1px solid rgba(224,225,221,0.08)' }}>
+              <div style={{ paddingBottom: '12px', borderBottom: '1px solid rgba(15,53,56,0.08)' }}>
                 <FormularioInvitarUsuario equipoId={equipoId} />
               </div>
 
@@ -440,8 +440,8 @@ export default function Team() {
                       gap: '12px',
                       padding: '12px',
                       borderRadius: '12px',
-                      background: 'rgba(224, 225, 221, 0.04)',
-                      border: '1px solid rgba(224, 225, 221, 0.06)',
+                      background: 'rgba(15, 53, 56, 0.04)',
+                      border: '1px solid rgba(15, 53, 56, 0.06)',
                     }}
                   >
                     <Avatar name={m.nombre} size={38} ring={m.rol === 'Líder' ? 'gold' : 'none'} />
@@ -451,7 +451,7 @@ export default function Team() {
                           style={{
                             fontWeight: 500,
                             fontSize: '13px',
-                            color: '#E0E1DD',
+                            color: '#0F3538',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
@@ -459,18 +459,18 @@ export default function Team() {
                         >
                           {m.nombre}
                         </span>
-                        {m.rol === 'Líder' && <Crown size={12} color="#c49a3f" />}
+                        {m.rol === 'Líder' && <Crown size={12} color="#E29578" />}
                       </div>
-                      <span style={{ fontSize: '11px', color: '#778DA9' }}>{m.rol}</span>
+                      <span style={{ fontSize: '11px', color: '#4E7276' }}>{m.rol}</span>
                     </div>
                     <select
                       onChange={(e) => cambiarRol(m.usuarioId, Number(e.target.value))}
                       defaultValue=""
                       style={{
-                        background: 'rgba(224,225,221,0.06)',
-                        border: '1px solid rgba(224,225,221,0.15)',
+                        background: 'rgba(15,53,56,0.06)',
+                        border: '1px solid rgba(15,53,56,0.15)',
                         borderRadius: '8px',
-                        color: '#778DA9',
+                        color: '#4E7276',
                         fontSize: '11px',
                         padding: '4px 6px',
                         flexShrink: 0,
@@ -499,7 +499,7 @@ export default function Team() {
                     gap: '8px',
                   }}
                 >
-                  <Folder size={16} color="#778DA9" /> Proyectos
+                  <Folder size={16} color="#4E7276" /> Proyectos
                 </h2>
                 <Button
                   variant="glass"
@@ -513,7 +513,7 @@ export default function Team() {
               </div>
 
               {proyectos.length === 0 ? (
-                <p style={{ color: '#778DA9', fontSize: '13px', textAlign: 'center', padding: '24px 0' }}>
+                <p style={{ color: '#4E7276', fontSize: '13px', textAlign: 'center', padding: '24px 0' }}>
                   Aún no hay proyectos. Crea el primero.
                 </p>
               ) : (
@@ -526,12 +526,12 @@ export default function Team() {
                       onClick={() => navigate(`/proyectos/${p.id}`)}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 600, margin: 0, color: '#E0E1DD' }}>
+                        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 600, margin: 0, color: '#0F3538' }}>
                           {p.nombre}
                         </h3>
-                        <ChevronRight size={14} color="#415A77" />
+                        <ChevronRight size={14} color="#006D77" />
                       </div>
-                      <span style={{ fontSize: '12px', color: '#778DA9', display: 'block', marginBottom: '12px' }}>
+                      <span style={{ fontSize: '12px', color: '#4E7276', display: 'block', marginBottom: '12px' }}>
                         {p.estado === 'Completado' ? 'Completado' : 'En progreso'}
                       </span>
                       <XPBar value={p.porcentajeAvance} max={100} label={`${p.porcentajeAvance}% completado`} />
@@ -546,13 +546,13 @@ export default function Team() {
               <div
                 style={{
                   padding: '16px 20px',
-                  borderBottom: '1px solid rgba(224,225,221,0.08)',
+                  borderBottom: '1px solid rgba(15,53,56,0.08)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
                 }}
               >
-                <MessageSquare size={15} color="#778DA9" />
+                <MessageSquare size={15} color="#4E7276" />
                 <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, margin: 0 }}>
                   Chat del equipo
                 </h2>
@@ -575,7 +575,7 @@ export default function Team() {
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 600, margin: '0 0 6px' }}>
               Nuevo proyecto
             </h2>
-            <p style={{ color: '#778DA9', fontSize: '13px', margin: '0 0 24px' }}>
+            <p style={{ color: '#4E7276', fontSize: '13px', margin: '0 0 24px' }}>
               Crea un proyecto para organizar las misiones del equipo
             </p>
             <FormularioCrearProyecto equipoId={equipoId} onCreado={handleProyectoCreado} />

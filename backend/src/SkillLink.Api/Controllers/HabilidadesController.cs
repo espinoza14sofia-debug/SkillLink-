@@ -95,5 +95,20 @@ namespace SkillLink.Api.Controllers
             var sugerencias = await _habilidadService.SugerirCompanerosAsync(usuarioId.Value);
             return Ok(sugerencias);
         }
+
+        // GET: api/habilidades/buscar?query=java
+        [HttpGet("buscar")]
+        [Authorize]
+        public async Task<IActionResult> BuscarUsuariosPorHabilidad([FromQuery] string query)
+        {
+            var usuarioId = ObtenerUsuarioId();
+            if (usuarioId == null) return Unauthorized();
+
+            if (string.IsNullOrWhiteSpace(query))
+                return Ok(new List<object>());
+
+            var resultados = await _habilidadService.BuscarUsuariosPorHabilidadAsync(query, usuarioId.Value);
+            return Ok(resultados);
+        }
     }
 }

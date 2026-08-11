@@ -44,10 +44,10 @@ export default function RestablecerContrasena() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <GlassCard style={{ padding: '32px', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
-          <p style={{ color: '#c97070', fontSize: '14px' }}>
+          <p style={{ color: '#C4453C', fontSize: '14px' }}>
             Enlace inválido o incompleto. Solicita uno nuevo.
           </p>
-          <Link to="/olvide-contrasena" style={{ color: '#778DA9', fontSize: '13px' }}>
+          <Link to="/olvide-contrasena" style={{ color: '#4E7276', fontSize: '13px' }}>
             Solicitar recuperación
           </Link>
         </GlassCard>
@@ -68,12 +68,12 @@ export default function RestablecerContrasena() {
           </p>
         ) : (
           <>
-            <p style={{ color: '#778DA9', fontSize: '13px', margin: '0 0 20px' }}>
+            <p style={{ color: '#4E7276', fontSize: '13px', margin: '0 0 20px' }}>
               Ingresa tu nueva contraseña.
             </p>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ position: 'relative' }}>
-                <Lock size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#778DA9' }} />
+                <Lock size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#4E7276' }} />
                 <input
                   type="password"
                   value={nuevaPassword}
@@ -84,16 +84,16 @@ export default function RestablecerContrasena() {
                     width: '100%',
                     boxSizing: 'border-box',
                     padding: '10px 12px 10px 36px',
-                    background: 'rgba(224,225,221,0.06)',
-                    border: '1px solid rgba(224,225,221,0.15)',
+                    background: 'rgba(15,53,56,0.06)',
+                    border: '1px solid rgba(15,53,56,0.15)',
                     borderRadius: '8px',
-                    color: '#E0E1DD',
+                    color: '#0F3538',
                     fontSize: '14px',
                   }}
                 />
               </div>
               <div style={{ position: 'relative' }}>
-                <Lock size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#778DA9' }} />
+                <Lock size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#4E7276' }} />
                 <input
                   type="password"
                   value={confirmar}
@@ -104,10 +104,10 @@ export default function RestablecerContrasena() {
                     width: '100%',
                     boxSizing: 'border-box',
                     padding: '10px 12px 10px 36px',
-                    background: 'rgba(224,225,221,0.06)',
-                    border: '1px solid rgba(224,225,221,0.15)',
+                    background: 'rgba(15,53,56,0.06)',
+                    border: '1px solid rgba(15,53,56,0.15)',
                     borderRadius: '8px',
-                    color: '#E0E1DD',
+                    color: '#0F3538',
                     fontSize: '14px',
                   }}
                 />
@@ -115,12 +115,12 @@ export default function RestablecerContrasena() {
               <Button variant="primary" type="submit" disabled={cargando}>
                 {cargando ? 'Restableciendo…' : 'Restablecer contraseña'}
               </Button>
-              {error && <p style={{ color: '#c97070', fontSize: '12px', margin: 0 }}>{error}</p>}
+              {error && <p style={{ color: '#C4453C', fontSize: '12px', margin: 0 }}>{error}</p>}
             </form>
           </>
         )}
 
-        <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#778DA9', fontSize: '13px', marginTop: '20px', textDecoration: 'none' }}>
+        <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4E7276', fontSize: '13px', marginTop: '20px', textDecoration: 'none' }}>
           <ArrowLeft size={14} /> Volver a iniciar sesión
         </Link>
       </GlassCard>

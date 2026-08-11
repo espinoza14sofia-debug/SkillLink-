@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SkillLink.Application.DTOs;
 using SkillLink.Application.Interfaces;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SkillLink.Api.Controllers;
 
@@ -59,6 +61,28 @@ public class AuthController : ControllerBase
         }
 
         return Ok(new { mensaje = "Si el email existe, se enviaron instrucciones de recuperación." });
+    }
+
+    // POST: api/auth/cambiar-password
+    [HttpPost("cambiar-password")]
+    [Authorize]
+    public async Task<IActionResult> CambiarPassword([FromBody] CambiarPasswordDto dto)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var usuarioId))
+        {
+            return Unauthorized();
+        }
+
+        var resultado = await _authService.CambiarPasswordAsync(usuarioId, dto);
+
+        if (!resultado.Exito)
+        {
+            return BadRequest(new { mensaje = resultado.Error });
+        }
+
+        return Ok(new { mensaje = "Contraseña actualizada correctamente." });
     }
 
     // POST: api/auth/restablecer-password

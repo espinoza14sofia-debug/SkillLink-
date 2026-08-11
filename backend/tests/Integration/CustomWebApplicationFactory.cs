@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SkillLink.Application.Interfaces;
+using SkillLink.Api.Services;
 using SkillLink.Infrastructure.Persistence;
 
 namespace SkillLink.Tests.Integration;
@@ -37,9 +37,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             }
 
             var emailMock = new Mock<IEmailService>();
-            // Ajusta la firma según tu interfaz real, ej:
-            // emailMock.Setup(e => e.EnviarAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-            //          .Returns(Task.CompletedTask);
+            emailMock
+                .Setup(e => e.SendEmailAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
             services.AddSingleton(emailMock.Object);
 
             // ---- Crear el esquema en memoria (incluye seed de NivelConfiguracion) ----

@@ -11,8 +11,8 @@ self.addEventListener('push', (event) => {
     const titulo = payload.titulo || 'SkillLink';
     const opciones = {
         body: payload.mensaje || '',
-        icon: '/icon-192.png',
-        badge: '/icon-192.png',
+        icon: '/favicon.png',
+        badge: '/favicon.png',
     };
 
     event.waitUntil(self.registration.showNotification(titulo, opciones));

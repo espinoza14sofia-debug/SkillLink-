@@ -1,4 +1,6 @@
-﻿namespace SkillLink.Api.Services
+﻿using System.Threading.Tasks;
+
+namespace SkillLink.Application.Interfaces
 {
     public interface IEmailService
     {

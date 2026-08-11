@@ -126,7 +126,7 @@ export default function Dashboard() {
                         gap: 16,
                     }}
                 >
-                    <p style={{ color: "#E0E1DD" }}>{error || "Ocurrió un error."}</p>
+                    <p style={{ color: "#0F3538" }}>{error || "Ocurrió un error."}</p>
                     <Button variant="ghost" onClick={handleLogout}>
                         Cerrar sesión
                     </Button>
@@ -165,7 +165,7 @@ export default function Dashboard() {
                     >
                         {saludoSegunHora()}, {primerNombre}
                     </h1>
-                    <p style={{ color: "#778DA9", margin: 0 }}>
+                    <p style={{ color: "#4E7276", margin: 0 }}>
                         {perfil.xpRestante > 0
                             ? `Te faltan ${perfil.xpRestante} XP para el siguiente nivel.`
                             : "¡Nivel completo! Sigue así."}
@@ -182,8 +182,8 @@ export default function Dashboard() {
                 style={{
                     padding: "32px",
                     marginBottom: "24px",
-                    background: "rgba(65, 90, 119, 0.14)",
-                    border: "1px solid rgba(65, 90, 119, 0.35)",
+                    background: "rgba(0, 109, 119, 0.14)",
+                    border: "1px solid rgba(0, 109, 119, 0.35)",
                     position: "relative",
                     overflow: "hidden",
                 }}
@@ -196,7 +196,7 @@ export default function Dashboard() {
                         width: 250,
                         height: 250,
                         borderRadius: "50%",
-                        border: "1px solid rgba(65, 90, 119, 0.2)",
+                        border: "1px solid rgba(0, 109, 119, 0.2)",
                         pointerEvents: "none",
                     }}
                 />
@@ -208,7 +208,7 @@ export default function Dashboard() {
                         width: 160,
                         height: 160,
                         borderRadius: "50%",
-                        border: "1px solid rgba(65, 90, 119, 0.15)",
+                        border: "1px solid rgba(0, 109, 119, 0.15)",
                         pointerEvents: "none",
                     }}
                 />
@@ -238,8 +238,8 @@ export default function Dashboard() {
                             </h2>
                             <div
                                 style={{
-                                    background: "rgba(196, 154, 63, 0.15)",
-                                    border: "1px solid rgba(196, 154, 63, 0.4)",
+                                    background: "rgba(15, 53, 56, 0.15)",
+                                    border: "1px solid rgba(15, 53, 56, 0.4)",
                                     borderRadius: "999px",
                                     padding: "3px 12px",
                                 }}
@@ -257,19 +257,19 @@ export default function Dashboard() {
                             </div>
                         </div>
                         {perfil.carrera && (
-                            <p style={{ color: "#778DA9", fontSize: "13px", margin: "0 0 16px" }}>
+                            <p style={{ color: "#4E7276", fontSize: "13px", margin: "0 0 16px" }}>
                                 {perfil.carrera}
                             </p>
                         )}
                         <XPBar value={xp} max={xpMax} showValues />
-                        <p style={{ fontSize: "12px", color: "#778DA9", margin: "6px 0 0" }}>
+                        <p style={{ fontSize: "12px", color: "#4E7276", margin: "6px 0 0" }}>
                             {perfil.xpRestante > 0 ? (
                                 <>
                                     Faltan{" "}
                                     <span
                                         style={{
                                             fontFamily: "var(--font-mono)",
-                                            color: "#9db5cc",
+                                            color: "#006D77",
                                             fontWeight: 500,
                                         }}
                                     >
@@ -295,8 +295,8 @@ export default function Dashboard() {
                 }}
             >
                 {[
-                    { label: "XP Total", value: perfil.xp.toLocaleString(), color: "#9db5cc", Icon: Zap, to: "/perfil" },
-                    { label: "Insignias", value: perfil.insigniasDesbloqueadas, color: "#c49a3f", Icon: Star, to: "/insignias" },
+                    { label: "XP Total", value: perfil.xp.toLocaleString(), color: "#006D77", Icon: Zap, to: "/perfil" },
+                    { label: "Insignias", value: perfil.insigniasDesbloqueadas, color: "#0F3538", Icon: Star, to: "/insignias" },
                     { label: "Misiones completadas", value: misionesCompletadasCount, color: "#6db384", Icon: Target, to: "/misiones" },
                 ].map(({ label, value, color, Icon, to }) => (
                     <Link key={label} to={to} style={{ textDecoration: "none" }}>
@@ -321,13 +321,13 @@ export default function Dashboard() {
                                     fontFamily: "var(--font-mono)",
                                     fontSize: "28px",
                                     fontWeight: 600,
-                                    color: "#E0E1DD",
+                                    color: "#0F3538",
                                     marginBottom: "4px",
                                 }}
                             >
                                 {value}
                             </div>
-                            <div style={{ fontSize: "13px", color: "#778DA9" }}>{label}</div>
+                            <div style={{ fontSize: "13px", color: "#4E7276" }}>{label}</div>
                         </GlassCard>
                     </Link>
                 ))}
@@ -357,7 +357,7 @@ export default function Dashboard() {
 
                     {misionesActivas.length === 0 ? (
                         <GlassCard style={{ padding: "24px", textAlign: "center" }}>
-                            <p style={{ color: "#778DA9", fontSize: "13px", margin: 0 }}>
+                            <p style={{ color: "#4E7276", fontSize: "13px", margin: 0 }}>
                                 No tienes misiones activas ahora mismo.
                             </p>
                         </GlassCard>
@@ -377,7 +377,7 @@ export default function Dashboard() {
                     </h2>
                     {actividad.length === 0 ? (
                         <GlassCard style={{ padding: "24px", textAlign: "center" }}>
-                            <p style={{ color: "#778DA9", fontSize: "13px", margin: 0 }}>
+                            <p style={{ color: "#4E7276", fontSize: "13px", margin: 0 }}>
                                 Aún no hay actividad reciente.
                             </p>
                         </GlassCard>
@@ -393,7 +393,7 @@ export default function Dashboard() {
                                         padding: "12px",
                                         borderRadius: "10px",
                                         borderBottom:
-                                            i < actividad.length - 1 ? "1px solid rgba(224,225,221,0.06)" : "none",
+                                            i < actividad.length - 1 ? "1px solid rgba(15,53,56,0.06)" : "none",
                                     }}
                                 >
                                     <div
@@ -402,17 +402,17 @@ export default function Dashboard() {
                                             height: 34,
                                             borderRadius: "10px",
                                             flexShrink: 0,
-                                            background: "rgba(65, 90, 119, 0.2)",
-                                            border: "1px solid rgba(65, 90, 119, 0.3)",
+                                            background: "rgba(0, 109, 119, 0.2)",
+                                            border: "1px solid rgba(0, 109, 119, 0.3)",
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
                                         }}
                                     >
-                                        <CheckCircle size={15} color="#778DA9" />
+                                        <CheckCircle size={15} color="#4E7276" />
                                     </div>
                                     <div style={{ flex: 1 }}>
-                                        <p style={{ margin: "0 0 4px", fontSize: "13px", color: "#E0E1DD", lineHeight: 1.4 }}>
+                                        <p style={{ margin: "0 0 4px", fontSize: "13px", color: "#0F3538", lineHeight: 1.4 }}>
                                             {a.texto}
                                         </p>
                                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -428,7 +428,7 @@ export default function Dashboard() {
                                                     +{a.xp} XP
                                                 </span>
                                             )}
-                                            <span style={{ fontSize: "11px", color: "#778DA9" }}>hace {a.tiempo}</span>
+                                            <span style={{ fontSize: "11px", color: "#4E7276" }}>hace {a.tiempo}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -444,7 +444,7 @@ export default function Dashboard() {
                                 fontSize: "14px",
                                 fontWeight: 600,
                                 margin: "0 0 10px",
-                                color: "#778DA9",
+                                color: "#4E7276",
                             }}
                         >
                             ACCIONES RÁPIDAS
@@ -474,13 +474,13 @@ export default function Dashboard() {
                                                 gap: "10px",
                                                 fontSize: "13px",
                                                 fontWeight: 500,
-                                                color: "#E0E1DD",
+                                                color: "#0F3538",
                                             }}
                                         >
-                                            <Icon size={15} color="#778DA9" />
+                                            <Icon size={15} color="#4E7276" />
                                             {label}
                                         </span>
-                                        <ChevronRight size={14} color="#415A77" />
+                                        <ChevronRight size={14} color="#006D77" />
                                     </div>
                                 </Link>
                             ))}
@@ -524,7 +524,7 @@ function MissionRow({ mission }) {
                         </span>
                         <Badge variant={s.variant}>{s.label}</Badge>
                     </div>
-                    <span style={{ fontSize: "12px", color: "#778DA9" }}>
+                    <span style={{ fontSize: "12px", color: "#4E7276" }}>
                         {mission.proyectoNombre || mission.descripcion}
                     </span>
                 </div>
@@ -543,8 +543,8 @@ function MissionRow({ mission }) {
                             fontFamily: "var(--font-mono)",
                             fontSize: "13px",
                             fontWeight: 600,
-                            color: "#9db5cc",
-                            background: "rgba(65,90,119,0.2)",
+                            color: "#006D77",
+                            background: "rgba(0,109,119,0.2)",
                             padding: "2px 8px",
                             borderRadius: "6px",
                         }}
@@ -552,7 +552,7 @@ function MissionRow({ mission }) {
                         +{mission.xpValor} XP
                     </div>
                     {mission.fechaLimite && (
-                        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#778DA9" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#4E7276" }}>
                             <Clock size={11} />
                             {new Date(mission.fechaLimite).toLocaleDateString("es-CR", { day: "numeric", month: "short" })}
                         </div>

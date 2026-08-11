@@ -9,15 +9,18 @@ public class LogroService : ILogroService
     private readonly ILogroRepository _logroRepository;
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IProyectoRepository _proyectoRepository;
+    private readonly IMisionRepository _misionRepository;
 
     public LogroService(
         ILogroRepository logroRepository,
         IUsuarioRepository usuarioRepository,
-        IProyectoRepository proyectoRepository)
+        IProyectoRepository proyectoRepository,
+        IMisionRepository misionRepository)
     {
         _logroRepository = logroRepository;
         _usuarioRepository = usuarioRepository;
         _proyectoRepository = proyectoRepository;
+        _misionRepository = misionRepository;
     }
 
     public async Task<List<LogroDto>> ObtenerLogrosDeUsuarioAsync(Guid usuarioId)
@@ -28,6 +31,7 @@ public class LogroService : ILogroService
         return todos.Select(logro =>
         {
             var obtenido = obtenidos.FirstOrDefault(o => o.LogroId == logro.Id);
+
             return new LogroDto
             {
                 Id = logro.Id,
@@ -39,45 +43,82 @@ public class LogroService : ILogroService
         }).ToList();
     }
 
-    public async Task<List<LogroDto>> EvaluarYOtorgarAsync(Guid usuarioId, int xpTotal, int misionesCompletadas)
+    /// <summary>
+    /// Evalúa y otorga insignias con base en el estado actual
+    /// del usuario en la base de datos.
+    /// </summary>
+    public async Task<List<LogroDto>> EvaluarYOtorgarAsync(Guid usuarioId)
     {
         var logros = await _logroRepository.ObtenerTodosAsync();
         var nuevos = new List<LogroDto>();
 
-        // Estos dos solo se calculan si hay al menos un logro que los necesite,
-        // para no pegarle a la base de datos de más en cada evaluación.
-        var necesitaRacha = logros.Any(l => l.TipoCondicion == "racha_dias");
-        var necesitaProyectos = logros.Any(l => l.TipoCondicion == "proyectos_completados");
-
-        var rachaActual = 0;
-        if (necesitaRacha)
+        if (logros.Count == 0)
         {
-            var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId);
-            rachaActual = usuario?.RachaActual ?? 0;
+            return nuevos;
         }
 
-        var proyectosCompletados = 0;
-        if (necesitaProyectos)
+        var usuario = await _usuarioRepository.ObtenerPorIdAsync(usuarioId);
+
+        if (usuario == null)
         {
-            var proyectos = await _proyectoRepository.ObtenerPorUsuarioAsync(usuarioId);
-            proyectosCompletados = proyectos.Count(p => p.Estado == EstadoProyecto.Completado);
+            return nuevos;
         }
+
+        // Determinar qué datos son necesarios según las condiciones
+        // de las insignias existentes.
+        var necesitaMisiones = logros.Any(
+            l => l.TipoCondicion == "misiones_completadas");
+
+        var necesitaProyectos = logros.Any(
+            l => l.TipoCondicion == "proyectos_completados");
+
+        var xpTotal = usuario.Xp;
+        var rachaActual = usuario.RachaActual;
+
+        var misionesCompletadas = necesitaMisiones
+            ? await _misionRepository.ContarCompletadasPorUsuarioAsync(usuarioId)
+            : 0;
+
+        var proyectosCompletados = necesitaProyectos
+            ? (await _proyectoRepository.ObtenerPorUsuarioAsync(usuarioId))
+                .Count(p => p.Estado == EstadoProyecto.Completado)
+            : 0;
+
+        // Obtener las insignias que el usuario ya tiene.
+        var yaObtenidos = (await _logroRepository
+                .ObtenerPorUsuarioAsync(usuarioId))
+            .Select(o => o.LogroId)
+            .ToHashSet();
 
         foreach (var logro in logros)
         {
+            // Si ya tiene la insignia, no volver a otorgarla.
+            if (yaObtenidos.Contains(logro.Id))
+            {
+                continue;
+            }
+
             var cumple = logro.TipoCondicion switch
             {
-                "xp_total" => xpTotal >= logro.ValorCondicion,
-                "misiones_completadas" => misionesCompletadas >= logro.ValorCondicion,
-                "racha_dias" => rachaActual >= logro.ValorCondicion,
-                "proyectos_completados" => proyectosCompletados >= logro.ValorCondicion,
+                "xp_total" =>
+                    xpTotal >= logro.ValorCondicion,
+
+                "misiones_completadas" =>
+                    misionesCompletadas >= logro.ValorCondicion,
+
+                "racha_dias" =>
+                    rachaActual >= logro.ValorCondicion,
+
+                "proyectos_completados" =>
+                    proyectosCompletados >= logro.ValorCondicion,
+
                 _ => false
             };
 
-            if (!cumple) continue;
-
-            var yaLoTiene = await _logroRepository.YaTieneLogroAsync(usuarioId, logro.Id);
-            if (yaLoTiene) continue;
+            if (!cumple)
+            {
+                continue;
+            }
 
             var fecha = DateTime.UtcNow;
 
@@ -98,7 +139,10 @@ public class LogroService : ILogroService
             });
         }
 
-        await _logroRepository.GuardarCambiosAsync();
+        if (nuevos.Count > 0)
+        {
+            await _logroRepository.GuardarCambiosAsync();
+        }
 
         return nuevos;
     }

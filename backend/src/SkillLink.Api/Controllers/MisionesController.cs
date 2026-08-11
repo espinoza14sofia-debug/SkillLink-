@@ -87,15 +87,23 @@ public class MisionesController : ControllerBase
     }
 
     // PUT: api/misiones/{id}/asignar
+    // ANTES: ignoraba el body y siempre asignaba la misión al usuario logueado
+    // (ObtenerUsuarioId()), sin importar qué compañero se elegía en el dropdown
+    // del frontend. Ahora toma el usuario destino del DTO.
     [HttpPut("{id}/asignar")]
-    public async Task<IActionResult> AsignarAMi(Guid id)
+    public async Task<IActionResult> Asignar(Guid id, [FromBody] AsignarMisionDto dto)
     {
-        var usuarioId = ObtenerUsuarioId();
-        if (usuarioId == null) return Unauthorized();
+        var usuarioActualId = ObtenerUsuarioId();
+        if (usuarioActualId == null) return Unauthorized();
+
+        if (dto == null || dto.UsuarioId == Guid.Empty)
+        {
+            return BadRequest(new { mensaje = "Debés indicar a qué usuario asignar la misión." });
+        }
 
         try
         {
-            var mision = await _misionService.AsignarAsync(id, usuarioId.Value);
+            var mision = await _misionService.AsignarAsync(id, dto.UsuarioId);
             return Ok(mision);
         }
         catch (InvalidOperationException ex)

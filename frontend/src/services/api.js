@@ -19,7 +19,7 @@ api.interceptors.response.use((response) => {
     window.dispatchEvent(
       new CustomEvent('subioDeNivel', { detail: { nivel: data.nuevoNivel ?? data.nivel } })
     );
-}
+  }
   return response;
 });
 

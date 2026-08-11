@@ -17,20 +17,26 @@ const CARRERAS = [
   'Medicina',
 ];
 
+const OTRA_CARRERA = '__otra__';
+
 export default function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', career: '', password: '', confirm: '' });
+  const [form, setForm] = useState({ name: '', email: '', career: '', careerOtra: '', confirm: '', password: '' });
   const [errors, setErrors] = useState({});
   const [errorBackend, setErrorBackend] = useState('');
   const [cargando, setCargando] = useState(false);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  // Si eligió "Otra", la carrera real es lo que escribió a mano.
+  const carreraFinal = form.career === OTRA_CARRERA ? form.careerOtra.trim() : form.career;
+
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = 'Nombre requerido';
     if (!form.email.includes('@')) e.email = 'Correo inválido';
     if (!form.career) e.career = 'Selecciona una carrera';
+    if (form.career === OTRA_CARRERA && !form.careerOtra.trim()) e.careerOtra = 'Escribí el nombre de tu carrera';
     if (form.password.length < 8) e.password = 'Mínimo 8 caracteres';
     if (form.password !== form.confirm) e.confirm = 'Las contraseñas no coinciden';
     return e;
@@ -53,7 +59,7 @@ export default function Register() {
         nombre: form.name,
         email: form.email,
         password: form.password,
-        carrera: form.career,
+        carrera: carreraFinal,
       });
       navigate('/login');
     } catch (err) {
@@ -86,20 +92,20 @@ export default function Register() {
               width: 52,
               height: 52,
               borderRadius: '16px',
-              background: '#415A77',
+              background: '#006D77',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 14px',
-              boxShadow: '0 0 30px rgba(65, 90, 119, 0.4)',
+              boxShadow: '0 0 30px rgba(0, 109, 119, 0.4)',
             }}
           >
-            <Zap size={26} color="#E0E1DD" fill="#E0E1DD" />
+            <Zap size={26} color="#FFFFFF" fill="#FFFFFF" />
           </div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '26px', fontWeight: 700, margin: '0 0 6px' }}>
             Crea tu cuenta
           </h1>
-          <p style={{ color: '#778DA9', fontSize: '13px', margin: 0 }}>
+          <p style={{ color: '#4E7276', fontSize: '13px', margin: 0 }}>
             Únete a miles de estudiantes que ya colaboran
           </p>
         </div>
@@ -108,13 +114,13 @@ export default function Register() {
           {errorBackend && (
             <div
               style={{
-                background: 'rgba(124, 58, 58, 0.15)',
-                border: '1px solid rgba(124, 58, 58, 0.35)',
+                background: 'rgba(196, 69, 60, 0.15)',
+                border: '1px solid rgba(196, 69, 60, 0.35)',
                 borderRadius: '10px',
                 padding: '10px 14px',
                 marginBottom: '16px',
                 fontSize: '13px',
-                color: '#c97070',
+                color: '#C4453C',
               }}
             >
               {errorBackend}
@@ -141,7 +147,7 @@ export default function Register() {
               icon={<Mail size={15} />}
             />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 500, color: '#778DA9' }}>Carrera</label>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#4E7276' }}>Carrera</label>
               <div style={{ position: 'relative' }}>
                 <BookOpen
                   size={15}
@@ -150,7 +156,7 @@ export default function Register() {
                     left: 14,
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    color: '#778DA9',
+                    color: '#4E7276',
                     pointerEvents: 'none',
                   }}
                 />
@@ -160,10 +166,10 @@ export default function Register() {
                   style={{
                     width: '100%',
                     padding: '12px 14px 12px 42px',
-                    background: 'rgba(224, 225, 221, 0.06)',
-                    border: `1px solid ${errors.career ? 'rgba(124,58,58,0.6)' : 'rgba(224,225,221,0.15)'}`,
+                    background: 'rgba(15, 53, 56, 0.06)',
+                    border: `1px solid ${errors.career ? 'rgba(196,69,60,0.6)' : 'rgba(15,53,56,0.15)'}`,
                     borderRadius: '12px',
-                    color: form.career ? '#E0E1DD' : '#778DA9',
+                    color: form.career ? '#0F3538' : '#4E7276',
                     fontSize: '14px',
                     outline: 'none',
                     cursor: 'pointer',
@@ -171,17 +177,31 @@ export default function Register() {
                     WebkitAppearance: 'none',
                   }}
                 >
-                  <option value="" style={{ background: '#1B263B' }}>
+                  <option value="" style={{ background: '#FFFFFF' }}>
                     Selecciona tu carrera
                   </option>
                   {CARRERAS.map((c) => (
-                    <option key={c} value={c} style={{ background: '#1B263B' }}>
+                    <option key={c} value={c} style={{ background: '#FFFFFF' }}>
                       {c}
                     </option>
                   ))}
+                  <option value={OTRA_CARRERA} style={{ background: '#FFFFFF' }}>
+                    Otra (especificar)
+                  </option>
                 </select>
               </div>
-              {errors.career && <span style={{ fontSize: '12px', color: '#c97070' }}>{errors.career}</span>}
+              {errors.career && <span style={{ fontSize: '12px', color: '#C4453C' }}>{errors.career}</span>}
+
+              {form.career === OTRA_CARRERA && (
+                <Input
+                  placeholder="Escribí el nombre de tu carrera"
+                  value={form.careerOtra}
+                  onChange={set('careerOtra')}
+                  error={errors.careerOtra}
+                  icon={<BookOpen size={15} />}
+                  style={{ marginTop: '2px' }}
+                />
+              )}
             </div>
             <Input
               label="Contraseña"
@@ -204,10 +224,10 @@ export default function Register() {
 
             {form.password.length > 0 && <PasswordStrength password={form.password} />}
 
-            <p style={{ fontSize: '12px', color: '#778DA9', margin: '4px 0 0', textAlign: 'center', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '12px', color: '#4E7276', margin: '4px 0 0', textAlign: 'center', lineHeight: 1.6 }}>
               Al registrarte aceptas los{' '}
-              <span style={{ color: '#9db5cc', cursor: 'pointer' }}>Términos de uso</span> y la{' '}
-              <span style={{ color: '#9db5cc', cursor: 'pointer' }}>Política de privacidad</span>
+              <span style={{ color: '#006D77', cursor: 'pointer' }}>Términos de uso</span> y la{' '}
+              <span style={{ color: '#006D77', cursor: 'pointer' }}>Política de privacidad</span>
             </p>
 
             <Button type="submit" size="lg" style={{ width: '100%' }} disabled={cargando}>
@@ -220,11 +240,11 @@ export default function Register() {
               textAlign: 'center',
               marginTop: '20px',
               paddingTop: '20px',
-              borderTop: '1px solid rgba(224, 225, 221, 0.08)',
+              borderTop: '1px solid rgba(15, 53, 56, 0.08)',
             }}
           >
-            <span style={{ color: '#778DA9', fontSize: '13px' }}>¿Ya tienes cuenta? </span>
-           <br /> <Link to="/login" style={{ color: '#9db5cc', fontSize: '13px', fontWeight: 500 }}>
+            <span style={{ color: '#4E7276', fontSize: '13px' }}>¿Ya tienes cuenta? </span>
+           <br /> <Link to="/login" style={{ color: '#006D77', fontSize: '13px', fontWeight: 500 }}>
               Inicia sesión
             </Link>
           </div>
@@ -243,7 +263,7 @@ function PasswordStrength({ password }) {
   ].filter(Boolean).length;
 
   const labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];
-  const colors = ['', '#c97070', '#c49a3f', '#778DA9', '#6db384'];
+  const colors = ['', '#C4453C', '#C97A3C', '#83C5BE', '#2F8F6F'];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -255,7 +275,7 @@ function PasswordStrength({ password }) {
               flex: 1,
               height: 4,
               borderRadius: 2,
-              background: i <= score ? colors[score] : 'rgba(224, 225, 221, 0.1)',
+              background: i <= score ? colors[score] : 'rgba(15, 53, 56, 0.1)',
               transition: 'background 0.25s',
             }}
           />

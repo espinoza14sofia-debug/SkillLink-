@@ -249,11 +249,13 @@
     height: 30px;
     width: auto;
 }
+
 .stat-icon-img {
     height: 70px;
     width: auto;
     object-fit: contain;
 }
+
 .misiones-link {
     display: flex;
     align-items: center;

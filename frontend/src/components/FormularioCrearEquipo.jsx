@@ -36,12 +36,12 @@ export default function FormularioCrearEquipo({ onCreado }) {
       {error && (
         <div
           style={{
-            background: "rgba(124, 58, 58, 0.15)",
-            border: "1px solid rgba(124, 58, 58, 0.35)",
+            background: "rgba(196, 69, 60, 0.15)",
+            border: "1px solid rgba(196, 69, 60, 0.35)",
             borderRadius: "10px",
             padding: "10px 14px",
             fontSize: "13px",
-            color: "#c97070",
+            color: "#C4453C",
           }}
         >
           {error}
