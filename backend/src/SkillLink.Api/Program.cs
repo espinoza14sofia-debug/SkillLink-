@@ -58,13 +58,12 @@ builder.Services.AddScoped<IInvitacionService, InvitacionService>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-// ==========================B
+// ==========================
 // Base de datos
 // ==========================
 builder.Services.AddDbContext<SkillLinkDbContext>(options =>
-    options.UseSqlServer(
+    options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
-
 // ==========================
 // Swagger (con soporte JWT - botón Authorize)
 // ==========================
