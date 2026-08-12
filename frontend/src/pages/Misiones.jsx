@@ -37,6 +37,7 @@ export default function Misiones() {
     const [filtroActivo, setFiltroActivo] = useState('Todas');
     const [expandidaId, setExpandidaId] = useState(null);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState({});
+    const [completandoId, setCompletandoId] = useState(null);
 
     const cargarDatos = async () => {
         try {
@@ -65,8 +66,12 @@ export default function Misiones() {
 
     useEffect(() => {
         const stored = localStorage.getItem('usuario');
-        if (stored) {
-            setUsuarioId(JSON.parse(stored).id);
+        if (stored && stored !== 'undefined') {
+            try {
+                setUsuarioId(JSON.parse(stored).id);
+            } catch {
+                setUsuarioId(null);
+            }
         }
         cargarDatos();
     }, []);
@@ -87,12 +92,20 @@ export default function Misiones() {
     };
 
     const handleCompletar = async (id) => {
+        // Evita doble envío (doble clic o clic mientras la petición anterior
+        // todavía está en curso), que generaba un 400 espurio al backend
+        // ("Esta misión ya fue completada") con datos de UI desactualizados.
+        if (completandoId === id) return;
+
+        setCompletandoId(id);
         try {
             await api.put(`/misiones/${id}/completar`);
-            cargarDatos();
+            await cargarDatos();
         } catch (err) {
             const mensaje = err.response?.data?.mensaje || 'No se pudo completar la misión.';
             alert(mensaje);
+        } finally {
+            setCompletandoId(null);
         }
     };
 
@@ -213,6 +226,7 @@ export default function Misiones() {
                                         const esMia = Boolean(usuarioId) && Boolean(mision.usuarioAsignadoId)
                                             && String(mision.usuarioAsignadoId) === String(usuarioId);
                                         const completada = clave === 'done';
+                                        const estaCompletando = completandoId === mision.id;
                                         const nombreAsignado = miembrosPorEquipo[grupo.equipoId]?.find(
                                             (m) => String(m.usuarioId) === String(mision.usuarioAsignadoId)
                                         )?.nombre;
@@ -289,8 +303,13 @@ export default function Misiones() {
                                                                 </div>
 
                                                                 {esMia && (
-                                                                    <Button variant="primary" size="sm" onClick={() => handleCompletar(mision.id)}>
-                                                                        Marcar como completada
+                                                                    <Button
+                                                                        variant="primary"
+                                                                        size="sm"
+                                                                        onClick={() => handleCompletar(mision.id)}
+                                                                        disabled={estaCompletando}
+                                                                    >
+                                                                        {estaCompletando ? 'Completando...' : 'Marcar como completada'}
                                                                     </Button>
                                                                 )}
                                                             </div>
