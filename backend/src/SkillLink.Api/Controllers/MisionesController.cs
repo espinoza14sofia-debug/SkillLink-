@@ -152,6 +152,32 @@ public class MisionesController : ControllerBase
         }
     }
 
+    [HttpPut("{id}/completar")]
+    public async Task<IActionResult> Completar(Guid id)
+    {
+        var usuarioId = ObtenerUsuarioId();
+        if (usuarioId == null) return Unauthorized();
+
+        try
+        {
+            var mision = await _misionService.CompletarAsync(id, usuarioId.Value);
+            return Ok(mision);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // TEMPORAL: para diagnosticar el 500, remover después
+            return StatusCode(500, new { mensaje = ex.Message, stackTrace = ex.StackTrace });
+        }
+    }
+
     // PUT: api/misiones/{id}/progreso
     [HttpPut("{id}/progreso")]
     public async Task<IActionResult> ActualizarProgreso(Guid id, [FromBody] ActualizarProgresoDto dto)
