@@ -8,4 +8,6 @@ public interface IMensajeRepository
     Task<List<Mensaje>> ObtenerNuevosAsync(Guid equipoId, DateTime desde);
     Task AgregarAsync(Mensaje mensaje);
     Task GuardarCambiosAsync();
+
+    Task<int> ContarEnviadosPorUsuarioAsync(Guid usuarioId);
 }

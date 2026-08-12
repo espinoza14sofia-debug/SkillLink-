@@ -23,11 +23,15 @@ public class MensajeRepository : IMensajeRepository
             .ToListAsync();
     }
 
-    public async Task<List<Mensaje>> ObtenerNuevosAsync(Guid equipoId, DateTime desde)
+    public async Task<List<Mensaje>> ObtenerNuevosAsync(
+        Guid equipoId,
+        DateTime desde)
     {
         return await _context.Mensajes
             .Include(m => m.Emisor)
-            .Where(m => m.EquipoId == equipoId && m.Fecha > desde)
+            .Where(m =>
+                m.EquipoId == equipoId &&
+                m.Fecha > desde)
             .OrderBy(m => m.Fecha)
             .ToListAsync();
     }
@@ -40,5 +44,15 @@ public class MensajeRepository : IMensajeRepository
     public async Task GuardarCambiosAsync()
     {
         await _context.SaveChangesAsync();
+    }
+
+    // =========================================================
+    // INSIGNIAS
+    // =========================================================
+
+    public async Task<int> ContarEnviadosPorUsuarioAsync(Guid usuarioId)
+    {
+        return await _context.Mensajes
+            .CountAsync(m => m.EmisorId == usuarioId);
     }
 }

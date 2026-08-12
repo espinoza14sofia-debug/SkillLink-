@@ -79,8 +79,322 @@ namespace SkillLink.Infrastructure.Persistence
             modelBuilder.Entity<Logro>(entity =>
             {
                 entity.HasKey(l => l.Id);
-                entity.Property(l => l.Nombre).IsRequired().HasMaxLength(100);
-                entity.Property(l => l.TipoCondicion).IsRequired().HasMaxLength(50);
+
+                entity.Property(l => l.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(l => l.Descripcion)
+                    .HasMaxLength(300);
+
+                entity.Property(l => l.TipoCondicion)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(l => l.ValorCondicion)
+                    .IsRequired();
+
+                entity.HasData(
+
+                    // =========================================================
+                    // XP TOTAL
+                    // =========================================================
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("10000000-0000-0000-0000-000000000001"),
+                        Nombre = "Primeros pasos",
+                        Descripcion = "Alcanza 50 XP.",
+                        TipoCondicion = "xp_total",
+                        ValorCondicion = 50
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("10000000-0000-0000-0000-000000000002"),
+                        Nombre = "Aprendiz",
+                        Descripcion = "Alcanza 100 XP.",
+                        TipoCondicion = "xp_total",
+                        ValorCondicion = 100
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("10000000-0000-0000-0000-000000000003"),
+                        Nombre = "Colaborador",
+                        Descripcion = "Alcanza 250 XP.",
+                        TipoCondicion = "xp_total",
+                        ValorCondicion = 250
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("10000000-0000-0000-0000-000000000004"),
+                        Nombre = "Experto",
+                        Descripcion = "Alcanza 500 XP.",
+                        TipoCondicion = "xp_total",
+                        ValorCondicion = 500
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("10000000-0000-0000-0000-000000000005"),
+                        Nombre = "Maestro del equipo",
+                        Descripcion = "Alcanza 1000 XP.",
+                        TipoCondicion = "xp_total",
+                        ValorCondicion = 1000
+                    },
+
+
+                    // =========================================================
+                    // MISIONES COMPLETADAS
+                    // =========================================================
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("20000000-0000-0000-0000-000000000001"),
+                        Nombre = "Recién llegado",
+                        Descripcion = "Completa tu primera misión.",
+                        TipoCondicion = "misiones_completadas",
+                        ValorCondicion = 1
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("20000000-0000-0000-0000-000000000002"),
+                        Nombre = "En marcha",
+                        Descripcion = "Completa 5 misiones.",
+                        TipoCondicion = "misiones_completadas",
+                        ValorCondicion = 5
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("20000000-0000-0000-0000-000000000003"),
+                        Nombre = "Misionero",
+                        Descripcion = "Completa 10 misiones.",
+                        TipoCondicion = "misiones_completadas",
+                        ValorCondicion = 10
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("20000000-0000-0000-0000-000000000004"),
+                        Nombre = "Especialista en misiones",
+                        Descripcion = "Completa 25 misiones.",
+                        TipoCondicion = "misiones_completadas",
+                        ValorCondicion = 25
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("20000000-0000-0000-0000-000000000005"),
+                        Nombre = "Leyenda de las misiones",
+                        Descripcion = "Completa 50 misiones.",
+                        TipoCondicion = "misiones_completadas",
+                        ValorCondicion = 50
+                    },
+
+
+                    // =========================================================
+                    // PROYECTOS CREADOS
+                    // =========================================================
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("30000000-0000-0000-0000-000000000001"),
+                        Nombre = "Primer proyecto",
+                        Descripcion = "Crea tu primer proyecto.",
+                        TipoCondicion = "proyectos_creados",
+                        ValorCondicion = 1
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("30000000-0000-0000-0000-000000000002"),
+                        Nombre = "Constructor",
+                        Descripcion = "Crea 3 proyectos.",
+                        TipoCondicion = "proyectos_creados",
+                        ValorCondicion = 3
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("30000000-0000-0000-0000-000000000003"),
+                        Nombre = "Creador de proyectos",
+                        Descripcion = "Crea 5 proyectos.",
+                        TipoCondicion = "proyectos_creados",
+                        ValorCondicion = 5
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("30000000-0000-0000-0000-000000000004"),
+                        Nombre = "Gestor de proyectos",
+                        Descripcion = "Crea 10 proyectos.",
+                        TipoCondicion = "proyectos_creados",
+                        ValorCondicion = 10
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("30000000-0000-0000-0000-000000000005"),
+                        Nombre = "Arquitecto",
+                        Descripcion = "Crea 20 proyectos.",
+                        TipoCondicion = "proyectos_creados",
+                        ValorCondicion = 20
+                    },
+
+
+                    // =========================================================
+                    // EQUIPOS CREADOS
+                    // =========================================================
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("40000000-0000-0000-0000-000000000001"),
+                        Nombre = "Fundador",
+                        Descripcion = "Crea tu primer equipo.",
+                        TipoCondicion = "equipos_creados",
+                        ValorCondicion = 1
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("40000000-0000-0000-0000-000000000002"),
+                        Nombre = "Organizador",
+                        Descripcion = "Crea 3 equipos.",
+                        TipoCondicion = "equipos_creados",
+                        ValorCondicion = 3
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("40000000-0000-0000-0000-000000000003"),
+                        Nombre = "Líder de equipos",
+                        Descripcion = "Crea 5 equipos.",
+                        TipoCondicion = "equipos_creados",
+                        ValorCondicion = 5
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("40000000-0000-0000-0000-000000000004"),
+                        Nombre = "Coordinador",
+                        Descripcion = "Crea 10 equipos.",
+                        TipoCondicion = "equipos_creados",
+                        ValorCondicion = 10
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("40000000-0000-0000-0000-000000000005"),
+                        Nombre = "Líder nato",
+                        Descripcion = "Crea 20 equipos.",
+                        TipoCondicion = "equipos_creados",
+                        ValorCondicion = 20
+                    },
+
+
+                    // =========================================================
+                    // HABILIDADES REGISTRADAS
+                    // =========================================================
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("50000000-0000-0000-0000-000000000001"),
+                        Nombre = "Primera habilidad",
+                        Descripcion = "Registra tu primera habilidad.",
+                        TipoCondicion = "habilidades_registradas",
+                        ValorCondicion = 1
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("50000000-0000-0000-0000-000000000002"),
+                        Nombre = "Multitalento",
+                        Descripcion = "Registra 3 habilidades.",
+                        TipoCondicion = "habilidades_registradas",
+                        ValorCondicion = 3
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("50000000-0000-0000-0000-000000000003"),
+                        Nombre = "Versátil",
+                        Descripcion = "Registra 5 habilidades.",
+                        TipoCondicion = "habilidades_registradas",
+                        ValorCondicion = 5
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("50000000-0000-0000-0000-000000000004"),
+                        Nombre = "Especialista",
+                        Descripcion = "Registra 8 habilidades.",
+                        TipoCondicion = "habilidades_registradas",
+                        ValorCondicion = 8
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("50000000-0000-0000-0000-000000000005"),
+                        Nombre = "Polímata",
+                        Descripcion = "Registra 12 habilidades.",
+                        TipoCondicion = "habilidades_registradas",
+                        ValorCondicion = 12
+                    },
+
+
+                    // =========================================================
+                    // MENSAJES ENVIADOS
+                    // =========================================================
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("60000000-0000-0000-0000-000000000001"),
+                        Nombre = "Hola equipo",
+                        Descripcion = "Envía tu primer mensaje.",
+                        TipoCondicion = "mensajes_enviados",
+                        ValorCondicion = 1
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("60000000-0000-0000-0000-000000000002"),
+                        Nombre = "Comunicador",
+                        Descripcion = "Envía 10 mensajes.",
+                        TipoCondicion = "mensajes_enviados",
+                        ValorCondicion = 10
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("60000000-0000-0000-0000-000000000003"),
+                        Nombre = "Conversador",
+                        Descripcion = "Envía 50 mensajes.",
+                        TipoCondicion = "mensajes_enviados",
+                        ValorCondicion = 50
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("60000000-0000-0000-0000-000000000004"),
+                        Nombre = "Comunicador experto",
+                        Descripcion = "Envía 100 mensajes.",
+                        TipoCondicion = "mensajes_enviados",
+                        ValorCondicion = 100
+                    },
+
+                    new Logro
+                    {
+                        Id = Guid.Parse("60000000-0000-0000-0000-000000000005"),
+                        Nombre = "Maestro de la comunicación",
+                        Descripcion = "Envía 250 mensajes.",
+                        TipoCondicion = "mensajes_enviados",
+                        ValorCondicion = 250
+                    }
+                );
             });
 
             modelBuilder.Entity<UsuarioLogro>(entity =>

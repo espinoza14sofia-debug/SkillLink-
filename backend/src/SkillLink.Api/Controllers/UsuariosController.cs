@@ -1,9 +1,10 @@
+﻿using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SkillLink.Application.Interfaces;
 using SkillLink.Application.DTOs;
+using SkillLink.Application.Interfaces;
 
 namespace SkillLink.Api.Controllers;
 
@@ -39,8 +40,9 @@ public class UsuariosController : ControllerBase
 
     private Guid? ObtenerUsuarioId()
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                           ?? User.FindFirstValue("sub");
+        var userIdClaim =
+            User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
 
         return Guid.TryParse(userIdClaim, out var id) ? id : null;
     }
@@ -50,40 +52,122 @@ public class UsuariosController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Me()
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                           ?? User.FindFirstValue("sub");
+        var total = Stopwatch.StartNew();
+
+        var userIdClaim =
+            User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
 
         if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized();
         }
 
+        // ---------------------------------------------------------
+        // USUARIO
+        // ---------------------------------------------------------
+
+        var reloj = Stopwatch.StartNew();
+
         var usuario = await _usuarioRepository.ObtenerPorIdAsync(userId);
+
+        Console.WriteLine(
+            $"[ME] Obtener usuario: {reloj.ElapsedMilliseconds} ms"
+        );
 
         if (usuario == null)
         {
+            Console.WriteLine(
+                $"[ME] Usuario no encontrado. Total: {total.ElapsedMilliseconds} ms"
+            );
+
             return NotFound();
         }
 
-        // Registra que el usuario tuvo actividad hoy.
+        // ---------------------------------------------------------
+        // RACHA
+        // ---------------------------------------------------------
+
+        reloj.Restart();
+
         var racha = await _rachaService.RegistrarActividadAsync(userId);
 
+        Console.WriteLine(
+            $"[ME] Registrar racha: {reloj.ElapsedMilliseconds} ms"
+        );
+
+        // ---------------------------------------------------------
+        // NIVEL
+        // ---------------------------------------------------------
+
+        reloj.Restart();
+
         var nivelInfo = await _nivelService.CalcularNivelAsync(usuario.Xp);
+
+        Console.WriteLine(
+            $"[ME] Calcular nivel: {reloj.ElapsedMilliseconds} ms"
+        );
+
+        // ---------------------------------------------------------
+        // LOGROS
+        // ---------------------------------------------------------
+
+        reloj.Restart();
+
         var logros = await _logroService.ObtenerLogrosDeUsuarioAsync(userId);
+
+        Console.WriteLine(
+            $"[ME] Obtener logros: {reloj.ElapsedMilliseconds} ms"
+        );
+
+        // ---------------------------------------------------------
+        // MISIONES COMPLETADAS
+        // ---------------------------------------------------------
+
+        reloj.Restart();
+
         var misionesCompletadas =
             await _misionRepository.ContarCompletadasPorUsuarioAsync(userId);
 
-        // Evalúa si el usuario desbloqueó alguna insignia nueva.
-        var logrosNuevos =
-            await _logroService.EvaluarYOtorgarAsync(userId);
+        Console.WriteLine(
+            $"[ME] Contar misiones: {reloj.ElapsedMilliseconds} ms"
+        );
 
-        // Habilidades del usuario.
+        // ---------------------------------------------------------
+        // EVALUAR LOGROS
+        // ---------------------------------------------------------
+        // ---------------------------------------------------------
+        // LOGROS NUEVOS
+        // ---------------------------------------------------------
+
+        var logrosNuevos = new List<LogroDto>();
+
+
+        // ---------------------------------------------------------
+        // HABILIDADES
+        // ---------------------------------------------------------
+
+        reloj.Restart();
+
         var habilidadesUsuario =
             await _usuarioService.ObtenerHabilidadesDeUsuarioAsync(userId);
 
-        // Todos los equipos a los que pertenece el usuario.
+        Console.WriteLine(
+            $"[ME] Obtener habilidades: {reloj.ElapsedMilliseconds} ms"
+        );
+
+        // ---------------------------------------------------------
+        // EQUIPOS
+        // ---------------------------------------------------------
+
+        reloj.Restart();
+
         var equipos =
             await _equipoRepository.ObtenerEquiposPorUsuarioAsync(userId);
+
+        Console.WriteLine(
+            $"[ME] Obtener equipos: {reloj.ElapsedMilliseconds} ms"
+        );
 
         var equiposDto = equipos
             .Select(e => new
@@ -93,14 +177,26 @@ public class UsuariosController : ControllerBase
             })
             .ToList();
 
-        // Insignias desbloqueadas.
+        // ---------------------------------------------------------
+        // INSIGNIAS
+        // ---------------------------------------------------------
+
         var insigniasDesbloqueadas = logros
             .Where(l => l.Desbloqueado)
             .Select(l => new
             {
                 id = l.Id,
                 nombre = l.Nombre
-            });
+            })
+            .ToList();
+
+        Console.WriteLine(
+            $"[ME] TOTAL: {total.ElapsedMilliseconds} ms"
+        );
+
+        // ---------------------------------------------------------
+        // RESPUESTA
+        // ---------------------------------------------------------
 
         return Ok(new
         {
@@ -113,18 +209,26 @@ public class UsuariosController : ControllerBase
             linkedin = usuario.Linkedin,
             descripcion = usuario.Descripcion,
             foto = usuario.Foto,
+
             nivel = nivelInfo.Nivel,
             titulo = nivelInfo.Titulo,
             xp = nivelInfo.Xp,
             xpProximoNivel = nivelInfo.XpProximoNivel,
             xpRestante = nivelInfo.XpRestante,
             progreso = nivelInfo.Progreso,
+
             fechaRegistro = usuario.FechaRegistro,
+
             insignias = insigniasDesbloqueadas,
+
             misionesCompletadas = misionesCompletadas,
+
             rachaActual = racha,
+
             logrosNuevos = logrosNuevos,
+
             habilidades = habilidadesUsuario,
+
             equipos = equiposDto
         });
     }
@@ -156,7 +260,8 @@ public class UsuariosController : ControllerBase
             return NotFound();
         }
 
-        var nivelInfo = await _nivelService.CalcularNivelAsync(usuario.Xp);
+        var nivelInfo =
+            await _nivelService.CalcularNivelAsync(usuario.Xp);
 
         return Ok(nivelInfo);
     }
@@ -194,7 +299,8 @@ public class UsuariosController : ControllerBase
             {
                 id = l.Id,
                 nombre = l.Nombre
-            });
+            })
+            .ToList();
 
         return Ok(new
         {
@@ -207,13 +313,19 @@ public class UsuariosController : ControllerBase
             linkedin = usuario.Linkedin,
             descripcion = usuario.Descripcion,
             foto = usuario.Foto,
+
             nivel = nivelInfo.Nivel,
             titulo = nivelInfo.Titulo,
             xp = nivelInfo.Xp,
+
             racha = usuario.RachaActual,
+
             fechaRegistro = usuario.FechaRegistro,
+
             misionesCompletadas = misionesCompletadas,
+
             insignias = insigniasDesbloqueadas,
+
             habilidades = habilidadesUsuario
         });
     }
@@ -232,7 +344,6 @@ public class UsuariosController : ControllerBase
             return Unauthorized();
         }
 
-        // Un usuario solo puede editar su propio perfil.
         if (usuarioActualId.Value != id)
         {
             return Forbid();
@@ -268,13 +379,13 @@ public class UsuariosController : ControllerBase
             return Unauthorized();
         }
 
-        // Un usuario solo puede eliminar su propia cuenta.
         if (usuarioActualId.Value != id)
         {
             return Forbid();
         }
 
-        var usuario = await _usuarioRepository.ObtenerPorIdAsync(id);
+        var usuario =
+            await _usuarioRepository.ObtenerPorIdAsync(id);
 
         if (usuario == null)
         {
@@ -293,7 +404,8 @@ public class UsuariosController : ControllerBase
         {
             return StatusCode(500, new
             {
-                error = "No se pudo eliminar la cuenta por datos relacionados pendientes."
+                error =
+                    "No se pudo eliminar la cuenta por datos relacionados pendientes."
             });
         }
 

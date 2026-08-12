@@ -1,4 +1,4 @@
-using SkillLink.Application.DTOs;
+﻿using SkillLink.Application.DTOs;
 using SkillLink.Application.Interfaces;
 using SkillLink.Domain.Entities;
 
@@ -10,17 +10,26 @@ public class LogroService : ILogroService
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IProyectoRepository _proyectoRepository;
     private readonly IMisionRepository _misionRepository;
+    private readonly IEquipoRepository _equipoRepository;
+    private readonly IHabilidadRepository _habilidadRepository;
+    private readonly IMensajeRepository _mensajeRepository;
 
     public LogroService(
         ILogroRepository logroRepository,
         IUsuarioRepository usuarioRepository,
         IProyectoRepository proyectoRepository,
-        IMisionRepository misionRepository)
+        IMisionRepository misionRepository,
+        IEquipoRepository equipoRepository,
+        IHabilidadRepository habilidadRepository,
+        IMensajeRepository mensajeRepository)
     {
         _logroRepository = logroRepository;
         _usuarioRepository = usuarioRepository;
         _proyectoRepository = proyectoRepository;
         _misionRepository = misionRepository;
+        _equipoRepository = equipoRepository;
+        _habilidadRepository = habilidadRepository;
+        _mensajeRepository = mensajeRepository;
     }
 
     public async Task<List<LogroDto>> ObtenerLogrosDeUsuarioAsync(Guid usuarioId)
@@ -28,9 +37,15 @@ public class LogroService : ILogroService
         var todos = await _logroRepository.ObtenerTodosAsync();
         var obtenidos = await _logroRepository.ObtenerPorUsuarioAsync(usuarioId);
 
+        var obtenidosPorId = obtenidos
+            .Select(o => o.LogroId)
+            .ToHashSet();
+
         return todos.Select(logro =>
         {
-            var obtenido = obtenidos.FirstOrDefault(o => o.LogroId == logro.Id);
+            var obtenido = obtenidos.FirstOrDefault(
+                o => o.LogroId == logro.Id
+            );
 
             return new LogroDto
             {
@@ -43,10 +58,6 @@ public class LogroService : ILogroService
         }).ToList();
     }
 
-    /// <summary>
-    /// Evalúa y otorga insignias con base en el estado actual
-    /// del usuario en la base de datos.
-    /// </summary>
     public async Task<List<LogroDto>> EvaluarYOtorgarAsync(Guid usuarioId)
     {
         var logros = await _logroRepository.ObtenerTodosAsync();
@@ -64,35 +75,83 @@ public class LogroService : ILogroService
             return nuevos;
         }
 
-        // Determinar qué datos son necesarios según las condiciones
-        // de las insignias existentes.
-        var necesitaMisiones = logros.Any(
-            l => l.TipoCondicion == "misiones_completadas");
-
-        var necesitaProyectos = logros.Any(
-            l => l.TipoCondicion == "proyectos_completados");
+        // =========================================================
+        // VALORES DIRECTOS DEL USUARIO
+        // =========================================================
 
         var xpTotal = usuario.Xp;
         var rachaActual = usuario.RachaActual;
 
-        var misionesCompletadas = necesitaMisiones
-            ? await _misionRepository.ContarCompletadasPorUsuarioAsync(usuarioId)
-            : 0;
+        // =========================================================
+        // LOGROS YA OBTENIDOS
+        // =========================================================
 
-        var proyectosCompletados = necesitaProyectos
-            ? (await _proyectoRepository.ObtenerPorUsuarioAsync(usuarioId))
-                .Count(p => p.Estado == EstadoProyecto.Completado)
-            : 0;
-
-        // Obtener las insignias que el usuario ya tiene.
         var yaObtenidos = (await _logroRepository
                 .ObtenerPorUsuarioAsync(usuarioId))
             .Select(o => o.LogroId)
             .ToHashSet();
 
+        // =========================================================
+        // DETERMINAR QUÉ INFORMACIÓN REALMENTE NECESITAMOS
+        // =========================================================
+
+        var necesitaMisiones = logros.Any(
+            l => l.TipoCondicion == "misiones_completadas"
+        );
+
+        var necesitaProyectos = logros.Any(
+            l => l.TipoCondicion == "proyectos_creados" ||
+                 l.TipoCondicion == "proyectos_completados"
+        );
+
+        var necesitaEquipos = logros.Any(
+            l => l.TipoCondicion == "equipos_creados"
+        );
+
+        var necesitaHabilidades = logros.Any(
+            l => l.TipoCondicion == "habilidades_registradas"
+        );
+
+        var necesitaMensajes = logros.Any(
+            l => l.TipoCondicion == "mensajes_enviados"
+        );
+
+        // =========================================================
+        // OBTENER DATOS
+        // =========================================================
+
+        var misionesCompletadas = necesitaMisiones
+            ? await _misionRepository.ContarCompletadasPorUsuarioAsync(usuarioId)
+            : 0;
+
+        var proyectos = necesitaProyectos
+            ? await _proyectoRepository.ObtenerPorUsuarioAsync(usuarioId)
+            : new List<Proyecto>();
+
+        var proyectosCreados = proyectos.Count;
+
+        var proyectosCompletados = proyectos.Count(
+            p => p.Estado == EstadoProyecto.Completado
+        );
+
+        var equiposCreados = necesitaEquipos
+            ? await _equipoRepository.ContarCreadosPorUsuarioAsync(usuarioId)
+            : 0;
+
+        var habilidadesRegistradas = necesitaHabilidades
+            ? (await _habilidadRepository.ObtenerPorUsuarioAsync(usuarioId)).Count
+            : 0;
+
+        var mensajesEnviados = necesitaMensajes
+            ? await _mensajeRepository.ContarEnviadosPorUsuarioAsync(usuarioId)
+            : 0;
+
+        // =========================================================
+        // EVALUAR LOGROS
+        // =========================================================
+
         foreach (var logro in logros)
         {
-            // Si ya tiene la insignia, no volver a otorgarla.
             if (yaObtenidos.Contains(logro.Id))
             {
                 continue;
@@ -106,11 +165,23 @@ public class LogroService : ILogroService
                 "misiones_completadas" =>
                     misionesCompletadas >= logro.ValorCondicion,
 
-                "racha_dias" =>
-                    rachaActual >= logro.ValorCondicion,
+                "proyectos_creados" =>
+                    proyectosCreados >= logro.ValorCondicion,
 
                 "proyectos_completados" =>
                     proyectosCompletados >= logro.ValorCondicion,
+
+                "equipos_creados" =>
+                    equiposCreados >= logro.ValorCondicion,
+
+                "habilidades_registradas" =>
+                    habilidadesRegistradas >= logro.ValorCondicion,
+
+                "mensajes_enviados" =>
+                    mensajesEnviados >= logro.ValorCondicion,
+
+                "racha_dias" =>
+                    rachaActual >= logro.ValorCondicion,
 
                 _ => false
             };
@@ -122,21 +193,25 @@ public class LogroService : ILogroService
 
             var fecha = DateTime.UtcNow;
 
-            await _logroRepository.OtorgarAsync(new UsuarioLogro
-            {
-                UsuarioId = usuarioId,
-                LogroId = logro.Id,
-                FechaObtenido = fecha
-            });
+            await _logroRepository.OtorgarAsync(
+                new UsuarioLogro
+                {
+                    UsuarioId = usuarioId,
+                    LogroId = logro.Id,
+                    FechaObtenido = fecha
+                }
+            );
 
-            nuevos.Add(new LogroDto
-            {
-                Id = logro.Id,
-                Nombre = logro.Nombre,
-                Descripcion = logro.Descripcion,
-                Desbloqueado = true,
-                FechaObtenido = fecha
-            });
+            nuevos.Add(
+                new LogroDto
+                {
+                    Id = logro.Id,
+                    Nombre = logro.Nombre,
+                    Descripcion = logro.Descripcion,
+                    Desbloqueado = true,
+                    FechaObtenido = fecha
+                }
+            );
         }
 
         if (nuevos.Count > 0)

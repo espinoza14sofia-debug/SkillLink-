@@ -60,7 +60,7 @@ namespace SkillLink.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nombre = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Descripcion = table.Column<string>(type: "text", nullable: true),
+                    Descripcion = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
                     TipoCondicion = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     ValorCondicion = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -389,6 +389,43 @@ namespace SkillLink.Infrastructure.Migrations
                         principalTable: "Proyectos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Logros",
+                columns: new[] { "Id", "Descripcion", "Nombre", "TipoCondicion", "ValorCondicion" },
+                values: new object[,]
+                {
+                    { new Guid("10000000-0000-0000-0000-000000000001"), "Alcanza 50 XP.", "Primeros pasos", "xp_total", 50 },
+                    { new Guid("10000000-0000-0000-0000-000000000002"), "Alcanza 100 XP.", "Aprendiz", "xp_total", 100 },
+                    { new Guid("10000000-0000-0000-0000-000000000003"), "Alcanza 250 XP.", "Colaborador", "xp_total", 250 },
+                    { new Guid("10000000-0000-0000-0000-000000000004"), "Alcanza 500 XP.", "Experto", "xp_total", 500 },
+                    { new Guid("10000000-0000-0000-0000-000000000005"), "Alcanza 1000 XP.", "Maestro del equipo", "xp_total", 1000 },
+                    { new Guid("20000000-0000-0000-0000-000000000001"), "Completa tu primera misión.", "Recién llegado", "misiones_completadas", 1 },
+                    { new Guid("20000000-0000-0000-0000-000000000002"), "Completa 5 misiones.", "En marcha", "misiones_completadas", 5 },
+                    { new Guid("20000000-0000-0000-0000-000000000003"), "Completa 10 misiones.", "Misionero", "misiones_completadas", 10 },
+                    { new Guid("20000000-0000-0000-0000-000000000004"), "Completa 25 misiones.", "Especialista en misiones", "misiones_completadas", 25 },
+                    { new Guid("20000000-0000-0000-0000-000000000005"), "Completa 50 misiones.", "Leyenda de las misiones", "misiones_completadas", 50 },
+                    { new Guid("30000000-0000-0000-0000-000000000001"), "Crea tu primer proyecto.", "Primer proyecto", "proyectos_creados", 1 },
+                    { new Guid("30000000-0000-0000-0000-000000000002"), "Crea 3 proyectos.", "Constructor", "proyectos_creados", 3 },
+                    { new Guid("30000000-0000-0000-0000-000000000003"), "Crea 5 proyectos.", "Creador de proyectos", "proyectos_creados", 5 },
+                    { new Guid("30000000-0000-0000-0000-000000000004"), "Crea 10 proyectos.", "Gestor de proyectos", "proyectos_creados", 10 },
+                    { new Guid("30000000-0000-0000-0000-000000000005"), "Crea 20 proyectos.", "Arquitecto", "proyectos_creados", 20 },
+                    { new Guid("40000000-0000-0000-0000-000000000001"), "Crea tu primer equipo.", "Fundador", "equipos_creados", 1 },
+                    { new Guid("40000000-0000-0000-0000-000000000002"), "Crea 3 equipos.", "Organizador", "equipos_creados", 3 },
+                    { new Guid("40000000-0000-0000-0000-000000000003"), "Crea 5 equipos.", "Líder de equipos", "equipos_creados", 5 },
+                    { new Guid("40000000-0000-0000-0000-000000000004"), "Crea 10 equipos.", "Coordinador", "equipos_creados", 10 },
+                    { new Guid("40000000-0000-0000-0000-000000000005"), "Crea 20 equipos.", "Líder nato", "equipos_creados", 20 },
+                    { new Guid("50000000-0000-0000-0000-000000000001"), "Registra tu primera habilidad.", "Primera habilidad", "habilidades_registradas", 1 },
+                    { new Guid("50000000-0000-0000-0000-000000000002"), "Registra 3 habilidades.", "Multitalento", "habilidades_registradas", 3 },
+                    { new Guid("50000000-0000-0000-0000-000000000003"), "Registra 5 habilidades.", "Versátil", "habilidades_registradas", 5 },
+                    { new Guid("50000000-0000-0000-0000-000000000004"), "Registra 8 habilidades.", "Especialista", "habilidades_registradas", 8 },
+                    { new Guid("50000000-0000-0000-0000-000000000005"), "Registra 12 habilidades.", "Polímata", "habilidades_registradas", 12 },
+                    { new Guid("60000000-0000-0000-0000-000000000001"), "Envía tu primer mensaje.", "Hola equipo", "mensajes_enviados", 1 },
+                    { new Guid("60000000-0000-0000-0000-000000000002"), "Envía 10 mensajes.", "Comunicador", "mensajes_enviados", 10 },
+                    { new Guid("60000000-0000-0000-0000-000000000003"), "Envía 50 mensajes.", "Conversador", "mensajes_enviados", 50 },
+                    { new Guid("60000000-0000-0000-0000-000000000004"), "Envía 100 mensajes.", "Comunicador experto", "mensajes_enviados", 100 },
+                    { new Guid("60000000-0000-0000-0000-000000000005"), "Envía 250 mensajes.", "Maestro de la comunicación", "mensajes_enviados", 250 }
                 });
 
             migrationBuilder.InsertData(

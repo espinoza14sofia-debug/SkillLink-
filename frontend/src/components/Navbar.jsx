@@ -7,6 +7,7 @@ import {
     Bell, Settings, User, LogOut, Menu, X, ChevronRight, Zap, Search,
 } from "lucide-react";
 import { Avatar, XPBar } from "./ui";
+import { usePerfil } from "../context/PerfilContext";
 
 const navLinks = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -45,22 +46,12 @@ export default function Navbar() {
     const navigate = useNavigate();
     const { logout } = useAuth();
 
-    const [perfil, setPerfil] = useState(null);
-    const [notificaciones, setNotificaciones] = useState([]);
-    const [showNotifs, setShowNotifs] = useState(false);
+    const { perfil } = usePerfil();
+    const [notificaciones, setNotificaciones] = useState([]); const [showNotifs, setShowNotifs] = useState(false);
     const [showUser, setShowUser] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
 
     useEffect(() => {
-        const cargarPerfil = async () => {
-            try {
-                const respuesta = await api.get("/usuarios/me");
-                setPerfil(respuesta.data);
-            } catch (err) {
-                setPerfil(null);
-            }
-        };
-        cargarPerfil();
 
         const cargarNotificaciones = async () => {
             try {
